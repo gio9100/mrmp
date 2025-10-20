@@ -8,7 +8,7 @@
 }
 
 body {
-    background: repeating-conic-gradient(from 30deg, #0000 0 120deg, #000513 0 180deg) 20px 11.54px, repeating-conic-gradient(from 30deg, #000000 0 60deg, #0040ff 0 120deg, #000513 0 180deg);
+    background: repeating-conic-gradient(from 30deg, #0000 0 120deg, #000513 0 180deg) 20px 11.54px, repeating-conic-gradient(from 30deg, #f2f2f2  0 60deg, #f2f2f2  0 120deg, #f2f2f2  0 180deg);
     background-size: 40px 23px;
     display: flex;
     justify-content: center;
