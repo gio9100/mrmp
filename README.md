@@ -1,2 +1,2 @@
 # mrmp
-trabajen pinchis huevones
+a trabajar muchachos
