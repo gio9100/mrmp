@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
 <meta charset="UTF-8">
 <title>Login MRMC</title>
-<link rel="stylesheet" href="inicio_sesion.css">
+<link rel="stylesheet" href="inicio_secion.php">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
