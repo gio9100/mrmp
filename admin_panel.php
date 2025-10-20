@@ -2,7 +2,7 @@
 session_start();
 require_once "conexion.php";
 
-$claveCreador = "chucho come pepino";
+$claveCreador = "mrmp123";
 $mensaje = $_SESSION['mensaje'] ?? '';
 unset($_SESSION['mensaje']);
 
