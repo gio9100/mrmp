@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form action="register.php" method="post" novalidate>
 <form method="post" class="formulario" novalidate>
 <section class="seccion-informacion">
-<h2>Registro MRMC</h2>
+<h2>Registro MRMP</h2>
 <label>Nombre</label>
 <input type="text" name="nombre" required>
 <label>Correo</label>
