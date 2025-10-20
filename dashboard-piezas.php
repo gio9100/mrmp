@@ -192,7 +192,7 @@ header a:hover { background:#002080; cursor:pointer; }
     <div>
         <?php if(isset($_SESSION['usuario_id'])): ?>
             Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?> | 
-            <a href="perfill.php">Perfil</a>
+            <a href="perfil.php">Perfil</a>
             <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
             <a href="logout.php">Cerrar sesión</a>
         <?php else: ?>
