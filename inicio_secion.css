@@ -17,7 +17,7 @@
 /* -------------------- */
 
 
-/* Fondo general con imagen */
+/* Fondo con imagen */
 
 
 /* -------------------- */
@@ -37,7 +37,7 @@ body {
 /* -------------------- */
 
 
-/* Contenedor formulario */
+/* Contenedor principal */
 
 
 /* -------------------- */
@@ -49,7 +49,6 @@ body {
     min-height: 460px;
     border-radius: 20px;
     background: rgba(13, 13, 13, 0.55);
-    /* Transparente */
     border: 1px solid rgba(0, 255, 224, 0.3);
     box-shadow: 0 0 25px rgba(0, 255, 224, 0.2);
     overflow: hidden;
@@ -337,7 +336,7 @@ p a:hover {
 /* -------------------- */
 
 
-/* Animaciones */
+/* Animación */
 
 
 /* -------------------- */

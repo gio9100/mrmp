@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION["usuario_id"] = $usuario["id"];
                 $_SESSION["usuario_nombre"] = $usuario["nombre"];
                 $_SESSION["usuario_correo"] = $usuario["correo"];
-                $mensaje = "¡Bienvenido a MRMC, " . $usuario["nombre"] . "!";
+                $mensaje = "¡Bienvenido a MRMC, " . htmlspecialchars($usuario["nombre"]) . "!";
                 $exito = true;
             } else {
                 $mensaje = "Correo o contraseña incorrectos.";
@@ -43,28 +43,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
 <meta charset="UTF-8">
 <title>Login MRMC</title>
-<link rel="stylesheet" href="inicio_secion.css">
+<link rel="stylesheet" href="inicio_sesion.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+
 <form method="post" class="formulario" novalidate>
-<section class="seccion-informacion">
-<h1>Inicio de sesión MRMC</h1>
-<label>Correo</label>
-<input type="email" name="correo" value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
-<label>Contraseña</label>
-<input type="password" name="contrasena" required minlength="6">
-</section>
-<section class="seccion-botones">
-<button type="submit">Iniciar sesión</button>
-<p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
-<p>¿Olvidaste tu contraseña?</p>
-<a href="cambiar_contrasena_con_codigo.php" class="btn-link">Recuperarla con tu código privado</a>
-</section>
+    <section class="seccion-informacion">
+        <h1>Inicio de sesión MRMC</h1>
+        <div class="inputs">
+            <label>Correo</label>
+            <input type="email" name="correo" value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
+
+            <label>Contraseña</label>
+            <input type="password" name="contrasena" required minlength="6">
+        </div>
+    </section>
+
+    <section class="seccion-botones">
+        <button type="submit">Iniciar sesión</button>
+        <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
+        <p>¿Olvidaste tu contraseña?</p>
+        <a href="cambiar_contrasena_con_codigo.php" class="btn-link">Recuperarla con tu código privado</a>
+    </section>
 </form>
 
 <?php if($mensaje): ?>
-<div class="modal-mensaje <?= $exito ? 'exito' : 'error' ?>">
+<div class="modal-mensaje <?= $exito ? 'success' : 'error' ?>">
     <div class="modal-contenido">
         <h2><?= $exito ? "🚗 Bienvenido a MRMC" : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
@@ -81,5 +86,6 @@ function cerrarModal(){
 }
 </script>
 <?php endif; ?>
+
 </body>
 </html>
