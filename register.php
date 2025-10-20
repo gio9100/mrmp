@@ -43,13 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Correo inválido.');
     }
 
-    // Validación que sea exactamente dominio gmail.com
+  
     if (!preg_match('/^[A-Za-z0-9._%+-]+@gmail\.com$/', $correo)) {
         die('Solo se permiten correos @gmail.com');
     }
 
-    // Si llega aquí, el correo tiene formato válido y es @gmail.com
-    // Aquí puedes continuar (guardar en DB, enviar email, etc.)
     echo 'Correo aceptado: ' . htmlspecialchars($correo);
 }
 ?>
@@ -84,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if($mensaje): ?>
 <div class="modal-mensaje <?= $exito ? 'exito' : 'error' ?>">
     <div class="modal-contenido">
-        <h2><?= $exito ? "🚗 ¡Bienvenido a MRMC!" : "❌ Error" ?></h2>
+        <h2><?= $exito ? "🚗 ¡Bienvenido a MRMP!" : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
         <?php if($exito): ?>
             <button onclick="window.location.href='inicio_secion.php'">Ir al Login</button>
