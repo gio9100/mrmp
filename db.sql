@@ -1,9 +1,0 @@
-CREATE TABLE usuarios (
-    id     INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR (100) NOT NULL,
-    correo VARCHAR (120) NOT NULL UNIQUE,
-    contrasena_hash VARCHAR (255) NOT NULL,
-    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE= InnoDB
-DEFAULT CHARSET = utf8mb4
-COLLATE= utf8mb4_unicode_ci;
