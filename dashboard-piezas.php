@@ -98,9 +98,11 @@ unset($_SESSION['mensaje']);
       <a href="perfil.php">Perfil</a>
       <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
       <a href="dashboard-piezas.php?logout=1">Cerrar sesión</a>
+      <a href="sobre-nosotros.php">Sobre Nosotros</a>
     <?php else: ?>
       <a href="inicio_secion.php">Iniciar sesión</a>
       <a href="register.php">Crear cuenta</a>
+      <a href="sobre-nosotros.php">Sobre Nosotros</a>
     <?php endif; ?>
   </div>
 </header>
