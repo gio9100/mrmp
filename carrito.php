@@ -75,7 +75,7 @@ unset($_SESSION['mensaje']);
 
 <header>
   <div class="logo">
-    <img src="images/mrmp logo.png" alt="MRMP logo">
+    <img src="img/mrmp logo.png" alt="MRMP logo">
     <span>MRMP</span>
   </div>
   <div class="usuario">
