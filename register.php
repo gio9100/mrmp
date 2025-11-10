@@ -16,11 +16,7 @@ $dominios_validos = [
     'yahoo.com',
     'yahoo.es',
     'icloud.com',
-    'live.com',
-    'msn.com',
-    'protonmail.com',
-    'zoho.com',
-    'aol.com'
+  
 ];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
