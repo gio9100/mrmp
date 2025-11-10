@@ -1,0 +1,286 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background: #f9f9f9;
+    color: #111;
+}
+
+header {
+    background: #fff;
+    border-bottom: 2px solid #c62828;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 60px;
+    width: auto;
+}
+
+.logo span {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.usuario a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #000;
+    border: 1px solid #c62828;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.usuario a:hover {
+    background: #c62828;
+    color: #fff;
+}
+
+.saludo {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+
+/*buscar*/
+
+.buscar-form {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+    gap: 10px;
+}
+
+.buscar-form input {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 280px;
+}
+
+.buscar-form button {
+    background: #c62828;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.buscar-form button:hover {
+    background: #a51f1f;
+}
+
+
+/*marcas*/
+
+.marcas-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px auto 25px;
+}
+
+.marcas-menu form button {
+    background: #fff;
+    color: #000;
+    border: 1px solid #c62828;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.marcas-menu form button:hover {
+    background: #c62828;
+    color: #fff;
+}
+
+
+/*piezas cards*/
+
+.piezas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 30px 50px;
+    justify-items: center;
+}
+
+.pieza {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s;
+    max-width: 250px;
+}
+
+.pieza:hover {
+    transform: translateY(-5px);
+}
+
+.pieza img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.pieza h3 {
+    font-size: 1.1rem;
+    color: #000;
+}
+
+.pieza p {
+    margin: 5px 0;
+    color: #333;
+}
+
+.pieza form button,
+.pieza .btn-ver-desc {
+    background: #c62828;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    margin-top: 5px;
+}
+
+.pieza form button:hover,
+.pieza .btn-ver-desc:hover {
+    background: #a51f1f;
+}
+
+.login-aviso {
+    color: #c62828;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+
+/*modales*/
+
+.modal-mensaje {
+    background: #c62828;
+    color: #fff;
+    padding: 12px 20px;
+    text-align: center;
+    border-radius: 6px;
+    margin: 10px auto;
+    width: fit-content;
+}
+
+footer {
+    background: #fff;
+    border-top: 2px solid #c62828;
+    text-align: center;
+    padding: 18px 0;
+    color: #000;
+    font-size: 0.95rem;
+}
+
+footer span {
+    color: #000000;
+    font-weight: 700;
+}
+
+
+/*modal descripcion*/
+
+.modal-desc {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-desc-content {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal-desc-content h3 {
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.modal-desc-content p {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-desc-content .modal-close {
+    background: #c62828;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+/*responsivo*/
+
+@media (max-width: 700px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .usuario {
+        justify-content: center;
+    }
+    .piezas {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        padding: 20px;
+    }
+}

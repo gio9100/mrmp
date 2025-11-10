@@ -1,0 +1,228 @@
+body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background: #fff;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: #fff;
+    border-bottom: 2px solid #c62828;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 60px;
+    width: auto;
+}
+
+.logo span {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.usuario a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #000;
+    border: 1px solid #c62828;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.usuario a:hover {
+    background: #c62828;
+    color: #fff;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 15px;
+    width: 100%;
+}
+
+
+/*modal*/
+
+.mensaje {
+    background: #c62828;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: fit-content;
+}
+
+
+/*seccion*/
+
+.seccion {
+    background: rgba(198, 40, 40, 0.05);
+    padding: 20px 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.seccion img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid #c62828;
+}
+
+.perfil-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.perfil-info h3 {
+    color: #c62828;
+    margin: 0 0 10px 0;
+}
+
+.perfil-info p {
+    margin: 2px 0;
+    color: #111;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+
+/* Verificado */
+
+.verificado {
+    color: #00ff00;
+    font-weight: 700;
+}
+
+.no-verificado {
+    color: #ff4444;
+    font-weight: 700;
+}
+
+
+/*inputs y botones*/
+
+.perfil-info input[type="text"],
+.perfil-info input[type="email"],
+.perfil-info input[type="password"],
+.perfil-info input[type="tel"],
+.perfil-info input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #c62828;
+    background: #fff;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.perfil-info button {
+    background: #c62828;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    margin-top: 5px;
+}
+
+.perfil-info button:hover {
+    background: #a51f1f;
+}
+
+.perfil-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.perfil-links a {
+    color: #c62828;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.perfil-links a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    background: #fff;
+    border-top: 2px solid #c62828;
+    text-align: center;
+    padding: 18px 0;
+    color: #000;
+    font-size: 0.95rem;
+}
+
+footer span {
+    color: #000000;
+    font-weight: 700;
+}
+
+
+/*responsivo*/
+
+@media (max-width: 700px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .usuario {
+        justify-content: center;
+    }
+    .seccion {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .perfil-info {
+        align-items: center;
+    }
+}

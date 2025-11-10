@@ -1,0 +1,170 @@
+<?php
+session_start();
+require_once "conexion.php";
+
+if(isset($_GET['logout'])){
+    session_destroy();
+    header("Location: dashboard-piezas.php");
+    exit;
+}
+
+if(isset($_SESSION['usuario_id']) && !isset($_SESSION['carrito'])) $_SESSION['carrito'] = [];
+
+// Agregar pieza al carrito
+if(isset($_GET['agregar']) && is_numeric($_GET['agregar'])){
+    if(!isset($_SESSION['usuario_id'])){
+        $_SESSION['mensaje'] = "⚠️ Debes iniciar sesión para agregar al carrito.";
+    } else {
+        $id_pieza = intval($_GET['agregar']);
+        $stmt = $conexion->prepare("SELECT cantidad FROM piezas WHERE id=?");
+        $stmt->bind_param("i",$id_pieza);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if($res && $res->num_rows==1){
+            $pieza = $res->fetch_assoc();
+            if(($pieza['cantidad'] - ($_SESSION['carrito'][$id_pieza] ?? 0)) > 0){
+                $_SESSION['carrito'][$id_pieza] = ($_SESSION['carrito'][$id_pieza] ?? 0) + 1;
+                $_SESSION['mensaje'] = "✅ Pieza agregada al carrito.";
+            } else {
+                $_SESSION['mensaje'] = "⚠️ No hay stock suficiente.";
+            }
+        }
+    }
+    header("Location: dashboard-piezas.php");
+    exit;
+}
+
+// Filtros y búsqueda
+$busqueda = trim($_GET['buscar'] ?? '');
+$marca_id = intval($_GET['marca'] ?? 0);
+
+// Marcas
+$marcas_res = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
+$marcas = [];
+while($m = $marcas_res->fetch_assoc()){
+    $marcas[$m['id']] = $m['nombre'];
+}
+
+// Piezas
+$sql = "SELECT p.*, m.nombre as marca_nombre FROM piezas p LEFT JOIN marcas m ON p.marca_id = m.id";
+$condiciones = [];
+$params = [];
+$tipos = "";
+
+if($busqueda !== ''){
+    $condiciones[] = "(p.nombre LIKE ? OR p.descripcion LIKE ?)";
+    $params[] = "%$busqueda%";
+    $params[] = "%$busqueda%";
+    $tipos .= "ss";
+}
+if($marca_id>0){
+    $condiciones[] = "p.marca_id=?";
+    $params[] = $marca_id;
+    $tipos .= "i";
+}
+if(count($condiciones)>0){
+    $sql .= " WHERE ".implode(" AND ", $condiciones);
+}
+$sql .= " ORDER BY p.id DESC";
+
+$stmt = $conexion->prepare($sql);
+if(count($params)>0) $stmt->bind_param($tipos,...$params);
+$stmt->execute();
+$res = $stmt->get_result();
+$piezas = $res->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+$mensaje = $_SESSION['mensaje'] ?? '';
+unset($_SESSION['mensaje']);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard MRMP</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="images/mrmp logo.png" alt="MRMC logo">
+    <span>MRMP</span>
+  </div>
+  <div class="usuario">
+    <?php if(isset($_SESSION['usuario_id'])): ?>
+      <span class="saludo">Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></span>
+      <a href="perfil.php">Perfil</a>
+      <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
+      <a href="dashboard-piezas.php?logout=1">Cerrar sesión</a>
+    <?php else: ?>
+      <a href="inicio_secion.php">Iniciar sesión</a>
+      <a href="register.php">Crear cuenta</a>
+    <?php endif; ?>
+  </div>
+</header>
+
+<main>
+<?php if($mensaje): ?>
+<div class="modal-mensaje"><?= htmlspecialchars($mensaje) ?></div>
+<?php endif; ?>
+
+<div class="marcas-menu">
+  <?php foreach($marcas as $id=>$nombre): ?>
+    <form method="get">
+      <input type="hidden" name="marca" value="<?= $id ?>">
+      <button type="submit"><?= htmlspecialchars($nombre) ?></button>
+    </form>
+  <?php endforeach; ?>
+  <form method="get"><button type="submit">Todas</button></form>
+</div>
+
+<form class="buscar-form" method="get">
+  <input type="text" name="buscar" placeholder="Buscar piezas..." value="<?= htmlspecialchars($busqueda) ?>">
+  <button type="submit">Buscar</button>
+</form>
+
+<div class="piezas">
+<?php if(count($piezas) === 0): ?>
+  <p>No se encontraron piezas.</p>
+<?php else: ?>
+  <?php foreach($piezas as $p): ?>
+  <div class="pieza">
+    <?php if(!empty($p['imagen'])): ?>
+    <div class="imagen-container">
+      <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+    </div>
+    <?php endif; ?>
+    <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+    <p class="precio">Precio: $<?= number_format($p['precio'],2) ?></p>
+    <p class="stock">Stock: <?= intval($p['cantidad']) ?></p>
+    <a href="#desc-<?= $p['id'] ?>" class="ver-desc">Ver descripción</a>
+
+    <?php if(isset($_SESSION['usuario_id'])): ?>
+    <form method="get">
+      <input type="hidden" name="agregar" value="<?= intval($p['id']) ?>">
+      <button type="submit">Agregar al carrito</button>
+    </form>
+    <?php else: ?>
+    <p class="login-aviso">Inicia sesión para agregar al carrito</p>
+    <?php endif; ?>
+
+    <div class="modal-desc" id="desc-<?= $p['id'] ?>">
+      <div class="modal-desc-content">
+        <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+        <p><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
+        <a href="#!" class="modal-close">×</a>
+      </div>
+    </div>
+  </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+</div>
+
+</main>
+<footer>
+  <p>© <?= date('Y') ?> <span>MRMP</span></p>
+</footer>
+</body>
+</html>
