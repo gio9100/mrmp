@@ -111,7 +111,7 @@ if(!$usuario){
 
 <header>
   <div class="logo">
-    <img src="images/mrmp logo.png" alt="mrmp logo">
+    <img src="img/mrmp logo.png" alt="mrmp logo">
     <span>MRMP</span>
   </div>
   <div class="usuario">
