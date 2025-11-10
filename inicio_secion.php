@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION["usuario_id"] = $usuario["id"];
                 $_SESSION["usuario_nombre"] = $usuario["nombre"];
                 $_SESSION["usuario_correo"] = $usuario["correo"];
-                $mensaje = "¡Bienvenido a MRMC, " . $usuario["nombre"] . "!";
+                $mensaje = "¡Bienvenido a MRMP, " . $usuario["nombre"] . "!";
                 $exito = true;
             } else {
                 $mensaje = "Correo o contraseña incorrectos.";
@@ -74,13 +74,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <?php if($mensaje): ?>
 <div class="modal-mensaje <?= $exito ? 'exito' : 'error' ?>">
     <div class="modal-contenido">
-        <h2><?= $exito ? "🔧 Bienvenido al Taller MRMC" : "❌ Error" ?></h2>
+        <h2><?= $exito ? "🔧 Bienvenido al Taller MRMP, Conoce de nuestros Creadores, Conoce nuestras Referencias y Estandares de Calidad! " : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
         <?php if($exito): ?>
             <button onclick="window.location.href='dashboard-piezas.php'">Ir al Panel</button>
         <?php else: ?>
             <button onclick="cerrarModal()">Cerrar</button>
         <?php endif; ?>
+        <ul>
+            <li><a href="carrito.php">Descubre Nuestras Referencias (da click aqui)</a></li>
+        </ul>
     </div>
 </div>
 <script>

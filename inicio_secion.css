@@ -136,6 +136,16 @@ a:hover {
     color: #111;
 }
 
+.modal-contenido a {
+    color: blue;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: 600;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+
 .modal-contenido h2 {
     margin-bottom: 10px;
     color: #c00;
