@@ -33,18 +33,16 @@ header {
     width: auto;
 }
 
-.logo span {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #000;
-    letter-spacing: 1px;
-}
-
 .usuario {
     display: flex;
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
+}
+
+.logo p {
+    color: #9C2007;
+    font-size: 1.6rem;
 }
 
 .usuario a {

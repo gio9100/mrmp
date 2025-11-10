@@ -76,7 +76,7 @@ unset($_SESSION['mensaje']);
 <header>
   <div class="logo">
     <img src="img/mrmp logo.png" alt="MRMP logo">
-    <span>MRMP</span>
+    <p>Mexican Racing Motor Parts</p>
   </div>
   <div class="usuario">
     <?php if(isset($_SESSION['usuario_id'])): ?>

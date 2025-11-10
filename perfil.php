@@ -112,7 +112,7 @@ if(!$usuario){
 <header>
   <div class="logo">
     <img src="img/mrmp logo.png" alt="mrmp logo">
-    <span>MRMP</span>
+    <p>Mexican Racing Motor Parts</p>
   </div>
   <div class="usuario">
       <span class="saludo">Hola, <?= htmlspecialchars($usuario['nombre']) ?></span>
