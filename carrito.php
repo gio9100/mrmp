@@ -82,6 +82,7 @@ unset($_SESSION['mensaje']);
     <?php if(isset($_SESSION['usuario_id'])): ?>
       <span class="saludo">Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></span>
       <a href="dashboard-piezas.php">Dashboard</a>
+      <a href="perfil.php">Perfil</a>
       <a href="logout.php">Cerrar sesión</a>
     <?php else: ?>
       <a href="inicio_secion.php">Iniciar sesión</a>
