@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <form method="post" class="formulario" novalidate>
     <div class="logo-taller">
-        <img src="images/mrmp logo.png" alt="Logo MRMC">
+        <img src="img/mrmp logo.png" alt="Logo MRMP">
         <h1>Inicio de sesión MRMP</h1>
         <p class="subtitulo">Motor Racing Mexican Parts</p>
     </div>
