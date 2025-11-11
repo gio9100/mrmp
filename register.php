@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Registro MRMC</title>
+<title>Registro MRMP</title>
 <link rel="stylesheet" href="registro.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>

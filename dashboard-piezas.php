@@ -85,6 +85,56 @@ unset($_SESSION['mensaje']);
 <title>Dashboard MRMP</title>
 <link rel="stylesheet" href="dashboard.css">
 </head>
+
+<script>
+// Espera a que toda la página haya cargado
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Busca todos los enlaces con la clase "ver-desc"
+  document.querySelectorAll('.ver-desc').forEach(link => {
+
+    // Al hacer clic en cualquiera de esos enlaces
+    link.addEventListener('click', e => {
+      e.preventDefault(); // Evita que el enlace cambie la URL
+
+      // Obtiene el valor del "href" (por ejemplo "#desc-5") y le quita el "#"
+      const targetId = link.getAttribute('href').substring(1);
+
+      // Busca el modal correspondiente con ese ID
+      const modal = document.getElementById(targetId);
+
+      // Si el modal existe, lo muestra
+      if (modal) {
+        modal.style.display = 'flex'; // Cambia el display para hacerlo visible
+      }
+    });
+  });
+
+  // Busca todos los botones o enlaces para cerrar el modal (la "X")
+  document.querySelectorAll('.modal-close').forEach(btn => {
+
+    // Cuando se hace clic en cerrar
+    btn.addEventListener('click', e => {
+      e.preventDefault(); // Evita que el enlace haga algo raro
+
+      // Busca el contenedor del modal y lo oculta
+      btn.closest('.modal-desc').style.display = 'none';
+    });
+  });
+
+  // Permite cerrar el modal si se hace clic fuera del cuadro de contenido
+  document.querySelectorAll('.modal-desc').forEach(modal => {
+    modal.addEventListener('click', e => {
+
+      // Si se hace clic directamente sobre el fondo oscuro (no el contenido)
+      if (e.target === modal) {
+        modal.style.display = 'none'; // Cierra el modal
+      }
+    });
+  });
+});
+</script>
+
 <body>
 
 <header>
@@ -98,11 +148,11 @@ unset($_SESSION['mensaje']);
       <a href="perfil.php">Perfil</a>
       <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
       <a href="dashboard-piezas.php?logout=1">Cerrar sesión</a>
-      <a href="sobre-nosotros.php">Sobre Nosotros</a>
+      <a href="blog.php">Blog</a>
     <?php else: ?>
       <a href="inicio_secion.php">Iniciar sesión</a>
       <a href="register.php">Crear cuenta</a>
-      <a href="sobre-nosotros.php">Sobre Nosotros</a>
+      <a href="blog.php">Blog</a>
     <?php endif; ?>
   </div>
 </header>
@@ -166,7 +216,18 @@ unset($_SESSION['mensaje']);
 
 </main>
 <footer>
-  <p>© <?= date('Y') ?> <span>MRMP</span></p>
+  <div class="footer-redes">
+    <a href="https://www.facebook.com/noticiasalertamichoacan?locale=es_LA" target="_blank" class="facebook">
+      <i class="fab fa-facebook-f"></i>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg" alt="Facebook">
+      </a>
+    </a>
+    <a href="" target="_blank" class="instagram">
+      <i class="fab fa-instagram-f"></i>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+    </a>
+    </div>
+      <p>© <?= date('Y') ?> <span>Mexican Racing Motor Parts</span></p>
 </footer>
 </body>
 </html>

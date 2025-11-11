@@ -347,7 +347,7 @@ while($m3 = $marcas_edit->fetch_assoc()):
 </main>
 
 <footer style="text-align: center; margin-top: 20px; color: #888;">
-&copy; <?= date('Y') ?> MRMP
+&copy; <?= date('Y') ?> Mexican Racing Motor Parts
 </footer>
 
 <?php endif; ?>

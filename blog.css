@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+header {
+    background: #fff;
+    border-bottom: 2px solid #c62828;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 120px;
+    width: auto;
+}
+
+.logo p {
+    color: #c62828;
+    font-size: 1.6rem;
+}
+
+.usuario a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #000;
+    border: 1px solid #c62828;
+    padding: 8px 14px;
+    border-radius: 9px;
+    transition: all 0.3s ease;
+}
+
+.usuario a:hover {
+    background: #c62828;
+    color: #fff;
+}
+
+.saludo {
+    font-weight: 600;
+    margin-right: 5px;
+}

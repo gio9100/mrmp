@@ -119,6 +119,7 @@ if(!$usuario){
       <a href="dashboard-piezas.php">Dashboard</a>
       <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
       <a href="logout.php" class="btn-logout">Cerrar sesión</a>
+      <a href="blog.php">Blog</a>
   </div>
 </header>
 
@@ -173,7 +174,7 @@ if(!$usuario){
 
 
 <footer>
-  <p>© <?= date('Y') ?> <span>MRMP</span></p>
+  <p>© <?= date('Y') ?> <span>Mexican Racing Motor Parts</span></p>
 </footer>
 
 </main>

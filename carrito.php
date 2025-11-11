@@ -84,9 +84,11 @@ unset($_SESSION['mensaje']);
       <a href="dashboard-piezas.php">Dashboard</a>
       <a href="perfil.php">Perfil</a>
       <a href="logout.php">Cerrar sesión</a>
+      <a href="Blog.php">Blog</a>
     <?php else: ?>
       <a href="inicio_secion.php">Iniciar sesión</a>
       <a href="register.php">Crear cuenta</a>
+      <a href="blog.php">Blog</a>
     <?php endif; ?>
   </div>
 </header>
@@ -137,7 +139,7 @@ unset($_SESSION['mensaje']);
 </main>
 
 <footer style="padding:8px 0;font-size:0.85rem;text-align:center;border-top:2px solid #c62828;">
-    © <?= date('Y') ?> <span>MRMP</span>
+    © <?= date('Y') ?> <span>Mexican Racing Motor Parts</span>
 </footer>
 
 </body>
