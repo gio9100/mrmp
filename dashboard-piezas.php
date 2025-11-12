@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </main>
 <footer>
   <div class="footer-redes">
-    <a href="https://www.facebook.com/noticiasalertamichoacan?locale=es_LA" target="_blank" class="facebook">
+    <a href="https://www.facebook.com/profile.php?id=61583404693123" target="_blank" class="facebook">
       <i class="fab fa-facebook-f"></i>
       <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg" alt="Facebook">
       </a>
