@@ -34,6 +34,6 @@ if(isset($_GET['logout'])){
     </div>
     </header>
 <body>
-    <p>Somos un Taller/tienda de autopartes, manejas casi todas las marcas de carros (Toyota, Subaru, Dodge, Nissan, Ford,Etc)</p>
+    <p>Somos un Taller/tienda de autopartes, manejamos casi todas las marcas de carros (Toyota, Subaru, Dodge, Nissan, Ford,Chevrolet,Honda, Mitsubihi,bmw,mercedes benz,audi,etc)</p>
 </body>
 </html>
