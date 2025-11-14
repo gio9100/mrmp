@@ -25,8 +25,6 @@ if(isset($_GET['logout'])){
       <span class="saludo">Hola, <?= htmlspecialchars($_SESSION['usuario_nombre'])?></span>
       <a href="perfil.php">Perfil</a>
       <a href="carrito.php">Carrito</a> (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
-
-      <a href="dashboard-piezas.php?logout=1">Cerrar Sesion</a>
       <a href="dashboard-piezas.php">dashboard</a>
        <a href="dashboard-piezas.php?logout=1">Cerrar sesión</a>
        <?php else: ?>
