@@ -428,3 +428,10 @@ footer {
     opacity: 0.8;
     /* Le da un efecto visual */
 }
+
+.piezas .p1{
+color: red;
+}
+.a {
+    left: 800px;
+}
