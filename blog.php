@@ -26,9 +26,11 @@ if(isset($_GET['logout'])){
       <a href="perfil.php">Perfil</a>
       <a href="carrito.php">Carrito</a> (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
       <a href="dashboard-piezas.php">Cerrar Sesion</a>
+      <a href="dashboard-piezas.php">dashboard</a>
        <?php else: ?>
         <a href="inicio_secion.php">Iniciar Sesion</a>
         <a href="register.php">Crear Cuenta</a>
+        <a href="dashboard-piezas.php">dashboard</a>
         <?php endif; ?>
     </div>
     </header>
