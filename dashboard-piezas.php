@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <button type="submit">Agregar al carrito</button>
     </form>
     <?php else: ?>
-    <p class="login-aviso">Inicia sesión para agregar al carrito</p>
+    <p1 class="login-aviso">Inicia sesión para agregar al carrito</p1>
     <?php endif; ?>
 
     <div class="modal-desc" id="desc-<?= $p['id'] ?>">
