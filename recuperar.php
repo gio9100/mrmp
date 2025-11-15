@@ -78,7 +78,7 @@ if (isset($_POST['correo']) && !isset($_POST['nueva_password'])) {
 
                 // Contenido del correo
                 $mail->isHTML(true);
-                $mail->Subject = "Recuperación de contraseña";
+                $mail->Subject = "Restablecer contraseña MRMP";
 
                 // Cuerpo del mensaje en HTML
                 $mail->Body = "
@@ -177,46 +177,47 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
 
 ?>
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Recuperar contraseña</title>
-    <style>
-        body { font-family: Arial; background:#f5f5f5; padding:30px; }
-        .box { background:white; padding:20px; max-width:400px; margin:auto; border-radius:10px; }
-        input { width:100%; padding:10px; border:1px solid #ccc; margin-top:10px; border-radius:5px; }
-        button { width:100%; padding:12px; margin-top:15px; background:#007bff; color:white;
-                 border:none; border-radius:5px; cursor:pointer; }
-        .message { padding:10px; margin:10px 0; border-radius:5px; }
-        .success { background:#d4edda; }
-        .error { background:#f8d7da; }
-    </style>
-</head>
+<html lang="es">
+    <head>
+    <meta charset="utf-8">
+    <title>Recuperar contraseña MRMP</title>
+    <link rel="stylesheet" href="recuperar.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
 <body>
 
 <div class="box">
+<div class="formulario">
 
-<h2>Recuperar contraseña</h2>
 
 <?php if ($mensaje): ?>
     <div class="message <?= $tipo_mensaje ?>"><?= $mensaje ?></div>
 <?php endif; ?>
 
 <?php if (!$token_valido && !isset($_POST['token'])): ?>
-
+    <div class="logo-taller">
+     <img src="img/mrmp logo.png" alt="logo mrmp">
+     <p class="subtitulo">Recuperar Tu contraseña</p>
     <p>Ingresa tu correo para enviarte un enlace de recuperación.</p>
+     </div>
     <form method="POST">
         <input type="email" name="correo" placeholder="Tu correo" required>
         <button type="submit">Enviar enlace</button>
+        <a href="inicio_secion.php">Regresar al inicio de sesion</a>
     </form>
-
+</div>
 <?php else: ?>
 
-    <p>Escribe tu nueva contraseña</p>
+    
     <form method="POST">
+        <div class="logo-taller">
+            <img src="img/mrmp logo.png" alt="logo mrmp">
+            <p class="subtitulo">Escribe tu nueva contraseña (minimo 6 caracteres)</p>
         <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? $_POST['token']) ?>">
-        <input type="password" name="nueva_password" placeholder="Nueva contraseña" required>
-        <input type="password" name="confirmar_password" placeholder="Confirmar contraseña" required>
+        <input type="password" name="nueva_password" placeholder="Nueva contraseña" minlength="6" required>
+        <input type="password" name="confirmar_password" placeholder="Confirmar contraseña" minlength="6" required>
         <button type="submit">Cambiar contraseña</button>
+        <a href="inicio_secion.php">Regresar al inicio de sesion</a>
     </form>
 
 <?php endif; ?>
