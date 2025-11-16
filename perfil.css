@@ -126,6 +126,10 @@ main {
     word-break: break-word;
 }
 
+.seccion a {
+    color: green;
+}
+
 
 /* Verificado */
 

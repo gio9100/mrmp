@@ -172,7 +172,11 @@ if(!$usuario){
     </form>
 </div>
 
+<div class="seccion">
+    <h3>Cambiar Contraseña</h3>
+    <p><a href="recuperar.php">Cambiar contraseña en este link</a></p>
 
+</div>
 <footer>
   <p>© <?= date('Y') ?> <span>Mexican Racing Motor Parts</span></p>
 </footer>

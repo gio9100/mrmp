@@ -67,34 +67,42 @@ if (isset($_POST['correo']) && !isset($_POST['nueva_password'])) {
                 $mail->isSMTP();
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'giovannidossantos929@gmail.com'; 
-                $mail->Password = 'ncxj opmh jwzy yjoz';  // Contraseña de aplicación
+                $mail->Username = 'mexicanracermp@gmail.com'; 
+                $mail->Password = 'ynxm gxio tuku ssba';  // Contraseña de aplicación
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 
                 // Destinatarios
-                $mail->setFrom('giovannidossantos929@gmail.com', 'Recuperación de Cuenta');
+                $mail->setFrom('giovannidossantos929@gmail.com', 'Restablecer password');
                 $mail->addAddress($correo, $usuario['nombre']);
 
                 // Contenido del correo
                 $mail->isHTML(true);
-                $mail->Subject = "Restablecer contraseña MRMP";
+                $mail->Subject = "Restablecer password MRMP";
+$mail->addEmbeddedImage('img/mrmp-logo.png', 'logoLab');
 
-                // Cuerpo del mensaje en HTML
-                $mail->Body = "
-                    <h2>Recuperación de contraseña</h2>
-                    Hola <strong>{$usuario['nombre']}</strong>,<br><br>
-                    Has solicitado recuperar tu contraseña.<br><br>
-                    <a href='$enlace' 
-                       style='background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;'>
-                       Restablecer contraseña
-                    </a>
-                    <br><br>
-                    Si el botón no funciona abre este enlace:<br>
-                    $enlace
-                    <br><br>
-                    Este enlace expira en 1 hora.
-                ";
+$mail->Body = "
+    <center>
+        <img src='cid:logoLab' width='150' style='margin-bottom:20px;'>
+    </center>
+
+    <h2>Recuperación de contraseña</h2>
+    Hola <strong>{$usuario['nombre']}</strong>,<br><br>
+
+    Has solicitado recuperar tu contraseña.<br><br>
+
+    <a href='$enlace' 
+       style='background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;'>
+       Restablecer contraseña
+    </a>
+
+    <br><br>
+    Si el botón no funciona abre este enlace:<br>
+    $enlace
+    <br><br>
+    Este enlace expira en 1 hora.<br>
+    <strong>Si tú no solicitaste el cambio de contraseña, ignora este correo.</strong>
+";
 
                 // Alternativa en texto plano
                 $mail->AltBody = "Hola {$usuario['nombre']}, usa este enlace para recuperar tu contraseña: $enlace";
@@ -196,7 +204,7 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
 
 <?php if (!$token_valido && !isset($_POST['token'])): ?>
     <div class="logo-taller">
-     <img src="img/mrmp logo.png" alt="logo mrmp">
+     <img src="img/mrmp-logo.png" alt="logo mrmp">
      <p class="subtitulo">Recuperar Tu contraseña</p>
     <p>Ingresa tu correo para enviarte un enlace de recuperación.</p>
      </div>
@@ -211,7 +219,7 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
     
     <form method="POST">
         <div class="logo-taller">
-            <img src="img/mrmp logo.png" alt="logo mrmp">
+            <img src="img/mrmp-logo.png" alt="logo mrmp">
             <p class="subtitulo">Escribe tu nueva contraseña (minimo 6 caracteres)</p>
         <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? $_POST['token']) ?>">
         <input type="password" name="nueva_password" placeholder="Nueva contraseña" minlength="6" required>

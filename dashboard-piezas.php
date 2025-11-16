@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <header>
   <div class="logo">
-    <img src="img/mrmp logo.png" alt="MRMC logo">
+    <img src="img/mrmp-logo.png" alt="MRMP logo">
     <p>Mexican Racing Motor Parts</p>
   </div>
   <div class="usuario">
