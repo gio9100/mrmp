@@ -273,7 +273,7 @@ while($m = $marcas_res->fetch_assoc()){
             <div class="row">
                 <div class="col-md-6">
                     <h5>Mexican Racing Motor Parts</h5>
-                    <p class="mb-0">Tu socio confiable en piezas automotrices de competición</p>
+                    <p class="mb-0">tu aliado confiable en piezas automotrices de mayor desempeño</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="social-links">
