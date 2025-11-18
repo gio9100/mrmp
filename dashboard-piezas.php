@@ -80,154 +80,282 @@ unset($_SESSION['mensaje']);
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard MRMP</title>
-<link rel="stylesheet" href="dashboard.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Piezas - MRMP</title>
+    <meta name="description" content="Catálogo completo de piezas automotrices de alta performance">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link href="pagina-principal.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
 </head>
-
-<script>
-// Espera a que toda la página haya cargado
-document.addEventListener('DOMContentLoaded', () => {
-
-  // Busca todos los enlaces con la clase "ver-desc"
-  document.querySelectorAll('.ver-desc').forEach(link => {
-
-    // Al hacer clic en cualquiera de esos enlaces
-    link.addEventListener('click', e => {
-      e.preventDefault(); // Evita que el enlace cambie la URL
-
-      // Obtiene el valor del "href" (por ejemplo "#desc-5") y le quita el "#"
-      const targetId = link.getAttribute('href').substring(1);
-
-      // Busca el modal correspondiente con ese ID
-      const modal = document.getElementById(targetId);
-
-      // Si el modal existe, lo muestra
-      if (modal) {
-        modal.style.display = 'flex'; // Cambia el display para hacerlo visible
-      }
-    });
-  });
-
-  // Busca todos los botones o enlaces para cerrar el modal (la "X")
-  document.querySelectorAll('.modal-close').forEach(btn => {
-
-    // Cuando se hace clic en cerrar
-    btn.addEventListener('click', e => {
-      e.preventDefault(); // Evita que el enlace haga algo raro
-
-      // Busca el contenedor del modal y lo oculta
-      btn.closest('.modal-desc').style.display = 'none';
-    });
-  });
-
-  // Permite cerrar el modal si se hace clic fuera del cuadro de contenido
-  document.querySelectorAll('.modal-desc').forEach(modal => {
-    modal.addEventListener('click', e => {
-
-      // Si se hace clic directamente sobre el fondo oscuro (no el contenido)
-      if (e.target === modal) {
-        modal.style.display = 'none'; // Cierra el modal
-      }
-    });
-  });
-});
-</script>
-
 <body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="pagina-principal.php">
+             <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
+                <strong></strong>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="pagina-principal.php">
+                            <i class="fas fa-home me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard-piezas.php">
+                            <i class="fas fa-cogs me-1"></i>Piezas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="blog.php">
+                            <i class="fas fa-blog me-1"></i>Blog
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="navbar-nav">
+                    <?php if(isset($_SESSION['usuario_id'])): ?>
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i><?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
+                                <li><a class="dropdown-item" href="carrito.php">
+                                    <i class="fas fa-shopping-cart me-2"></i>Carrito 
+                                    <span class="badge bg-primary"><?= array_sum($_SESSION['carrito'] ?? []) ?></span>
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a class="nav-link" href="inicio_secion.php">
+                            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                        </a>
+                        <a class="nav-link" href="register.php">
+                            <i class="fas fa-user-plus me-1"></i>Registrarse
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<header>
-  <div class="logo">
-    <img src="img/mrmp-logo.png" alt="MRMP logo">
-    <p>Mexican Racing Motor Parts</p>
-  </div>
-  <div class="usuario">
-    <?php if(isset($_SESSION['usuario_id'])): ?>
-      <span class="saludo">Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></span>
-      <a href="perfil.php">Perfil</a>
-      <a href="carrito.php">Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a>
-      <a href="dashboard-piezas.php?logout=1">Cerrar sesión</a>
-      <a href="blog.php">Blog</a>
-    <?php else: ?>
-      <a href="inicio_secion.php">Iniciar sesión</a>
-      <a href="register.php">Crear cuenta</a>
-      <a href="blog.php">Blog</a>
-    <?php endif; ?>
-  </div>
-</header>
+    <!-- Hero Section -->
+    <section class="hero-catalog">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold">Catálogo de Piezas</h1>
+                    <p class="lead">Encuentra las mejores piezas automotrices de alto desempeño</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex align-items-center justify-content-lg-end">
+                        <i class="fas fa-cogs fa-3x me-3 opacity-75"></i>
+                        <div>
+                            <h4 class="mb-0"><?= count($piezas) ?></h4>
+                            <small>Piezas Disponibles</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<main>
-<?php if($mensaje): ?>
-<div class="modal-mensaje"><?= htmlspecialchars($mensaje) ?></div>
-<?php endif; ?>
+    <main class="container my-4">
+        <?php if($mensaje): ?>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($mensaje) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php endif; ?>
 
-<div class="marcas-menu">
-  <?php foreach($marcas as $id=>$nombre): ?>
-    <form method="get">
-      <input type="hidden" name="marca" value="<?= $id ?>">
-      <button type="submit"><?= htmlspecialchars($nombre) ?></button>
-    </form>
-  <?php endforeach; ?>
-  <form method="get"><button type="submit">Todas</button></form>
-</div>
+        <!-- Filtros -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <form class="buscar-form" method="get">
+                        <div class="input-group">
+                            <input type="text" name="buscar" class="form-control" 
+                                   placeholder="Buscar piezas por nombre o descripción..." 
+                                   value="<?= htmlspecialchars($busqueda) ?>">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <div class="brand-filter">
+                        <strong class="d-block mb-2">Filtrar por marca:</strong>
+                        <div class="d-flex flex-wrap">
+                            <?php foreach($marcas as $id=>$nombre): ?>
+                                <a href="?marca=<?= $id ?>" 
+                                   class="btn btn-sm <?= $marca_id == $id ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                                    <?= htmlspecialchars($nombre) ?>
+                                </a>
+                            <?php endforeach; ?>
+                            <?php if($marca_id > 0): ?>
+                                <a href="?" class="btn btn-sm btn-outline-secondary me-2 mb-2">
+                                    <i class="fas fa-times me-1"></i>Limpiar
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<form class="buscar-form" method="get">
-  <input type="text" name="buscar" placeholder="Buscar piezas..." value="<?= htmlspecialchars($busqueda) ?>">
-  <button type="submit">Buscar</button>
-</form>
+        <!-- Grid de Piezas -->
+        <div class="row g-4">
+            <?php if(count($piezas) === 0): ?>
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No se encontraron piezas</h4>
+                    <p class="text-muted">Intenta con otros términos de búsqueda o filtros</p>
+                    <a href="?" class="btn btn-primary">Ver todas las piezas</a>
+                </div>
+            <?php else: ?>
+                <?php foreach($piezas as $p): ?>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <?php if(!empty($p['imagen'])): ?>
+                                <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" 
+                                     alt="<?= htmlspecialchars($p['nombre']) ?>">
+                            <?php else: ?>
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                    <i class="fas fa-cog fa-3x text-muted"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-title"><?= htmlspecialchars($p['nombre']) ?></h3>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-tag me-1"></i><?= htmlspecialchars($p['marca_nombre']) ?>
+                            </p>
+                            <div class="product-price mb-2">$<?= number_format($p['precio'],2) ?></div>
+                            <div class="product-stock mb-3">
+                                <span class="badge bg-<?= $p['cantidad'] > 0 ? 'success' : 'danger' ?>">
+                                    <i class="fas fa-<?= $p['cantidad'] > 0 ? 'check' : 'times' ?> me-1"></i>
+                                    Stock: <?= intval($p['cantidad']) ?>
+                                </span>
+                            </div>
+                            <div class="product-actions">
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2 ver-desc" 
+                                        data-bs-toggle="modal" data-bs-target="#modalDesc<?= $p['id'] ?>">
+                                    <i class="fas fa-eye me-1"></i>Ver Detalles
+                                </button>
+                                <?php if(isset($_SESSION['usuario_id'])): ?>
+                                    <a href="?agregar=<?= intval($p['id']) ?>" 
+                                       class="btn btn-primary btn-sm w-100">
+                                        <i class="fas fa-cart-plus me-1"></i>Agregar al Carrito
+                                    </a>
+                                <?php else: ?>
+                                    <small class="text-muted d-block text-center">
+                                        <a href="inicio_secion.php" class="text-decoration-underline">Inicia sesión</a> para comprar
+                                    </small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<div class="piezas">
-<?php if(count($piezas) === 0): ?>
-  <p>No se encontraron piezas.</p>
-<?php else: ?>
-  <?php foreach($piezas as $p): ?>
-  <div class="pieza">
-    <?php if(!empty($p['imagen'])): ?>
-    <div class="imagen-container">
-      <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
-    </div>
-    <?php endif; ?>
-    <h3><?= htmlspecialchars($p['nombre']) ?></h3>
-    <p class="precio">Precio: $<?= number_format($p['precio'],2) ?></p>
-    <p class="stock">Stock: <?= intval($p['cantidad']) ?></p>
-    <a href="#desc-<?= $p['id'] ?>" class="ver-desc">Ver descripción</a>
+                <!-- Modal Descripción -->
+                <div class="modal fade" id="modalDesc<?= $p['id'] ?>" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><?= htmlspecialchars($p['nombre']) ?></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <?php if(!empty($p['imagen'])): ?>
+                                    <div class="col-md-4">
+                                        <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" 
+                                             alt="<?= htmlspecialchars($p['nombre']) ?>" 
+                                             class="img-fluid rounded">
+                                    </div>
+                                    <?php endif; ?>
+                                    <div class="<?= !empty($p['imagen']) ? 'col-md-8' : 'col-12' ?>">
+                                        <p><strong>Marca:</strong> <?= htmlspecialchars($p['marca_nombre']) ?></p>
+                                        <p><strong>Precio:</strong> $<?= number_format($p['precio'],2) ?></p>
+                                        <p><strong>Stock disponible:</strong> <?= intval($p['cantidad']) ?></p>
+                                        <hr>
+                                        <h6>Descripción:</h6>
+                                        <p><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <?php if(isset($_SESSION['usuario_id'])): ?>
+                                    <a href="?agregar=<?= intval($p['id']) ?>" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-cart-plus me-1"></i>Agregar al Carrito
+                                    </a>
+                                <?php endif; ?>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </main>
 
-    <?php if(isset($_SESSION['usuario_id'])): ?>
-    <form method="get">
-      <input type="hidden" name="agregar" value="<?= intval($p['id']) ?>">
-      <button type="submit">Agregar al carrito</button>
-    </form>
-    <?php else: ?>
-    <p1 class="login-aviso">Inicia sesión para agregar al carrito</p1>
-    <?php endif; ?>
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h6 class="mb-0">Mexican Racing Motor Parts</h6>
+                    <small class="text-muted">Líder en piezas automotrices de alto desempeño</small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/profile.php?id=61583404693123" target="_blank" class="text-white me-3">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" target="_blank" class="text-white me-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <small class="text-muted">&copy; <?= date('Y') ?> MRMP.</small>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-    <div class="modal-desc" id="desc-<?= $p['id'] ?>">
-      <div class="modal-desc-content">
-        <h3><?= htmlspecialchars($p['nombre']) ?></h3>
-        <p><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
-        <a href="#!" class="modal-close">×</a>
-      </div>
-    </div>
-  </div>
-  <?php endforeach; ?>
-<?php endif; ?>
-</div>
-
-</main>
-<footer>
-  <div class="footer-redes">
-    <a href="https://www.facebook.com/profile.php?id=61583404693123" target="_blank" class="facebook">
-      <i class="fab fa-facebook-f"></i>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_icon.svg" alt="Facebook">
-      </a>
-    </a>
-    <a href="" target="_blank" class="instagram">
-      <i class="fab fa-instagram-f"></i>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
-    </a>
-    </div>
-      <p>© <?= date('Y') ?> <span>Mexican Racing Motor Parts</span></p>
-</footer>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Cerrar alertas automáticamente después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>

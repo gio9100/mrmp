@@ -62,19 +62,52 @@ if(isset($_POST['login_admin'])){
 // Si admin logueado -> panel
 if(isset($_SESSION['admin_id'])){
 
-    // Agregar marca
-    if(isset($_POST['nueva_marca'])){
-        $nombre_marca = trim($_POST['nombre_marca']);
-        if($nombre_marca !== ''){
-            $stmt = $conexion->prepare("INSERT INTO marcas(nombre) VALUES(?)");
-            $stmt->bind_param("s",$nombre_marca);
-            $stmt->execute();
-            $stmt->close();
-            $_SESSION['mensaje'] = "✅ Marca agregada correctamente.";
-            header("Location: admin_panel.php");
-            exit;
+// Agregar marca CON IMAGEN
+if(isset($_POST['nueva_marca'])){
+    $nombre_marca = trim($_POST['nombre_marca']);
+    $imagen_marca = '';
+
+    if(isset($_FILES['imagen_marca']) && $_FILES['imagen_marca']['error']==0){
+        $imagen_marca = time().'_'.basename($_FILES['imagen_marca']['name']);
+        move_uploaded_file($_FILES['imagen_marca']['tmp_name'], "uploads/".$imagen_marca);
+    }
+
+    if($nombre_marca !== ''){
+        $stmt = $conexion->prepare("INSERT INTO marcas(nombre, imagen) VALUES(?, ?)");
+        $stmt->bind_param("ss", $nombre_marca, $imagen_marca);
+        $stmt->execute();
+        $stmt->close();
+        $_SESSION['mensaje'] = "✅ Marca agregada correctamente.";
+        header("Location: admin_panel.php");
+        exit;
+    }
+}
+
+// Actualizar marca
+if(isset($_POST['actualizar_marca'])){
+    $id = intval($_POST['id_marca']);
+    $nombre_marca = trim($_POST['nombre_marca']);
+    $imagen_marca = $_POST['imagen_actual']; // Mantener imagen actual por defecto
+
+    // Si se sube nueva imagen
+    if(isset($_FILES['imagen_marca']) && $_FILES['imagen_marca']['error']==0){
+        $imagen_marca = time().'_'.basename($_FILES['imagen_marca']['name']);
+        move_uploaded_file($_FILES['imagen_marca']['tmp_name'], "uploads/".$imagen_marca);
+        
+        // Eliminar imagen anterior si existe
+        if($_POST['imagen_actual'] && file_exists("uploads/".$_POST['imagen_actual'])){
+            unlink("uploads/".$_POST['imagen_actual']);
         }
     }
+
+    $stmt = $conexion->prepare("UPDATE marcas SET nombre=?, imagen=? WHERE id=?");
+    $stmt->bind_param("ssi", $nombre_marca, $imagen_marca, $id);
+    $stmt->execute();
+    $stmt->close();
+    $_SESSION['mensaje'] = "✅ Marca actualizada correctamente.";
+    header("Location: admin_panel.php");
+    exit;
+}
 
     // Eliminar marca
     if(isset($_GET['eliminar_marca'])){
@@ -238,12 +271,73 @@ if(isset($_SESSION['admin_id'])){
 <?php endif; ?>
 
 
+<div class="acciones-rapidas">
+    <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las marcas?')">
+        <button type="submit" name="eliminar_todas_marcas" class="eliminar">Eliminar Todas las Marcas</button>
+    </form>
+</div>
+
 <section class="formulario">
 <h2>Gestionar Marcas</h2>
-<form method="post">
-<input type="text" name="nombre_marca" placeholder="Nombre de la marca" required>
-<button type="submit" name="nueva_marca">Agregar Marca</button>
+<form method="post" enctype="multipart/form-data">
+    <input type="text" name="nombre_marca" placeholder="Nombre de la marca" required>
+    <input type="file" name="imagen_marca" accept="image/*">
+    <small>Formatos: PNG, JPG, JPEG. Las imágenes se guardarán en uploads/</small>
+    <button type="submit" name="nueva_marca">Agregar Marca</button>
 </form>
+
+<div class="acciones-rapidas">
+    <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las marcas?')">
+        <button type="submit" name="eliminar_todas_marcas" class="eliminar">Eliminar Todas las Marcas</button>
+    </form>
+</div>
+
+<h3>Marcas Registradas</h3>
+<ul class="lista-marcas">
+<?php 
+$marcas_lista = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
+while($m = $marcas_lista->fetch_assoc()): 
+?>
+    <li class="marca-item">
+        <div class="marca-info">
+            <?php if($m['imagen']): ?>
+                <img src="uploads/<?= htmlspecialchars($m['imagen']) ?>" alt="<?= htmlspecialchars($m['nombre']) ?>" width="50" style="margin-right: 10px;">
+            <?php endif; ?>
+            <strong><?= htmlspecialchars($m['nombre']) ?></strong>
+        </div>
+        <div class="marca-acciones">
+            <a href="#editar-marca-<?= $m['id'] ?>" style="color: #007bff;">Editar</a> - 
+            <a href="?eliminar_marca=<?= $m['id'] ?>" style="color:red;" onclick="return confirm('¿Eliminar esta marca?')">Eliminar</a>
+        </div>
+        
+        <!-- Formulario de edición para cada marca -->
+        <div id="editar-marca-<?= $m['id'] ?>" class="form-edicion-marca">
+            <h4>Editar Marca: <?= htmlspecialchars($m['nombre']) ?></h4>
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id_marca" value="<?= $m['id'] ?>">
+                <input type="hidden" name="imagen_actual" value="<?= htmlspecialchars($m['imagen']) ?>">
+                
+                <input type="text" name="nombre_marca" value="<?= htmlspecialchars($m['nombre']) ?>" placeholder="Nombre de la marca" required>
+                
+                <div style="margin: 10px 0;">
+                    <?php if($m['imagen']): ?>
+                        <img src="uploads/<?= htmlspecialchars($m['imagen']) ?>" alt="Imagen actual" width="80" style="display: block; margin-bottom: 5px;">
+                        <small>Imagen actual (uploads/<?= htmlspecialchars($m['imagen']) ?>)</small>
+                    <?php else: ?>
+                        <small>No hay imagen</small>
+                    <?php endif; ?>
+                </div>
+                
+                <input type="file" name="imagen_marca" accept="image/*">
+                <small>Dejar vacío para mantener la imagen actual</small>
+                
+                <button type="submit" name="actualizar_marca">Actualizar Marca</button>
+            </form>
+        </div>
+    </li>
+<?php endwhile; ?>
+</ul>
+</section>
 
 <div class="acciones-rapidas">
 <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las marcas?')">

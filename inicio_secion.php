@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2><?= $exito ? "🔧 Bienvenido al Taller MRMP! " : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
         <?php if($exito): ?>
-            <button onclick="window.location.href='dashboard-piezas.php'">Ir al Panel</button>
+            <button onclick="window.location.href='pagina-principal.php'">Ir al Panel</button>
         <?php else: ?>
             <button onclick="cerrarModal()">Cerrar</button>
         <?php endif; ?>
