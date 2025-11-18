@@ -122,7 +122,7 @@ if(!$usuario){
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="pagina-principal.php">
-                <img src="img/icon-loho.ico" alt="MRMP" height="40" class="d-inline-block align-text-top">
+                <img src="" alt="MRMP" height="40" class="d-inline-block align-text-top">
                 <span class="brand-text">Mexican Racing Motor Parts</span>
             </a>
             
