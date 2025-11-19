@@ -28,11 +28,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION["usuario_correo"] = $usuario["correo"];
                 $mensaje = "¡Bienvenido a MRMP, " . $usuario["nombre"] . "!";
                 $exito = true;
+         //redireccion automatica
+                echo "
+                <script>
+                    setTimeout(function() {
+                        window.location.href = 'pagina-principal.php';
+                    }, 2000); // 2 segundos de espera
+                </script>
+                ";
             } else {
-                $mensaje = "Correo o contraseña incorrectos.";
+                $mensaje = " ⚠️Correo o contraseña incorrectos.";
             }
         } else {
-            $mensaje = "Correo o contraseña incorrectos.";
+            $mensaje = " ⚠️Correo no encontrado.";
         }
         $stmt->close();
     }
@@ -76,19 +84,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="modal-contenido">
         <h2><?= $exito ? "🔧 Bienvenido al Taller MRMP! " : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
-        <?php if($exito): ?>
-            <button onclick="window.location.href='pagina-principal.php'">Ir al Panel</button>
-        <?php else: ?>
-            <button onclick="cerrarModal()">Cerrar</button>
+             <?php if($exito): ?>
+                    <!-- mensaje antes de reedirigir automaticamente-->
+                    <p style="font-style: italic; margin-top: 15px;">
+                        Serás redirigido automáticamente en 2 segundos...
+                    </p>
+                <?php else: ?>
+                    <button onclick="cerrarmodal()">Cerrar Modal</button>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <script>
+            function cerrarmodal() {
+                document.querySelector('.modal-mensaje').style.display='none';
+            }
+        </script>
         <?php endif; ?>
-    </div>
-</div>
-<script>
-function cerrarModal(){ 
-    document.querySelector('.modal-mensaje').style.display='none'; 
-}
-</script>
-<?php endif; ?>
 
 </body>
 </html>
