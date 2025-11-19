@@ -1,568 +1,430 @@
 <?php
-// 1. INICIAR SESIÓN: Activa el sistema de sesiones para recordar al usuario
+// INICIAMOS LA SESIÓN PARA PODER USAR LOS DATOS DEL USUARIO GUARDADOS
 session_start();
 
-// 2. CONECTAR A BASE DE DATOS: Incluye el archivo que hace conexión con MySQL
+// INCLUIMOS EL ARCHIVO QUE NOS CONECTA A LA BASE DE DATOS
 require_once "conexion.php";
 
-// 3. VERIFICAR USUARIO LOGUEADO: Revisa si el usuario ya inició sesión
-if(!isset($_SESSION['usuario_id'])){
-    // 4. REDIRIGIR AL LOGIN: Si no está logueado, lo manda a iniciar sesión
-    header("Location: inicio_sesion.php");
-    // 5. DETENER EJECUCIÓN: No ejecuta nada más en esta página
+// VERIFICAMOS SI EL USUARIO HA INICIADO SESIÓN
+// SI NO HA INICIADO SESIÓN, LO ENVIAMOS A LA PÁGINA DE LOGIN
+if(!isset($_SESSION['usuario_id'])) {
+    // REDIRIGIMOS AL USUARIO A LA PÁGINA DE INICIO DE SESIÓN
+    header("Location: inicio_secion.php");
+    // TERMINAMOS LA EJECUCIÓN DEL SCRIPT
     exit;
 }
 
-// 6. VARIABLE PARA MENSAJES: Aquí se guardan resultados de operaciones
-$mensaje = "";
+// OBTENEMOS EL ID DEL USUARIO DESDE LA SESIÓN
+$usuario_id = $_SESSION['usuario_id'];
 
-// 7. VERIFICAR SI SE SUBIÓ IMAGEN: Pregunta si el usuario envió una foto
-if(isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0){
-    
-    // 8. TIPOS DE IMAGEN PERMITIDOS: Define qué formatos acepta el sistema
-    $tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    
-    // 9. OBTENER TIPO DE ARCHIVO: JPEG, PNG, etc.
-    $tipoArchivo = $_FILES['imagen']['type'];
-    
-    // 10. VALIDAR TIPO DE ARCHIVO: Revisa si es un tipo permitido
-    if(!in_array($tipoArchivo, $tiposPermitidos)) {
-        // 11. MENSAJE ERROR TIPO ARCHIVO: Si no es permitido, muestra error
-        $mensaje = "⚠️ Solo se permiten imágenes JPEG, PNG, GIF y WebP";
-    } else {
-        // 12. OBTENER NOMBRE ORIGINAL: "mi_foto.jpg"
-        $nombreArchivo = $_FILES['imagen']['name'];
-        
-        // 13. EXTRAER EXTENSIÓN: Obtiene solo "jpg" o "png"
-        $ext = pathinfo($nombreArchivo, PATHINFO_EXTENSION);
-        
-        // 14. CREAR NOMBRE ÚNICO: "perfil_25.jpg" (25 = ID usuario)
-        $nuevoNombre = "perfil_" . $_SESSION['usuario_id'] . "." . $ext;
-        
-        // 15. DEFINIR RUTA DE GUARDADO: "uploads/perfil_25.jpg"
-        $rutaDestino = "uploads/" . $nuevoNombre;
-        
-        // 16. VERIFICAR SI EXISTE CARPETA: Revisa si la carpeta uploads existe
-        if(!is_dir('uploads')) {
-            // 17. CREAR CARPETA: Si no existe, la crea
-            mkdir('uploads', 0755, true);
-        }
+// PREPARAMOS LA CONSULTA SQL PARA OBTENER LOS DATOS DEL USUARIO
+$sql_obtener_usuario = "SELECT * FROM usuarios WHERE id = ?";
 
-        // 18. VERIFICAR TAMAÑO: No más de 5MB
-        if($_FILES['imagen']['size'] > 5 * 1024 * 1024) {
-            // 19. MENSAJE ERROR TAMAÑO: Imagen demasiado grande
-            $mensaje = "⚠️ La imagen es demasiado grande (máximo 5MB)";
+// PREPARAMOS LA CONSULTA USANDO LA CONEXIÓN A LA BASE DE DATOS
+$declaracion = $conexion->prepare($sql_obtener_usuario);
+
+// VINCULAMOS EL PARÁMETRO (LA "i" SIGNIFICA QUE ES UN NÚMERO ENTERO)
+$declaracion->bind_param("i", $usuario_id);
+
+// EJECUTAMOS LA CONSULTA
+$declaracion->execute();
+
+// OBTENEMOS EL RESULTADO DE LA CONSULTA
+$resultado_consulta = $declaracion->get_result();
+
+// OBTENEMOS LOS DATOS DEL USUARIO COMO UN ARREGLO
+$datos_usuario = $resultado_consulta->fetch_assoc();
+
+// CERRAMOS LA DECLARACIÓN PARA LIBERAR RECURSOS
+$declaracion->close();
+
+// VERIFICAMOS SI REALMENTE SE ENCONTRÓ EL USUARIO EN LA BASE DE DATOS
+if(!$datos_usuario) {
+    // SI NO SE ENCONTRÓ EL USUARIO, DESTRUIMOS LA SESIÓN
+    session_destroy();
+    // Y REDIRIGIMOS AL LOGIN
+    header("Location: inicio_secion.php");
+    exit;
+}
+
+// =============================================================================
+// PROCESAMOS LA SUBIDA DE LA FOTO DE PERFIL CUANDO EL USUARIO ENVÍA EL FORMULARIO
+// =============================================================================
+
+// VERIFICAMOS SI SE ENVIÓ UN FORMULARIO Y SI SE SUBIÓ UN ARCHIVO DE FOTO
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto_perfil'])) {
+    
+    // DEFINIMOS LA CARPETA DONDE GUARDAREMOS LAS FOTOS DE PERFIL
+    $carpeta_destino_fotos = "uploads/perfiles/";
+    
+    // VERIFICAMOS SI LA CARPETA EXISTE, SI NO EXISTE LA CREAMOS
+    if(!is_dir($carpeta_destino_fotos)) {
+        // CREAMOS LA CARPETA CON PERMISOS DE LECTURA Y ESCRITURA
+        mkdir($carpeta_destino_fotos, 0777, true);
+    }
+    
+    // OBTENEMOS LA EXTENSIÓN DEL ARCHIVO SUBIDO (jpg, png, etc.)
+    $tipo_archivo = strtolower(pathinfo($_FILES["foto_perfil"]["name"], PATHINFO_EXTENSION));
+    
+    // CREAMOS UN NOMBRE ÚNICO PARA EL ARCHIVO PARA EVITAR DUPLICADOS
+    $nombre_archivo_final = "perfil_" . $usuario_id . "_" . time() . "." . $tipo_archivo;
+    
+    // DEFINIMOS LA RUTA COMPLETA DONDE SE GUARDARÁ EL ARCHIVO
+    $ruta_archivo_final = $carpeta_destino_fotos . $nombre_archivo_final;
+    
+    // VERIFICAMOS QUE EL ARCHIVO SEA UNA IMAGEN VÁLIDA
+    $es_imagen_valida = getimagesize($_FILES["foto_perfil"]["tmp_name"]);
+    
+    // SI ES UNA IMAGEN VÁLIDA, PROCEDEMOS CON LAS VALIDACIONES
+    if($es_imagen_valida !== false) {
+        // VERIFICAMOS EL TAMAÑO DEL ARCHIVO (MÁXIMO 2MB)
+        if($_FILES["foto_perfil"]["size"] > 2000000) {
+            $mensaje_error_foto = "❌ La imagen es demasiado grande. Máximo 2MB permitido.";
         } 
-        // 20. MOVER ARCHIVO: Del temporal al destino permanente
-        elseif(move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)){
-            
-            // 21. PREPARAR SQL ACTUALIZACIÓN: Query para guardar nombre de imagen en BD
-            $stmt = $conexion->prepare("UPDATE usuarios SET imagen_perfil=? WHERE id=?");
-            
-            // 22. REEMPLAZAR PARÁMETROS: Cambia ? por valores reales
-            $stmt->bind_param("si", $nuevoNombre, $_SESSION['usuario_id']);
-            
-            // 23. EJECUTAR CONSULTA: Envía el comando a la base de datos
-            if($stmt->execute()) {
-                // 24. MENSAJE ÉXITO: Si se guardó correctamente
-                $mensaje = "✅ Imagen de perfil actualizada";
-            } else {
-                // 25. MENSAJE ERROR BD: Si falló la base de datos
-                $mensaje = "⚠️ Error al guardar en la base de datos";
-            }
-            // 26. CERRAR CONSULTA: Libera memoria
-            $stmt->close();
-        } else {
-            // 27. MENSAJE ERROR SUBIR: Si no se pudo mover el archivo
-            $mensaje = "⚠️ Error al subir la imagen";
-        }
-    }
-}
-
-// 28. VERIFICAR ACTUALIZACIÓN TELÉFONO: Si el usuario envió formulario de teléfono
-if(isset($_POST['actualizar_telefono'])){
-    
-    // 29. OBTENER TELÉFONO: Lo que escribió el usuario en el formulario
-    $telefono = trim($_POST['telefono'] ?? '');
-    
-    // 30. VERIFICAR TELÉFONO VACÍO: Si está vacío, quiere eliminar teléfono
-    if($telefono === '') {
-        // 31. PREPARAR SQL ELIMINAR: Quita teléfono y marca como no verificado
-        $stmt = $conexion->prepare("UPDATE usuarios SET telefono=NULL, verificado=0 WHERE id=?");
-        // 32. REEMPLAZAR PARÁMETRO: Solo ID de usuario
-        $stmt->bind_param("i", $_SESSION['usuario_id']);
-        // 33. EJECUTAR CONSULTA
-        if($stmt->execute()) {
-            // 34. MENSAJE ÉXITO ELIMINAR
-            $mensaje = "✅ Teléfono eliminado correctamente";
-        } else {
-            // 35. MENSAJE ERROR ELIMINAR
-            $mensaje = "⚠️ Error al eliminar el teléfono";
-        }
-        // 36. CERRAR CONSULTA
-        $stmt->close();
-    } else {
-        // 37. VALIDAR FORMATO TELÉFONO: Usa expresión regular para validar
-        if(preg_match('/^[\+]?[0-9\s\-\(\)]{8,20}$/', $telefono)){
-            // 38. PREPARAR SQL ACTUALIZAR: Guarda teléfono y verifica cuenta
-            $stmt = $conexion->prepare("UPDATE usuarios SET telefono=?, verificado=1 WHERE id=?");
-            // 39. REEMPLAZAR PARÁMETROS: Teléfono (string) e ID (integer)
-            $stmt->bind_param("si", $telefono, $_SESSION['usuario_id']);
-            // 40. EJECUTAR CONSULTA
-            if($stmt->execute()) {
-                // 41. MENSAJE ÉXITO ACTUALIZAR
-                $mensaje = "✅ Teléfono actualizado y cuenta verificada";
-            } else {
-                // 42. MENSAJE ERROR ACTUALIZAR
-                $mensaje = "⚠️ Error al actualizar el teléfono";
-            }
-            // 43. CERRAR CONSULTA
-            $stmt->close();
-        } else {
-            // 44. MENSAJE ERROR FORMATO: Teléfono con formato inválido
-            $mensaje = "⚠️ Formato de teléfono inválido";
-        }
-    }
-}
-
-// 45. VERIFICAR ACTUALIZACIÓN CORREO: Si el usuario envió formulario de correo
-if(isset($_POST['actualizar_correo'])){
-    
-    // 46. OBTENER NUEVO CORREO: Lo que escribió el usuario
-    $nuevo_correo = trim($_POST['nuevo_correo'] ?? '');
-    
-    // 47. OBTENER CONTRASEÑA ACTUAL: Para verificar identidad
-    $contrasena_actual = $_POST['contrasena_actual'] ?? '';
-    
-    // 48. VERIFICAR CAMPOS VACÍOS: Ambos campos son obligatorios
-    if($nuevo_correo === '' || $contrasena_actual === '') {
-        // 49. MENSAJE ERROR CAMPOS VACÍOS
-        $mensaje = "⚠️ Completa todos los campos";
-    } 
-    // 50. VALIDAR FORMATO CORREO: Debe ser algo@algo.com
-    elseif (!filter_var($nuevo_correo, FILTER_VALIDATE_EMAIL)) {
-        // 51. MENSAJE ERROR FORMATO CORREO
-        $mensaje = "⚠️ El correo no es válido";
-    } else {
-        // 52. CONSULTAR CONTRASEÑA ACTUAL: Traer hash de contraseña de BD
-        $stmt = $conexion->prepare("SELECT contrasena_hash FROM usuarios WHERE id=?");
-        // 53. REEMPLAZAR PARÁMETRO: ID usuario
-        $stmt->bind_param("i", $_SESSION['usuario_id']);
-        // 54. EJECUTAR CONSULTA
-        $stmt->execute();
-        // 55. OBTENER RESULTADO
-        $resultado = $stmt->get_result();
-        // 56. CONVERTIR A ARRAY
-        $usuario_db = $resultado->fetch_assoc();
-        // 57. CERRAR CONSULTA
-        $stmt->close();
-
-        // 58. VERIFICAR CONTRASEÑA: Compara con hash en BD
-        if($usuario_db && password_verify($contrasena_actual, $usuario_db['contrasena_hash'])){
-            
-            // 59. VERIFICAR SI CORREO YA EXISTE: En otro usuario
-            $stmt = $conexion->prepare("SELECT id FROM usuarios WHERE correo=? AND id != ?");
-            // 60. REEMPLAZAR PARÁMETROS: Nuevo correo e ID actual
-            $stmt->bind_param("si", $nuevo_correo, $_SESSION['usuario_id']);
-            // 61. EJECUTAR CONSULTA
-            $stmt->execute();
-            // 62. OBTENER RESULTADO
-            $resultado = $stmt->get_result();
-
-            // 63. VERIFICAR SI ENCONTRÓ COINCIDENCIAS
-            if($resultado->num_rows > 0){
-                // 64. MENSAJE ERROR CORREO EXISTENTE
-                $mensaje = "⚠️ Este correo ya está registrado por otro usuario";
-            } else {
-                // 65. ACTUALIZAR CORREO EN BD
-                $stmt = $conexion->prepare("UPDATE usuarios SET correo=? WHERE id=?");
-                // 66. REEMPLAZAR PARÁMETROS
-                $stmt->bind_param("si", $nuevo_correo, $_SESSION['usuario_id']);
-                // 67. EJECUTAR CONSULTA
-                if($stmt->execute()) {
-                    // 68. ACTUALIZAR CORREO EN SESIÓN: Para mostrarlo inmediatamente
-                    $_SESSION['usuario_correo'] = $nuevo_correo;
-                    // 69. MENSAJE ÉXITO ACTUALIZACIÓN
-                    $mensaje = "✅ Correo electrónico actualizado correctamente";
-                } else {
-                    // 70. MENSAJE ERROR ACTUALIZACIÓN
-                    $mensaje = "⚠️ Error al actualizar el correo";
+        // VERIFICAMOS QUE SEA UN FORMATO DE IMAGEN PERMITIDO
+        else if($tipo_archivo != "jpg" && $tipo_archivo != "png" && $tipo_archivo != "jpeg" && $tipo_archivo != "gif") {
+            $mensaje_error_foto = "❌ Solo se permiten archivos JPG, JPEG, PNG y GIF.";
+        } 
+        // SI PASÓ TODAS LAS VALIDACIONES, PROCEDEMOS A SUBIR LA IMAGEN
+        else {
+            // PRIMERO INTENTAMOS SUBIR LA NUEVA IMAGEN
+            if(move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $ruta_archivo_final)) {
+                // SI LA SUBIDA FUE EXITOSA, ELIMINAMOS LA FOTO ANTERIOR SI EXISTE
+                if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_destino_fotos . $datos_usuario['imagen_perfil'])) {
+                    // ELIMINAMOS LA FOTO ANTERIOR DEL SERVIDOR
+                    unlink($carpeta_destino_fotos . $datos_usuario['imagen_perfil']);
                 }
-                // 71. CERRAR CONSULTA
-                $stmt->close();
+                
+                // ACTUALIZAMOS LA BASE DE DATOS CON LA NUEVA FOTO
+                $sql_actualizar_foto = "UPDATE usuarios SET imagen_perfil = ? WHERE id = ?";
+                $declaracion_actualizar = $conexion->prepare($sql_actualizar_foto);
+                $declaracion_actualizar->bind_param("si", $nombre_archivo_final, $usuario_id);
+                
+                // EJECUTAMOS LA ACTUALIZACIÓN
+                if($declaracion_actualizar->execute()) {
+                    $mensaje_exito_foto = "✅ Foto de perfil actualizada correctamente.";
+                    // ACTUALIZAMOS LA VARIABLE LOCAL CON EL NUEVO NOMBRE DE ARCHIVO
+                    $datos_usuario['imagen_perfil'] = $nombre_archivo_final;
+                    // ACTUALIZAMOS TAMBIÉN EN LA SESIÓN POR SI ACASO
+                    $_SESSION['imagen_perfil'] = $nombre_archivo_final;
+                } else {
+                    $mensaje_error_foto = "❌ Error al actualizar en la base de datos.";
+                    // SI HUBO ERROR EN LA BD, ELIMINAMOS LA IMAGEN QUE ACABAMOS DE SUBIR
+                    if(file_exists($ruta_archivo_final)) {
+                        unlink($ruta_archivo_final);
+                    }
+                }
+                // CERRAMOS LA DECLARACIÓN DE ACTUALIZACIÓN
+                $declaracion_actualizar->close();
+            } else {
+                $mensaje_error_foto = "❌ Error al subir la imagen al servidor.";
             }
-        } else {
-            // 72. MENSAJE ERROR CONTRASEÑA INCORRECTA
-            $mensaje = "⚠️ Contraseña actual incorrecta";
-        }
-    }
-}
-
-// 73. CONSULTAR DATOS ACTUALIZADOS: Traer toda la info del usuario
-$stmt = $conexion->prepare("SELECT nombre, correo, telefono, imagen_perfil, verificado, fecha_creacion FROM usuarios WHERE id=?");
-
-// 74. VERIFICAR SI CONSULTA SE PREPARÓ BIEN
-if($stmt) {
-    // 75. REEMPLAZAR PARÁMETRO: ID usuario
-    $stmt->bind_param("i", $_SESSION['usuario_id']);
-    // 76. EJECUTAR CONSULTA
-    if($stmt->execute()) {
-        // 77. OBTENER RESULTADOS
-        $res = $stmt->get_result();
-        // 78. CONVERTIR A ARRAY ASOCIATIVO
-        $usuario = $res->fetch_assoc();
-        // 79. VERIFICAR SI SE ENCONTRÓ USUARIO
-        if(!$usuario){
-            // 80. TERMINAR SI NO SE ENCUENTRA USUARIO
-            die("⚠️ Usuario no encontrado.");
         }
     } else {
-        // 81. TERMINAR SI ERROR EN CONSULTA
-        die("⚠️ Error al ejecutar la consulta.");
+        $mensaje_error_foto = "❌ El archivo no es una imagen válida.";
     }
-    // 82. CERRAR CONSULTA
-    $stmt->close();
-} else {
-    // 83. TERMINAR SI ERROR PREPARAR CONSULTA
-    die("⚠️ Error en la preparación de la consulta.");
 }
 
-// 84. DEFINIR RUTA IMAGEN POR DEFECTO
-$ruta_imagen = "img/default-avatar.png";
+// =============================================================================
+// PROCESAMOS LA ELIMINACIÓN DE LA FOTO DE PERFIL (SOLO CUANDO SE HACE CLICK EN ELIMINAR)
+// =============================================================================
 
-// 85. VERIFICAR SI USUARIO TIENE IMAGEN PERSONALIZADA
-if(!empty($usuario['imagen_perfil']) && file_exists("uploads/" . $usuario['imagen_perfil'])) {
-    // 86. USAR IMAGEN PERSONALIZADA SI EXISTE
-    $ruta_imagen = "uploads/" . $usuario['imagen_perfil'];
+// VERIFICAMOS SI EL USUARIO QUIERE ELIMINAR SU FOTO DE PERFIL (SOLO POR GET)
+if(isset($_GET['eliminar_foto']) && $_GET['eliminar_foto'] == '1') {
+    $carpeta_fotos = "uploads/perfiles/";
+    
+    // VERIFICAMOS SI EL USUARIO TIENE FOTO Y SI EL ARCHIVO EXISTE FÍSICAMENTE
+    if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_fotos . $datos_usuario['imagen_perfil'])) {
+        // ELIMINAMOS EL ARCHIVO FÍSICO DEL SERVIDOR
+        unlink($carpeta_fotos . $datos_usuario['imagen_perfil']);
+        
+        // ACTUALIZAMOS LA BASE DE DATOS PARA QUITAR LA REFERENCIA A LA FOTO
+        $sql_eliminar_foto = "UPDATE usuarios SET imagen_perfil = NULL WHERE id = ?";
+        $declaracion_eliminar = $conexion->prepare($sql_eliminar_foto);
+        $declaracion_eliminar->bind_param("i", $usuario_id);
+        
+        if($declaracion_eliminar->execute()) {
+            $mensaje_exito_foto = "✅ Foto de perfil eliminada correctamente.";
+            // ACTUALIZAMOS LA VARIABLE LOCAL
+            $datos_usuario['imagen_perfil'] = null;
+            // ACTUALIZAMOS LA SESIÓN
+            $_SESSION['imagen_perfil'] = null;
+        } else {
+            $mensaje_error_foto = "❌ Error al eliminar la foto de la base de datos.";
+        }
+        
+        $declaracion_eliminar->close();
+    } else {
+        $mensaje_error_foto = "❌ No se encontró la foto de perfil para eliminar.";
+    }
+    
+    // REDIRIGIMOS PARA EVITAR REENVÍOS DEL FORMULARIO
+    header("Location: perfil.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>
-<!-- 87. INICIAR DOCUMENTO HTML: Define que es una página web -->
 <html lang="es">
-<!-- 88. DEFINIR IDIOMA: Español para buscadores -->
 <head>
-    <!-- 89. CODIFICACIÓN CARACTERES: Para que muestre ñ y acentos -->
     <meta charset="UTF-8">
-    <!-- 90. CONFIGURACIÓN RESPONSIVE: Para que se vea bien en móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 91. TÍTULO DE LA PÁGINA: Lo que aparece en la pestaña del navegador -->
-    <title>Mi Perfil - MRMP</title>
-    <!-- 92. DESCRIPCIÓN PARA BUSCADORES -->
-    <meta name="description" content="Gestiona tu perfil en Mexican Racing Motor Parts">
+    <title>Mi Perfil - Mexican Racing Motor Parts</title>
     
-    <!-- 93. CARGAR BOOTSTRAP CSS: Framework para estilos -->
+    <!-- INCLUIMOS BOOTSTRAP PARA LOS ESTILOS Y COMPONENTES -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- 94. CARGAR FONT AWESOME: Librería de iconos -->
+    
+    <!-- INCLUIMOS FONT AWESOME PARA LOS ÍCONOS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- 95. CARGAR ESTILOS PERSONALIZADOS -->
-    <link href="main.css" rel="stylesheet">
-    <link href="pagina-principal.css" rel="stylesheet">
+    <!-- INCLUIMOS NUESTROS ARCHIVOS CSS PERSONALIZADOS -->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="pagina-principal.css">
+    <link rel="stylesheet" href="perfil.css">
 </head>
-<!-- 96. CUERPO DE LA PÁGINA: Todo el contenido visible -->
-<body class="mrmp-home">
-    <!-- 97. BARRA DE NAVEGACIÓN: Menú superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<body>
+    <!-- ============================================================================= -->
+    <!-- ENCABEZADO DE LA PÁGINA - IGUAL AL DE PAGINA-PRINCIPAL.PHP -->
+    <!-- ============================================================================= -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <!-- 98. LOGO Y NOMBRE EMPRESA -->
+            <!-- LOGO Y NOMBRE DE LA EMPRESA -->
             <a class="navbar-brand" href="pagina-principal.php">
+                <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
                 <span class="brand-text">Mexican Racing Motor Parts</span>
             </a>
             
-            <!-- 99. BOTÓN MENÚ MÓVIL: Solo visible en pantallas pequeñas -->
+            <!-- BOTÓN PARA MENÚ EN DISPOSITIVOS MÓVILES -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <!-- 100. CONTENIDO DEL MENÚ -->
+            <!-- MENÚ DE NAVEGACIÓN -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <!-- 101. ENLACE INICIO -->
+                    <!-- ENLACE A LA PÁGINA DE PIEZAS -->
                     <li class="nav-item">
-                        <a class="nav-link" href="pagina-principal.php">Inicio</a>
+                        <a class="nav-link" href="dashboard-piezas.php">
+                            <i class="fas fa-cogs me-1"></i>Piezas
+                        </a>
                     </li>
-                    <!-- 102. ENLACE PIEZAS -->
+                    <!-- ENLACE A LA PÁGINA DEL BLOG -->
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard-piezas.php">Piezas</a>
+                        <a class="nav-link" href="blog.php">
+                            <i class="fas fa-blog me-1"></i>Blog
+                        </a>
                     </li>
                 </ul>
                 
-                <!-- 103. MENÚ USUARIO (lado derecho) -->
+                <!-- MENÚ DEL LADO DERECHO (USUARIO) -->
                 <div class="navbar-nav">
-                    <div class="nav-item dropdown">
-                        <!-- 104. BOTÓN DESPLEGABLE CON NOMBRE USUARIO -->
-                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i><?= htmlspecialchars($usuario['nombre']) ?>
-                        </a>
-                        <!-- 105. MENÚ DESPLEGABLE -->
-                        <ul class="dropdown-menu">
-                            <!-- 106. ENLACE CARRITO CON CONTADOR -->
-                            <li><a class="dropdown-item" href="carrito.php">
-                                <i class="fas fa-shopping-cart me-2"></i>Carrito 
-                                <span class="badge bg-primary"><?= array_sum($_SESSION['carrito'] ?? []) ?></span>
-                            </a></li>
-                            <!-- 107. SEPARADOR -->
-                            <li><hr class="dropdown-divider"></li>
-                            <!-- 108. ENLACE CERRAR SESIÓN -->
-                            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 109. CONTENIDO PRINCIPAL -->
-    <main class="container mt-5 pt-5">
-        <div class="row">
-            <div class="col-12">
-                <!-- 110. MOSTRAR MENSAJES: Éxito o error -->
-                <?php if($mensaje): ?>
-                <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-                    <?= htmlspecialchars($mensaje) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <?php endif; ?>
-
-                <!-- 111. ENCABEZADO DE PÁGINA -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <!-- 112. TÍTULO PRINCIPAL -->
-                        <h1 class="display-5 fw-bold text-white">Mi Perfil</h1>
-                        <!-- 113. DESCRIPCIÓN -->
-                        <p class="lead text-white">Gestiona tu información personal y preferencias</p>
-                    </div>
-                    <div class="col-md-4 text-md-end">
-                        <!-- 114. TARJETA FECHA REGISTRO -->
-                        <div class="card bg-primary text-white">
-                            <div class="card-body py-3 text-center">
-                                <small class="d-block">Miembro desde</small>
-                                <strong class="fs-6"><?= htmlspecialchars($usuario['fecha_creacion'] ?? '-') ?></strong>
-                            </div>
+                    <?php if(isset($_SESSION['usuario_id'])): ?>
+                        <!-- SI EL USUARIO ESTÁ LOGUEADO, MOSTRAMOS SU MENÚ -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- ENLACE AL PERFIL (ACTUAL) -->
+                                <li><a class="dropdown-item active" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
+                                <!-- ENLACE AL CARRITO CON CONTADOR -->
+                                <li><a class="dropdown-item" href="carrito.php"><i class="fas fa-shopping-cart me-2"></i>Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a></li>
+                                <!-- SEPARADOR -->
+                                <li><hr class="dropdown-divider"></li>
+                                <!-- OPCIÓN PARA CERRAR SESIÓN -->
+                                <li><a class="dropdown-item" href="pagina-principal.php?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                            </ul>
                         </div>
-                    </div>
+                    <?php else: ?>
+                        <!-- SI EL USUARIO NO ESTÁ LOGUEADO, MOSTRAMOS OPCIONES DE LOGIN -->
+                        <a class="nav-link" href="inicio_secion.php">
+                            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                        </a>
+                        <a class="nav-link" href="register.php">
+                            <i class="fas fa-user-plus me-1"></i>Registrarse
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="row">
-            <!-- 115. COLUMNA IZQUIERDA: Imagen de perfil -->
-            <div class="col-lg-4 mb-4">
-                <div class="card profile-card">
-                    <div class="card-body text-center p-4">
-                        <!-- 116. IMAGEN DE PERFIL -->
-                        <img src="<?= $ruta_imagen ?>" 
-                             alt="Imagen de perfil" 
-                             class="profile-image mb-3"
-                             onerror="this.src='img/default-avatar.png'">
-                        
-                        <!-- 117. NOMBRE USUARIO -->
-                        <h4 class="card-title mb-2"><?= htmlspecialchars($usuario['nombre'] ?? 'Usuario') ?></h4>
-                        <!-- 118. CORREO USUARIO -->
-                        <p class="text-muted mb-3"><?= htmlspecialchars($usuario['correo'] ?? '-') ?></p>
-                        
-                        <!-- 119. BADGE ESTADO VERIFICACIÓN -->
-                        <span class="badge <?= $usuario['verificado'] ? 'bg-success' : 'bg-warning' ?> mb-3 px-3 py-2">
-                            <i class="fas <?= $usuario['verificado'] ? 'fa-check-circle' : 'fa-clock' ?> me-1"></i>
-                            <?= $usuario['verificado'] ? 'Cuenta Verificada' : 'Verificación Pendiente' ?>
-                        </span>
-
-                        <!-- 120. FORMULARIO SUBIR IMAGEN -->
-                        <form method="post" enctype="multipart/form-data" class="mt-4">
-                            <div class="mb-3">
-                                <label class="form-label info-label">Actualizar imagen de perfil</label>
-                                <!-- 121. INPUT SUBIR ARCHIVO -->
-                                <input type="file" name="imagen" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp" required>
-                                <!-- 122. TEXTO AYUDA -->
-                                <div class="form-text">Formatos: JPEG, PNG, GIF, WebP (Máx. 5MB)</div>
-                            </div>
-                            <!-- 123. BOTÓN SUBIR IMAGEN -->
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-upload me-1"></i>Subir Imagen
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 124. COLUMNA DERECHA: Información y formularios -->
+    <!-- ============================================================================= -->
+    <!-- CONTENIDO PRINCIPAL DE LA PÁGINA DE PERFIL -->
+    <!-- ============================================================================= -->
+    <div class="container contenedor-perfil">
+        <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- 125. TARJETA INFORMACIÓN PERSONAL -->
-                <div class="card profile-card mb-4">
-                    <div class="card-header card-header-custom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-user-circle me-2"></i>Información Personal
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- 126. NOMBRE COMPLETO -->
-                            <div class="col-md-6 mb-3">
-                                <label class="info-label d-block">Nombre completo</label>
-                                <span class="info-value"><?= htmlspecialchars($usuario['nombre'] ?? '-') ?></span>
-                            </div>
-                            <!-- 127. CORREO ELECTRÓNICO -->
-                            <div class="col-md-6 mb-3">
-                                <label class="info-label d-block">Correo electrónico</label>
-                                <span class="info-value"><?= htmlspecialchars($usuario['correo'] ?? '-') ?></span>
-                            </div>
-                            <!-- 128. TELÉFONO -->
-                            <div class="col-md-6 mb-3">
-                                <label class="info-label d-block">Teléfono</label>
-                                <span class="info-value">
-                                    <?= $usuario['telefono'] ? htmlspecialchars($usuario['telefono']) : '<span class="text-muted">No agregado</span>' ?>
-                                </span>
-                            </div>
-                            <!-- 129. ESTADO VERIFICACIÓN -->
-                            <div class="col-md-6 mb-3">
-                                <label class="info-label d-block">Estado de verificación</label>
-                                <span class="badge <?= $usuario['verificado'] ? 'bg-success' : 'bg-warning' ?>">
-                                    <?= $usuario['verificado'] ? 'Verificado' : 'No verificado' ?>
-                                </span>
-                            </div>
+                <div class="card tarjeta-perfil">
+                    <!-- ENCABEZADO DE LA TARJETA DE PERFIL -->
+                    <div class="encabezado-perfil">
+                        <div class="d-flex flex-column align-items-center">
+                            <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
+                                <!-- SI EL USUARIO TIENE FOTO DE PERFIL, LA MOSTRAMOS - USANDO imagen_perfil -->
+                                <img src="uploads/perfiles/<?= htmlspecialchars($datos_usuario['imagen_perfil']) ?>" 
+                                     alt="Foto de perfil" class="foto-perfil">
+                            <?php else: ?>
+                                <!-- SI NO TIENE FOTO, MOSTRAMOS UN AVATAR POR DEFECTO -->
+                                <div class="foto-perfil avatar-sin-foto d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-user fa-4x text-muted"></i>
+                                </div>
+                            <?php endif; ?>
+                            <!-- NOMBRE DEL USUARIO -->
+                            <h3 class="mt-3 nombre-usuario"><?= htmlspecialchars($datos_usuario['nombre']) ?></h3>
+                            <!-- FECHA DE REGISTRO DEL USUARIO -->
+                            <p class="mb-0 texto-miembro-desde">Miembro desde: <?= date('d/m/Y', strtotime($datos_usuario['fecha_creacion'])) ?></p>
                         </div>
                     </div>
-                </div>
 
-                <!-- 130. TARJETA ACTUALIZAR CORREO -->
-                <div class="card profile-card mb-4">
-                    <div class="card-header card-header-custom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-envelope me-2"></i>Actualizar Correo Electrónico
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <form method="post">
-                            <div class="row">
-                                <!-- 131. CAMPO NUEVO CORREO -->
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label info-label">Nuevo correo electrónico</label>
-                                    <input type="email" name="nuevo_correo" class="form-control" 
-                                           value="<?= htmlspecialchars($usuario['correo'] ?? '') ?>" 
-                                           placeholder="Ingresa tu nuevo correo" required>
-                                </div>
-                                <!-- 132. CAMPO CONTRASEÑA ACTUAL -->
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label info-label">Contraseña actual</label>
-                                    <input type="password" name="contrasena_actual" class="form-control" 
-                                           placeholder="Confirma con tu contraseña" required>
-                                </div>
+                    <!-- INFORMACIÓN DEL PERFIL -->
+                    <div class="informacion-perfil">
+                        <!-- ============================================================================= -->
+                        <!-- MOSTRAMOS MENSAJES DE ÉXITO O ERROR -->
+                        <!-- ============================================================================= -->
+                        
+                        <?php if(isset($mensaje_exito_foto)): ?>
+                            <!-- MENSAJE DE ÉXITO CUANDO LA FOTO SE ACTUALIZA CORRECTAMENTE -->
+                            <div class="alert alert-success alert-dismissible fade show">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <?= $mensaje_exito_foto ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                            <!-- 133. BOTÓN ACTUALIZAR CORREO -->
-                            <button type="submit" name="actualizar_correo" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i>Actualizar Correo
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                        <?php endif; ?>
 
-                <!-- 134. TARJETA GESTIONAR TELÉFONO -->
-                <div class="card profile-card mb-4">
-                    <div class="card-header card-header-custom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-phone me-2"></i>Gestionar Teléfono
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <form method="post">
-                            <div class="row align-items-end">
-                                <!-- 135. CAMPO TELÉFONO -->
-                                <div class="col-md-8 mb-3">
-                                    <label class="form-label info-label">Número de teléfono</label>
-                                    <input type="tel" name="telefono" class="form-control" 
-                                           value="<?= htmlspecialchars($usuario['telefono'] ?? '') ?>" 
-                                           placeholder="Ej: +52 123 456 7890" 
-                                           pattern="[\+]?[0-9\s\-\(\)]{8,20}">
-                                    <!-- 136. TEXTO AYUDA -->
-                                    <div class="form-text text-muted">
-                                        Agrega tu teléfono para verificar tu cuenta
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="d-grid gap-2">
-                                        <!-- 137. BOTÓN GUARDAR TELÉFONO -->
-                                        <button type="submit" name="actualizar_telefono" class="btn btn-primary">
-                                            <i class="fas fa-save me-1"></i>
-                                            <?= $usuario['telefono'] ? 'Actualizar' : 'Agregar' ?>
-                                        </button>
-                                        <!-- 138. BOTÓN ELIMINAR TELÉFONO (solo si existe) -->
-                                        <?php if($usuario['telefono']): ?>
-                                        <button type="submit" name="actualizar_telefono" class="btn btn-outline-danger btn-sm"
-                                                onclick="this.form.querySelector('input[name=\'telefono\']').value = '';">
-                                            <i class="fas fa-trash me-1"></i>Eliminar
-                                        </button>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
+                        <?php if(isset($mensaje_error_foto)): ?>
+                            <!-- MENSAJE DE ERROR CUANDO HAY PROBLEMAS CON LA FOTO -->
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <?= $mensaje_error_foto ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                        </form>
-                    </div>
-                </div>
+                        <?php endif; ?>
 
-                <!-- 139. TARJETA CAMBIAR CONTRASEÑA -->
-                <div class="card profile-card">
-                    <div class="card-header card-header-custom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-lock me-2"></i>Cambiar Contraseña
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- 140. TEXTO INFORMATIVO -->
-                        <p class="info-value mb-3">¿Necesitas cambiar tu contraseña? Haz clic en el enlace a continuación:</p>
-                        <!-- 141. ENLACE CAMBIAR CONTRASEÑA -->
-                        <a href="recuperar.php" class="btn btn-outline-primary">
-                            <i class="fas fa-key me-1"></i>Cambiar Contraseña
-                        </a>
+                        <!-- ============================================================================= -->
+                        <!-- FORMULARIO PARA SUBIR FOTO DE PERFIL -->
+                        <!-- ============================================================================= -->
+                        <div class="item-informacion">
+                            <div class="etiqueta-informacion">Foto de Perfil</div>
+                            <!-- FORMULARIO CON ENCTYPE PARA PODER SUBIR ARCHIVOS -->
+                            <form method="POST" enctype="multipart/form-data" class="d-flex align-items-center gap-3">
+                                <div class="flex-grow-1">
+                                    <!-- INPUT PARA SELECCIONAR ARCHIVO -->
+                                    <input type="file" class="form-control" name="foto_perfil" accept="image/*" required>
+                                    <!-- TEXTO DE AYUDA SOBRE LOS FORMATOS PERMITIDOS -->
+                                    <div class="form-text">Formatos permitidos: JPG, PNG, GIF. Máximo 2MB</div>
+                                </div>
+                                <!-- BOTÓN PARA SUBIR LA FOTO -->
+                                <button type="submit" class="btn btn-subir-foto">
+                                    <i class="fas fa-upload me-2"></i>Subir Foto
+                                </button>
+                            </form>
+                            
+                            <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
+                                <!-- SI EL USUARIO TIENE FOTO, MOSTRAMOS OPCIÓN PARA ELIMINARLA - USANDO imagen_perfil -->
+                                <div class="acciones-foto">
+                                    <a href="perfil.php?eliminar_foto=1" class="btn btn-outline-danger btn-sm" 
+                                       onclick="return confirm('¿Estás seguro de que quieres eliminar tu foto de perfil?')">
+                                        <i class="fas fa-trash me-1"></i>Eliminar Foto Actual
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- ============================================================================= -->
+                        <!-- INFORMACIÓN PERSONAL DEL USUARIO -->
+                        <!-- ============================================================================= -->
+                        
+                        <!-- NOMBRE COMPLETO -->
+                        <div class="item-informacion">
+                            <div class="etiqueta-informacion">Nombre Completo</div>
+                            <div class="valor-informacion"><?= htmlspecialchars($datos_usuario['nombre']) ?></div>
+                        </div>
+
+                        <!-- CORREO ELECTRÓNICO -->
+                        <div class="item-informacion">
+                            <div class="etiqueta-informacion">Correo Electrónico</div>
+                            <div class="valor-informacion"><?= htmlspecialchars($datos_usuario['correo']) ?></div>
+                        </div>
+
+                        <!-- FECHA DE REGISTRO -->
+                        <div class="item-informacion">
+                            <div class="etiqueta-informacion">Fecha de Registro</div>
+                            <div class="valor-informacion"><?= date('d/m/Y H:i', strtotime($datos_usuario['fecha_creacion'])) ?></div>
+                        </div>
+
+                        <!-- ============================================================================= -->
+                        <!-- BOTONES DE ACCIÓN -->
+                        <!-- ============================================================================= -->
+                        <div class="d-flex gap-2 mt-4">
+                            <!-- BOTÓN PARA VOLVER AL INICIO -->
+                            <a href="pagina-principal.php" class="btn btn-outline-primary">
+                                <i class="fas fa-home me-2"></i>Volver al Inicio
+                            </a>
+                            <!-- BOTÓN PARA VER LAS PIEZAS -->
+                            <a href="dashboard-piezas.php" class="btn btn-primary">
+                                <i class="fas fa-cogs me-2"></i>Ver Piezas
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- 142. PIE DE PÁGINA -->
+    <!-- ============================================================================= -->
+    <!-- PIE DE PÁGINA -->
+    <!-- ============================================================================= -->
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
             <div class="row">
-                <!-- 143. INFORMACIÓN EMPRESA -->
+                <!-- INFORMACIÓN DE LA EMPRESA -->
                 <div class="col-md-6">
-                    <h5 class="text-white">Mexican Racing Motor Parts</h5>
-                    <p class="mb-0 text-white-50">Tu socio confiable en piezas automotrices de competición</p>
+                    <h5>Mexican Racing Motor Parts</h5>
+                    <p class="mb-0">Tu aliado confiable en piezas automotrices de mayor desempeño</p>
                 </div>
-                <!-- 144. REDES SOCIALES Y COPYRIGHT -->
+                <!-- REDES SOCIALES Y COPYRIGHT -->
                 <div class="col-md-6 text-md-end">
-                    <div class="social-links">
-                        <!-- 145. ENLACE FACEBOOK -->
+                    <div class="enlaces-sociales">
                         <a href="https://www.facebook.com/profile.php?id=61583404693123" target="_blank" class="text-white me-3">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <!-- 146. ENLACE INSTAGRAM -->
                         <a href="#" target="_blank" class="text-white me-3">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
-                    <!-- 147. COPYRIGHT -->
-                    <p class="mt-2 mb-0 text-white-50">&copy; <?= date('Y') ?> Mexican Racing Motor Parts. Todos los derechos reservados.</p>
+                    <p class="mt-2 mb-0">&copy; <?= date('Y') ?> Mexican Racing Motor Parts.</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- 148. CARGAR JAVASCRIPT DE BOOTSTRAP -->
+    <!-- ============================================================================= -->
+    <!-- SCRIPTS JAVASCRIPT -->
+    <!-- ============================================================================= -->
+    
+    <!-- INCLUIMOS BOOTSTRAP JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- 149. SCRIPT PARA CERRAR ALERTAS AUTOMÁTICAMENTE -->
+    <!-- SCRIPT PERSONALIZADO PARA FUNCIONALIDADES EXTRA -->
     <script>
+        // ESTE SCRIPT SE EJECUTA CUANDO LA PÁGINA TERMINA DE CARGAR
         document.addEventListener('DOMContentLoaded', function() {
-            // 150. SELECCIONAR TODAS LAS ALERTAS
-            const alerts = document.querySelectorAll('.alert');
-            // 151. PARA CADA ALERTA...
-            alerts.forEach(alert => {
-                // 152. ESPERAR 5 SEGUNDOS Y LUEGO CERRARLA
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 5000);
-            });
+            // OBTENEMOS EL INPUT DE SUBIR FOTO
+            const inputFoto = document.querySelector('input[name="foto_perfil"]');
+            
+            // AGREGAMOS UN EVENTO PARA CUANDO EL USUARIO SELECCIONE UNA IMAGEN
+            if(inputFoto) {
+                inputFoto.addEventListener('change', function(evento) {
+                    // OBTENEMOS EL ARCHIVO SELECCIONADO
+                    const archivo = evento.target.files[0];
+                    
+                    // SI SE SELECCIONÓ UN ARCHIVO, MOSTRAMOS INFORMACIÓN EN CONSOLA
+                    if (archivo) {
+                        console.log('✅ Imagen seleccionada:', archivo.name);
+                        console.log('📏 Tamaño:', Math.round(archivo.size / 1024) + ' KB');
+                        console.log('📄 Tipo:', archivo.type);
+                    }
+                });
+            }
         });
     </script>
 </body>

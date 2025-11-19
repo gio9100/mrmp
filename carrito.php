@@ -69,7 +69,8 @@ unset($_SESSION['mensaje']);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carrito MRMP</title>
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="carrito.css">
+<link rel="stylesheet" href="pagina-principal.css">
 </head>
 <body>
 
@@ -81,14 +82,15 @@ unset($_SESSION['mensaje']);
   <div class="usuario">
     <?php if(isset($_SESSION['usuario_id'])): ?>
       <span class="saludo">Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></span>
-      <a href="dashboard-piezas.php">Dashboard</a>
+      <a href="dashboard-piezas.php">Piezas</a>
       <a href="perfil.php">Perfil</a>
       <a href="logout.php">Cerrar sesión</a>
-      <a href="Blog.php">Blog</a>
+      <a href="pagina-principal.php">Pagina Principal</a>
     <?php else: ?>
       <a href="inicio_secion.php">Iniciar sesión</a>
       <a href="register.php">Crear cuenta</a>
-      <a href="blog.php">Blog</a>
+      <a href="dashboard-piezas.php">piezas</a>
+      <a href="pagina-principal.php">Pagina Principal</a>
     <?php endif; ?>
   </div>
 </header>
