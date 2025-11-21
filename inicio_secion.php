@@ -84,6 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <p>Solo personal Autorizado</p>
         <a href="admin_panel.php">Admin Panel</a>
 </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </section>
 </form>

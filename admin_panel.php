@@ -493,13 +493,19 @@ if(isset($_POST['actualizar_marca'])){
 <!-- 207: Botón submit login -->
 <button type="submit" name="login_admin">Iniciar Sesión</button>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <!-- 208: Cierre form -->
 =======
+=======
+>>>>>>> Stashed changes
 <header>
 <div class="formulario">
 <a href="dashboard-piezas.php">dashboard</a>
 </header>
 </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 </form>
 <!-- 209: Cierre section -->
@@ -537,7 +543,11 @@ if(isset($_POST['actualizar_marca'])){
 <!-- 224: Título del panel -->
 <h1>Panel de Administración MRMP</h1>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <!-- 225: Botón de cerrar sesión -->
+=======
+<a href="dashboard-piezas.php">dashboard</a>
+>>>>>>> Stashed changes
 =======
 <a href="dashboard-piezas.php">dashboard</a>
 >>>>>>> Stashed changes
