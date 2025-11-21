@@ -75,7 +75,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <section class="seccion-botones">
         <button type="submit">Iniciar sesión</button>
         <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
+<<<<<<< Updated upstream
         <p>¿Olvidaste tu contraseña? <a href="recuperar.php">Recuperar Contraseña</a></p>
+=======
+        <p>¿Olvidaste tu contraseña?</p>
+        <a href="recupara.php">Recuperar Tu Contraseña</a>
+        <div class="panel-admin">
+        <p>Solo personal Autorizado</p>
+        <a href="admin_panel.php">Admin Panel</a>
+</div>
+>>>>>>> Stashed changes
     </section>
 </form>
 

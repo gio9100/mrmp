@@ -492,7 +492,15 @@ if(isset($_POST['actualizar_marca'])){
 <input type="password" name="contrasena" placeholder="Contraseña" required>
 <!-- 207: Botón submit login -->
 <button type="submit" name="login_admin">Iniciar Sesión</button>
+<<<<<<< Updated upstream
 <!-- 208: Cierre form -->
+=======
+<header>
+<div class="formulario">
+<a href="dashboard-piezas.php">dashboard</a>
+</header>
+</div>
+>>>>>>> Stashed changes
 </form>
 <!-- 209: Cierre section -->
 </section>
@@ -528,7 +536,11 @@ if(isset($_POST['actualizar_marca'])){
 <header>
 <!-- 224: Título del panel -->
 <h1>Panel de Administración MRMP</h1>
+<<<<<<< Updated upstream
 <!-- 225: Botón de cerrar sesión -->
+=======
+<a href="dashboard-piezas.php">dashboard</a>
+>>>>>>> Stashed changes
 <a href="?logout" style="color:#ff0000;">Cerrar sesión</a>
 <!-- 226: Cierre header -->
 </header>
