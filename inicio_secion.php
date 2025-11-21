@@ -85,6 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <a href="admin_panel.php">Admin Panel</a>
 </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
