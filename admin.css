@@ -1,280 +1,480 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* 1: Aquí definimos las variables globales pa' los colores, pa' que combine con la main */
+:root {
+    /* 2: El rojo chido que usamos en toda la página */
+    --primary-red: #dc2626;
+    /* 3: El negro puro pa'l fondo, modo dark activado */
+    --primary-dark: #000000;
+    /* 4: El blanco pa' las letras, si no no se ve nada */
+    --primary-light: #ffffff;
+    /* 5: Un gris oscurón pa' los fondos de las tarjetas */
+    --gray-dark: #1a1a1a;
+    /* 6: Un gris medio pa' los bordes y detalles */
+    --gray-medium: #404040;
+    /* 7: Un gris clarito pa' textos secundarios */
+    --gray-light: #737373;
 }
 
+/* 8: El selector universal, agarra todo lo que se mueva */
+* {
+    /* 9: Quitamos el margen por defecto pa' que no estorbe */
+    margin: 0;
+    /* 10: Quitamos el padding también, todo a cero */
+    padding: 0;
+    /* 11: Esto es pa' que el padding no aumente el tamaño de las cajas */
+    box-sizing: border-box;
+    /* 12: La fuente chida, usamos Roboto o la que caiga del sistema */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* 13: Estilos pal cuerpo de la página */
 body {
-    background: #ffffff;
-    color: #000000;
+    /* 14: Fondo negro, bien darks como nos gusta */
+    background: var(--primary-dark);
+    /* 15: Letras blancas pa' que resalten en lo oscuro */
+    color: var(--primary-light);
+    /* 16: Que ocupe al menos toda la altura de la pantalla */
     min-height: 100vh;
+    /* 17: Usamos flex pa' acomodar el footer al final solito */
     display: flex;
+    /* 18: Dirección columna pa' que vaya uno abajo del otro */
     flex-direction: column;
+    /* 19: Tamaño de letra base, ni muy grande ni muy chico */
     font-size: 15px;
 }
 
+/* 20: El encabezado de arriba */
 header {
-    background: #ffffff;
+    /* 21: Fondo gris oscuro pa' diferenciarlo del body */
+    background: var(--gray-dark);
+    /* 22: Flex pa' separar el título del botón de salir */
     display: flex;
+    /* 23: Espacio entre los elementos, uno a cada lado */
     justify-content: space-between;
+    /* 24: Alineados al centro verticalmente */
     align-items: center;
+    /* 25: Un relleno pa' que no pegue con los bordes */
     padding: 20px 40px;
-    border-bottom: 3px solid #e63946;
+    /* 26: Borde rojo abajo pa' darle estilo racing */
+    border-bottom: 3px solid var(--primary-red);
+    /* 27: Sticky pa' que se quede pegado arriba al scrollear */
     position: sticky;
+    /* 28: Pegado al top 0 */
     top: 0;
+    /* 29: Z-index alto pa' que flote sobre todo lo demás */
     z-index: 100;
 }
 
+/* 30: El título h1 dentro del header */
 header h1 {
-    color: #000000;
+    /* 31: Color blanco pa' que se lea */
+    color: var(--primary-light);
+    /* 32: Tamaño grandecito pa' que se vea quién manda */
     font-size: 24px;
+    /* 33: Negritas pa' que resalte más */
     font-weight: 700;
 }
 
+/* 34: Los enlaces en el header (como el de cerrar sesión) */
 header a {
-    color: #e63946;
+    /* 35: Color rojo pa' que llame la atención */
+    color: var(--primary-red);
+    /* 36: Sin subrayado, se ve más limpio */
     text-decoration: none;
+    /* 37: Medio negritas */
     font-weight: 600;
+    /* 38: Rellenito pa' que parezca botón */
     padding: 6px 12px;
+    /* 39: Bordes redondeados, se ve más moderno */
     border-radius: 6px;
-    background: rgba(255, 0, 0, 0.05);
+    /* 40: Fondo rojito transparente muy leve */
+    background: rgba(220, 38, 38, 0.1);
+    /* 41: Transición suave pal hover */
     transition: background 0.3s;
 }
 
+/* 42: Cuando pasas el mouse por el enlace del header */
 header a:hover {
-    background: rgba(230, 57, 70, 0.15);
+    /* 43: El fondo se pone más rojito */
+    background: rgba(220, 38, 38, 0.2);
 }
 
+/* 44: El contenedor principal */
 main {
+    /* 45: Flex 1 pa' que ocupe el espacio sobrante y empuje el footer */
     flex: 1;
+    /* 46: Relleno pa' que el contenido respire */
     padding: 30px 40px;
+    /* 47: Ancho máximo pa' que no se desparrame en pantallas grandes */
     max-width: 1400px;
+    /* 48: Centrado horizontalmente */
     margin: 0 auto;
+    /* 49: Ancho total */
+    width: 100%;
 }
 
 
-/*formularios*/
+/* 50: Sección de formularios */
 
+/* 51: Estilos pa' la etiqueta form y la clase .formulario */
 form,
 .formulario {
-    background: #ffffff;
+    /* 52: Fondo gris oscuro, tipo tarjeta */
+    background: var(--gray-dark);
+    /* 53: Relleno interno pa' que no se pegue el texto */
     padding: 20px;
+    /* 54: Bordes redondeados */
     border-radius: 12px;
+    /* 55: Margen abajo pa' separar de lo que sigue */
     margin-bottom: 30px;
-    border: 1px solid #e63946;
+    /* 56: Borde gris medio sutil */
+    border: 1px solid var(--gray-medium);
+    /* 57: Sombrita pa' darle profundidad */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* 58: Los títulos h2 dentro de los formularios */
 form h2 {
+    /* 59: Margen abajo pa' separar del input */
     margin-bottom: 15px;
-    color: #e63946;
+    /* 60: Color rojo, marca de la casa */
+    color: var(--primary-red);
+    /* 61: Tamaño de letra decente */
     font-size: 20px;
 }
 
+/* 62: Estilos pa' todos los inputs, selects y textareas */
 form input,
 form select,
 form textarea {
+    /* 63: Que ocupen todo el ancho disponible */
     width: 100%;
+    /* 64: Relleno cómodo pa' escribir */
     padding: 10px 14px;
+    /* 65: Margen abajo pa' separar entre campos */
     margin-bottom: 15px;
+    /* 66: Bordes redondeados */
     border-radius: 8px;
-    border: 1px solid #e63946;
-    background: #fff;
-    color: #000;
+    /* 67: Borde gris medio */
+    border: 1px solid var(--gray-medium);
+    /* 68: Fondo negro o casi negro pa' los inputs */
+    background: #000;
+    /* 69: Letra blanca pa' que se vea lo que escribes */
+    color: #fff;
+    /* 70: Tamaño de letra estándar */
     font-size: 14px;
 }
 
+/* 71: Cuando seleccionas un input (focus) */
 form input:focus,
 form select:focus,
 form textarea:focus {
+    /* 72: Quitamos el borde azul feo del navegador */
     outline: none;
-    border-color: #e63946;
-    box-shadow: 0 0 4px rgba(230, 57, 70, 0.3);
+    /* 73: Ponemos el borde rojo chido */
+    border-color: var(--primary-red);
+    /* 74: Una sombrita roja resplandeciente */
+    box-shadow: 0 0 4px rgba(220, 38, 38, 0.5);
 }
 
+/* 75: Estilos pa' los botones del formulario */
 form button {
-    background: #e63946;
+    /* 76: Fondo rojo primario */
+    background: var(--primary-red);
+    /* 77: Letra blanca */
     color: #fff;
+    /* 78: Relleno pa' que se vea botón */
     padding: 10px 20px;
+    /* 79: Sin borde */
     border: none;
+    /* 80: Bordes redondeados */
     border-radius: 8px;
+    /* 81: Letra un poco más gordita */
     font-weight: 600;
+    /* 82: Manita cuando pasas el mouse */
     cursor: pointer;
+    /* 83: Transición suave pal color */
     transition: background 0.3s;
 }
 
+/* 84: Hover del botón */
 form button:hover {
-    background: #c1121f;
+    /* 85: Se pone un rojo más oscuro */
+    background: #b91c1c;
 }
 
+/* 86: Botón específico pa' eliminar (clase .eliminar) */
 form button.eliminar {
+    /* 87: Fondo negro pa' diferenciarlo */
     background: #000000;
+    /* 88: Borde rojo pa' que se vea peligroso */
+    border: 1px solid var(--primary-red);
+    /* 89: Letra blanca */
     color: #fff;
 }
 
+/* 90: Hover del botón eliminar */
 form button.eliminar:hover {
+    /* 91: Fondo gris oscuro */
     background: #333333;
 }
 
 
-/*listas y tablas*/
+/* 92: Estilos pa' listas y tablas */
 
+/* 93: Lista desordenada */
 ul {
+    /* 94: Quitamos los puntitos feos */
     list-style: none;
+    /* 95: Margen arriba */
     margin-top: 15px;
 }
 
+/* 96: Elementos de la lista */
 li {
+    /* 97: Relleno interno */
     padding: 10px 15px;
-    background: #fff;
-    border: 1px solid #e63946;
+    /* 98: Fondo gris oscuro */
+    background: var(--gray-dark);
+    /* 99: Borde gris medio */
+    border: 1px solid var(--gray-medium);
+    /* 100: Bordes redondeados */
     border-radius: 6px;
+    /* 101: Margen abajo entre items */
     margin-bottom: 8px;
+    /* 102: Flex pa' acomodar contenido */
     display: flex;
+    /* 103: Separar texto de botones */
     justify-content: space-between;
+    /* 104: Alinear al centro */
     align-items: center;
-    color: #000;
+    /* 105: Color de texto blanco */
+    color: var(--primary-light);
 }
 
+/* 106: Hover en el item de la lista */
 li:hover {
-    background: #ffe6e6;
+    /* 107: Borde rojo al pasar el mouse */
+    border-color: var(--primary-red);
 }
 
+/* 108: Tablas */
 table {
+    /* 109: Ancho total */
     width: 100%;
+    /* 110: Colapsar bordes pa' que se vean juntos */
     border-collapse: collapse;
+    /* 111: Margen arriba */
     margin-top: 20px;
-    background: #fff;
+    /* 112: Fondo gris oscuro */
+    background: var(--gray-dark);
+    /* 113: Bordes redondeados */
     border-radius: 8px;
+    /* 114: Esconder lo que se salga de los bordes */
     overflow: hidden;
-    color: #000;
+    /* 115: Texto blanco */
+    color: var(--primary-light);
 }
 
+/* 116: Celdas de encabezado y datos */
 th,
 td {
+    /* 117: Relleno cómodo */
     padding: 12px 15px;
+    /* 118: Alineado a la izquierda */
     text-align: left;
-    border-bottom: 1px solid #e63946;
+    /* 119: Borde abajo gris medio */
+    border-bottom: 1px solid var(--gray-medium);
+    /* 120: Tamaño de letra */
     font-size: 14px;
 }
 
+/* 121: Encabezados de tabla */
 th {
-    background: #e63946;
+    /* 122: Fondo rojo */
+    background: var(--primary-red);
+    /* 123: Texto blanco */
     color: #fff;
 }
 
+/* 124: Hover en las filas de la tabla */
 tr:hover td {
-    background: #ffe6e6;
+    /* 125: Fondo un poco más claro pa' resaltar la fila */
+    background: var(--gray-medium);
 }
 
+/* 126: Enlaces dentro de la tabla */
 table a {
-    color: #e63946;
+    /* 127: Color rojo */
+    color: var(--primary-red);
+    /* 128: Sin subrayado */
     text-decoration: none;
 }
 
+/* 129: Hover en enlaces de tabla */
 table a:hover {
-    color: #c1121f;
+    /* 130: Rojo más claro o brillante */
+    color: #ff6b6b;
 }
 
 
-/*form para editar*/
+/* 131: Formulario específico pa' editar */
 
+/* 132: Contenedor de edición */
 .form-edicion {
-    background: #fff;
+    /* 133: Fondo gris oscuro */
+    background: var(--gray-dark);
+    /* 134: Relleno */
     padding: 15px;
+    /* 135: Bordes redondeados */
     border-radius: 8px;
-    border-left: 4px solid #e63946;
+    /* 136: Borde izquierdo rojo grueso pa' destacar */
+    border-left: 4px solid var(--primary-red);
+    /* 137: Margen arriba */
     margin-top: 10px;
 }
 
+/* 138: Título h4 en edición */
 .form-edicion h4 {
-    color: #e63946;
+    /* 139: Color rojo */
+    color: var(--primary-red);
+    /* 140: Margen abajo */
     margin-bottom: 10px;
+    /* 141: Tamaño de letra */
     font-size: 14px;
 }
 
 
-/*modales*/
+/* 142: Ventanas modales (popups) */
 
+/* 143: Fondo oscuro que cubre toda la pantalla */
 .modal-mensaje {
+    /* 144: Posición fija pa' que no se mueva */
     position: fixed;
+    /* 145: Pegado arriba */
     top: 0;
+    /* 146: Pegado a la izquierda */
     left: 0;
+    /* 147: Ancho total */
     width: 100%;
+    /* 148: Alto total */
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    /* 149: Fondo negro semitransparente */
+    background: rgba(0, 0, 0, 0.7);
+    /* 150: Flex pa' centrar el contenido */
     display: flex;
+    /* 151: Centrado horizontal */
     justify-content: center;
+    /* 152: Centrado vertical */
     align-items: center;
+    /* 153: Z-index altísimo pa' estar encima de todo */
     z-index: 1000;
 }
 
+/* 154: La cajita del mensaje */
 .modal-contenido {
-    background: #fff;
+    /* 155: Fondo gris oscuro */
+    background: var(--gray-dark);
+    /* 156: Relleno */
     padding: 25px;
+    /* 157: Bordes redondeados */
     border-radius: 12px;
+    /* 158: Texto centrado */
     text-align: center;
+    /* 159: Ancho máximo */
     max-width: 400px;
-    border: 2px solid #e63946;
+    /* 160: Borde rojo */
+    border: 2px solid var(--primary-red);
+    /* 161: Sombra chida */
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
 }
 
+/* 162: Título del modal */
 .modal-contenido h2 {
-    color: #e63946;
+    /* 163: Color rojo */
+    color: var(--primary-red);
+    /* 164: Margen abajo */
     margin-bottom: 15px;
 }
 
+/* 165: Texto del modal */
 .modal-contenido p {
-    color: #000;
+    /* 166: Color blanco */
+    color: var(--primary-light);
+    /* 167: Margen abajo */
     margin-bottom: 15px;
 }
 
+/* 168: Botón del modal */
 .modal-contenido button {
-    background: #e63946;
+    /* 169: Fondo rojo */
+    background: var(--primary-red);
+    /* 170: Texto blanco */
     color: #fff;
+    /* 171: Relleno */
     padding: 8px 16px;
+    /* 172: Sin borde */
     border: none;
+    /* 173: Bordes redondeados */
     border-radius: 6px;
+    /* 174: Manita */
     cursor: pointer;
 }
 
+/* 175: Hover del botón modal */
 .modal-contenido button:hover {
-    background: #c1121f;
+    /* 176: Rojo más oscuro */
+    background: #b91c1c;
 }
 
+/* 177: El pie de página */
 footer {
+    /* 178: Texto centrado */
     text-align: center;
+    /* 179: Relleno arriba y abajo */
     padding: 20px 0;
-    color: #000;
-    background: #ffffff;
-    border-top: 2px solid #e63946;
-    /* rojo */
+    /* 180: Color de texto gris claro */
+    color: var(--gray-light);
+    /* 181: Fondo gris oscuro */
+    background: var(--gray-dark);
+    /* 182: Borde arriba rojo */
+    border-top: 2px solid var(--primary-red);
+    /* 183: Tamaño de letra */
     font-size: 14px;
+    /* 184: Margen automático arriba pa' que se vaya al fondo si falta contenido */
     margin-top: auto;
 }
 
 
-/*responsivo*/
+/* 185: Estilos responsivos pa' celulares */
 
+/* 186: Si la pantalla es menor a 900px */
 @media screen and (max-width: 900px) {
+    /* 187: Ajustamos el padding del main */
     main {
         padding: 20px;
     }
+    /* 188: El header cambia a columna */
     header {
         flex-direction: column;
         align-items: flex-start;
     }
+    /* 189: Separamos el enlace */
     header a {
         margin-top: 10px;
     }
 }
 
+/* 190: Si la pantalla es menor a 600px */
 @media screen and (max-width: 600px) {
+    /* 191: Bajamos el tamaño de letra general */
     body {
         font-size: 14px;
     }
+    /* 192: Título más chico */
     header h1 {
         font-size: 20px;
     }
+    /* 193: Tablas más chicas */
     table,
     th,
     td {

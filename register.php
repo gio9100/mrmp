@@ -58,15 +58,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($stmt->execute()) {
                 $mensaje = "✅ Registro exitoso. Ahora inicia sesión.";
                 $exito = true;
+   //redireccion automatica
+                echo "
+                <script>
+                    setTimeout(function() {
+                        window.location.href = 'inicio_secion.php';
+                    }, 2000); // 2 segundos de espera
+                </script>
+                ";
             } else {
-                //correo ya registrado vro
-                $mensaje = ($conexion->errno === 1062)
-                    ? "⚠️ El correo ya está registrado."
-                    : "❌ Error: " . $conexion->error;
+                $mensaje = " ⚠️Correo o contraseña incorrectos.";
             }
-            $stmt->close();
-        }
+        $stmt->close();
     }
+}
 }
 ?>
 <!DOCTYPE html>
@@ -128,8 +133,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="modal-contenido">
         <h2><?= $exito ? "🔧 Registro Completado" : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
-        <?php if($exito): ?>
-            <button onclick="window.location.href='inicio_secion.php'">Ir al Login</button>
+       <?php if($exito): ?>
+                    <!-- mensaje antes de reedirigir automaticamente-->
+                    <p style="font-style: italic; margin-top: 15px;">
+                        Serás redirigido automáticamente en 2 segundos...
+                    </p>
         <?php else: ?>
             <button onclick="cerrarModal()">Cerrar</button>
         <?php endif; ?>

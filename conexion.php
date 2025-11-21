@@ -1,19 +1,20 @@
 <?php
-if (session_status() === PHP_SESSION_NONE){
-    session_start();
+
+
+$host = "localhost";      // Servidor MySQL, usualmente localhost
+$user = "root";           // Usuario MySQL
+$pass = "";               // Contraseña MySQL
+$db   = "bootcamp2";      // Nombre de tu base de datos
+
+// Crear la conexión
+$conexion = new mysqli($host, $user, $pass, $db);
+
+// Verificar conexión
+if ($conexion->connect_errno) {
+    // En caso de error, se detiene el script y muestra el error
+    die("Error al conectar a la base de datos: (" . $conexion->connect_errno . ") " . $conexion->connect_error);
 }
 
-$servidor_db = "localhost";
-$usuario_bd = "root";
-$contrasena_bd = "";
-$nombre_bd = "bootcamp2";
-
-$conexion = new mysqli($servidor_db, $usuario_bd, $contrasena_bd, $nombre_bd);
-
-if ($conexion->connect_error) {
-    die ("error de conexion a mysql:" . $conexion->connect_error);
-
-}
-if (!$conexion->set_charset("utf8mb4")) {
-    die ("error al configurar UTF-8:" . $conexion->connect_error);
-}
+// Opcional: establecer codificación de caracteres
+$conexion->set_charset("utf8mb4");
+?>

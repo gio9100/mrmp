@@ -404,23 +404,425 @@ footer p {
     .hero-title {
         font-size: 2.5rem;
     }
+
     .hero-subtitle {
         font-size: 1.1rem;
     }
+
     .section-title {
         font-size: 2rem;
     }
+
     .hero-buttons .btn {
         display: block;
         width: 100%;
         margin-bottom: 1rem;
     }
+
     .hero-buttons .btn:last-child {
         margin-bottom: 0;
     }
+
     .product-actions {
         flex-direction: column;
     }
+
+    .product-actions .btn {
+        width: 100%;
+    }
+}
+
+
+/* Text Selection */
+
+
+.about-section img {
+    border: 2px solid var(--gray-medium);
+}
+
+.features-list {
+    margin-top: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--primary-light);
+}
+
+.feature-item i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    color: var(--primary-red);
+}
+
+
+/* Categories Section */
+
+.categories-section {
+    background: var(--primary-dark);
+}
+
+.category-card {
+    background: var(--gray-dark);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid var(--gray-medium);
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-red);
+}
+
+.category-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-red);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--primary-light);
+    font-size: 2rem;
+}
+
+.category-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-light);
+}
+
+.category-card p {
+    color: var(--gray-light);
+    margin-bottom: 1.5rem;
+}
+
+
+/* Brands Section */
+
+.brands-section {
+    background: var(--primary-dark);
+    border-top: 1px solid var(--gray-medium);
+    border-bottom: 1px solid var(--gray-medium);
+}
+
+.brand-card {
+    padding: 1rem;
+}
+
+.brand-logo-container {
+    background: var(--gray-dark);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--gray-medium);
+    transition: all 0.3s ease;
+}
+
+.brand-card:hover .brand-logo-container {
+    border-color: var(--primary-red);
+    transform: translateY(-5px);
+}
+
+.brand-logo {
+    max-width: 120px;
+    height: auto;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease;
+}
+
+.brand-card:hover .brand-logo {
+    filter: brightness(0) invert(0.8);
+}
+
+.brand-name {
+    color: var(--gray-light);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+
+/* CTA Section */
+
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
+    border-top: 1px solid var(--gray-medium);
+}
+
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+
+/* Footer */
+
+footer {
+    background: var(--primary-dark);
+    border-top: 2px solid var(--primary-red);
+}
+
+footer h5 {
+    color: var(--primary-light);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+footer p {
+    color: var(--gray-light);
+    margin-bottom: 0;
+}
+
+.social-links a {
+    color: var(--gray-light) !important;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.social-links a:hover {
+    color: var(--primary-red) !important;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .hero-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .hero-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .product-actions .btn {
+        width: 100%;
+    }
+}
+
+
+/* Text Selection */
+
+::selection {
+    background: var(--primary-red);
+    color: var(--primary-light);
+}
+
+::-moz-selection {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--primary-light);
+}
+
+.feature-item i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    color: var(--primary-red);
+}
+
+
+/* Categories Section */
+
+.categories-section {
+    background: var(--primary-dark);
+}
+
+.category-card {
+    background: var(--gray-dark);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid var(--gray-medium);
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-red);
+}
+
+.category-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-red);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--primary-light);
+    font-size: 2rem;
+}
+
+.category-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-light);
+}
+
+.category-card p {
+    color: var(--gray-light);
+    margin-bottom: 1.5rem;
+}
+
+
+/* Brands Section */
+
+.brands-section {
+    background: var(--primary-dark);
+    border-top: 1px solid var(--gray-medium);
+    border-bottom: 1px solid var(--gray-medium);
+}
+
+.brand-card {
+    padding: 1rem;
+}
+
+.brand-logo-container {
+    background: var(--gray-dark);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--gray-medium);
+    transition: all 0.3s ease;
+}
+
+.brand-card:hover .brand-logo-container {
+    border-color: var(--primary-red);
+    transform: translateY(-5px);
+}
+
+.brand-logo {
+    max-width: 120px;
+    height: auto;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease;
+}
+
+.brand-card:hover .brand-logo {
+    filter: brightness(0) invert(0.8);
+}
+
+.brand-name {
+    color: var(--gray-light);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+
+/* CTA Section */
+
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
+    border-top: 1px solid var(--gray-medium);
+}
+
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+
+/* Footer */
+
+footer {
+    background: var(--primary-dark);
+    border-top: 2px solid var(--primary-red);
+}
+
+footer h5 {
+    color: var(--primary-light);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+footer p {
+    color: var(--gray-light);
+    margin-bottom: 0;
+}
+
+.social-links a {
+    color: var(--gray-light) !important;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.social-links a:hover {
+    color: var(--primary-red) !important;
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .hero-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .hero-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
     .product-actions .btn {
         width: 100%;
     }
@@ -437,4 +839,33 @@ footer p {
 ::-moz-selection {
     background: var(--primary-red);
     color: var(--primary-light);
+}
+
+
+/* Modal Styles for Dark Theme - DEFINITIVE FIX */
+
+.modal-content {
+    background-color: var(--gray-dark) !important;
+    color: var(--primary-light) !important;
+    border: 1px solid var(--gray-medium) !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--gray-medium) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--gray-medium) !important;
+}
+
+.modal-body p,
+.modal-body h6,
+.modal-body strong,
+.modal-body span,
+.modal-title {
+    color: var(--primary-light) !important;
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
 }

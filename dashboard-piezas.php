@@ -93,6 +93,21 @@ unset($_SESSION['mensaje']);
     
     <link href="pagina-principal.css" rel="stylesheet">
     <link rel="stylesheet" href="main.css">
+    
+    <style>
+        /* Estilos para el carrusel en las tarjetas */
+        .carousel-item img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -230,15 +245,47 @@ unset($_SESSION['mensaje']);
                     <a href="?" class="btn btn-primary">Ver todas las piezas</a>
                 </div>
             <?php else: ?>
-                <?php foreach($piezas as $p): ?>
+                <?php foreach($piezas as $p): 
+                    // Obtener imágenes adicionales
+                    $imagenes = [];
+                    if(!empty($p['imagen'])) $imagenes[] = $p['imagen'];
+                    
+                    $res_gal = $conexion->query("SELECT imagen FROM piezas_imagenes WHERE pieza_id=".$p['id']);
+                    while($row_gal = $res_gal->fetch_assoc()){
+                        $imagenes[] = $row_gal['imagen'];
+                    }
+                ?>
                 <div class="col-md-6 col-lg-4 col-xl-3">
                     <div class="product-card">
                         <div class="product-image">
-                            <?php if(!empty($p['imagen'])): ?>
-                                <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" 
-                                     alt="<?= htmlspecialchars($p['nombre']) ?>">
+                            <?php if(count($imagenes) > 0): ?>
+                                <div id="carouselPieza<?= $p['id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <?php foreach($imagenes as $index => $img): ?>
+                                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                                <!-- Trigger del Lightbox -->
+                                                <img src="uploads/<?= htmlspecialchars($img) ?>" 
+                                                     class="d-block w-100" 
+                                                     alt="<?= htmlspecialchars($p['nombre']) ?>"
+                                                     style="cursor: pointer;"
+                                                     data-bs-toggle="modal" 
+                                                     data-bs-target="#lightboxModal<?= $p['id'] ?>">
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php if(count($imagenes) > 1): ?>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPieza<?= $p['id'] ?>" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Anterior</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPieza<?= $p['id'] ?>" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Siguiente</span>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             <?php else: ?>
-                                <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100" style="height: 200px;">
                                     <i class="fas fa-cog fa-3x text-muted"></i>
                                 </div>
                             <?php endif; ?>
@@ -285,14 +332,31 @@ unset($_SESSION['mensaje']);
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <?php if(!empty($p['imagen'])): ?>
-                                    <div class="col-md-4">
-                                        <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" 
-                                             alt="<?= htmlspecialchars($p['nombre']) ?>" 
-                                             class="img-fluid rounded">
+                                    <div class="col-md-5">
+                                        <!-- Carrusel en Modal también -->
+                                        <?php if(count($imagenes) > 0): ?>
+                                            <div id="carouselModal<?= $p['id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    <?php foreach($imagenes as $index => $img): ?>
+                                                        <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                                            <img src="uploads/<?= htmlspecialchars($img) ?>" class="d-block w-100 rounded" alt="<?= htmlspecialchars($p['nombre']) ?>">
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                                <?php if(count($imagenes) > 1): ?>
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselModal<?= $p['id'] ?>" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Anterior</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselModal<?= $p['id'] ?>" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Siguiente</span>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
-                                    <?php endif; ?>
-                                    <div class="<?= !empty($p['imagen']) ? 'col-md-8' : 'col-12' ?>">
+                                    <div class="col-md-7">
                                         <p><strong>Marca:</strong> <?= htmlspecialchars($p['marca_nombre']) ?></p>
                                         <p><strong>Precio:</strong> $<?= number_format($p['precio'],2) ?></p>
                                         <p><strong>Stock disponible:</strong> <?= intval($p['cantidad']) ?></p>
@@ -314,6 +378,41 @@ unset($_SESSION['mensaje']);
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal Lightbox (Imagen Grande) -->
+                <?php if(count($imagenes) > 0): ?>
+                <div class="modal fade" id="lightboxModal<?= $p['id'] ?>" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- modal-xl para que sea grande -->
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header border-0">
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0">
+                                <div id="carouselLightbox<?= $p['id'] ?>" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <?php foreach($imagenes as $index => $img): ?>
+                                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                                <img src="uploads/<?= htmlspecialchars($img) ?>" class="d-block w-100" style="max-height: 80vh; object-fit: contain;" alt="<?= htmlspecialchars($p['nombre']) ?>">
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <?php if(count($imagenes) > 1): ?>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselLightbox<?= $p['id'] ?>" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Anterior</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselLightbox<?= $p['id'] ?>" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Siguiente</span>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
