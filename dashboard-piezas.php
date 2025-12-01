@@ -134,11 +134,6 @@ unset($_SESSION['mensaje']);
                             <i class="fas fa-cogs me-1"></i>Piezas
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="blog.php">
-                            <i class="fas fa-blog me-1"></i>Blog
-                        </a>
-                    </li>
                 </ul>
                 
                 <div class="navbar-nav">
@@ -199,7 +194,7 @@ unset($_SESSION['mensaje']);
         </div>
         <?php endif; ?>
 
-        <!-- Filtros -->
+        <!-- Filtros  -->
         <div class="filter-section">
             <div class="row">
                 <div class="col-md-6">

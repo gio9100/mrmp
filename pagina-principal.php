@@ -76,11 +76,6 @@ while($m = $marcas_res->fetch_assoc()){
                             <i class="fas fa-cogs me-1"></i>Piezas
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="blog.php">
-                            <i class="fas fa-blog me-1"></i>Blog
-                        </a>
-                    </li>
                 </ul>
                 <div class="navbar-nav">
                     <?php if(isset($_SESSION['usuario_id'])): ?>
