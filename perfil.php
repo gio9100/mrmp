@@ -6,162 +6,106 @@ session_start();
 require_once "conexion.php";
 
 // VERIFICAMOS SI EL USUARIO HA INICIADO SESIÓN
-// SI NO HA INICIADO SESIÓN, LO ENVIAMOS A LA PÁGINA DE LOGIN
 if(!isset($_SESSION['usuario_id'])) {
-    // REDIRIGIMOS AL USUARIO A LA PÁGINA DE INICIO DE SESIÓN
     header("Location: inicio_secion.php");
-    // TERMINAMOS LA EJECUCIÓN DEL SCRIPT
     exit;
 }
 
-// OBTENEMOS EL ID DEL USUARIO DESDE LA SESIÓN
 $usuario_id = $_SESSION['usuario_id'];
 
-// PREPARAMOS LA CONSULTA SQL PARA OBTENER LOS DATOS DEL USUARIO
-$sql_obtener_usuario = "SELECT * FROM usuarios WHERE id = ?";
+// OBTENEMOS LOS DATOS DEL USUARIO
+$stmt = $conexion->prepare("SELECT * FROM usuarios WHERE id = ?");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$datos_usuario = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-// PREPARAMOS LA CONSULTA USANDO LA CONEXIÓN A LA BASE DE DATOS
-$declaracion = $conexion->prepare($sql_obtener_usuario);
-
-// VINCULAMOS EL PARÁMETRO (LA "i" SIGNIFICA QUE ES UN NÚMERO ENTERO)
-$declaracion->bind_param("i", $usuario_id);
-
-// EJECUTAMOS LA CONSULTA
-$declaracion->execute();
-
-// OBTENEMOS EL RESULTADO DE LA CONSULTA
-$resultado_consulta = $declaracion->get_result();
-
-// OBTENEMOS LOS DATOS DEL USUARIO COMO UN ARREGLO
-$datos_usuario = $resultado_consulta->fetch_assoc();
-
-// CERRAMOS LA DECLARACIÓN PARA LIBERAR RECURSOS
-$declaracion->close();
-
-// VERIFICAMOS SI REALMENTE SE ENCONTRÓ EL USUARIO EN LA BASE DE DATOS
 if(!$datos_usuario) {
-    // SI NO SE ENCONTRÓ EL USUARIO, DESTRUIMOS LA SESIÓN
     session_destroy();
-    // Y REDIRIGIMOS AL LOGIN
     header("Location: inicio_secion.php");
     exit;
 }
 
 // =============================================================================
-// PROCESAMOS LA SUBIDA DE LA FOTO DE PERFIL CUANDO EL USUARIO ENVÍA EL FORMULARIO
+// LÓGICA PARA SUBIR/ELIMINAR FOTO DE PERFIL
 // =============================================================================
-
-// VERIFICAMOS SI SE ENVIÓ UN FORMULARIO Y SI SE SUBIÓ UN ARCHIVO DE FOTO
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto_perfil'])) {
+    $carpeta_destino = "uploads/perfiles/";
+    if(!is_dir($carpeta_destino)) mkdir($carpeta_destino, 0777, true);
     
-    // DEFINIMOS LA CARPETA DONDE GUARDAREMOS LAS FOTOS DE PERFIL
-    $carpeta_destino_fotos = "uploads/perfiles/";
+    $tipo = strtolower(pathinfo($_FILES["foto_perfil"]["name"], PATHINFO_EXTENSION));
+    $nombre_final = "perfil_" . $usuario_id . "_" . time() . "." . $tipo;
+    $ruta_final = $carpeta_destino . $nombre_final;
     
-    // VERIFICAMOS SI LA CARPETA EXISTE, SI NO EXISTE LA CREAMOS
-    if(!is_dir($carpeta_destino_fotos)) {
-        // CREAMOS LA CARPETA CON PERMISOS DE LECTURA Y ESCRITURA
-        mkdir($carpeta_destino_fotos, 0777, true);
-    }
-    
-    // OBTENEMOS LA EXTENSIÓN DEL ARCHIVO SUBIDO (jpg, png, etc.)
-    $tipo_archivo = strtolower(pathinfo($_FILES["foto_perfil"]["name"], PATHINFO_EXTENSION));
-    
-    // CREAMOS UN NOMBRE ÚNICO PARA EL ARCHIVO PARA EVITAR DUPLICADOS
-    $nombre_archivo_final = "perfil_" . $usuario_id . "_" . time() . "." . $tipo_archivo;
-    
-    // DEFINIMOS LA RUTA COMPLETA DONDE SE GUARDARÁ EL ARCHIVO
-    $ruta_archivo_final = $carpeta_destino_fotos . $nombre_archivo_final;
-    
-    // VERIFICAMOS QUE EL ARCHIVO SEA UNA IMAGEN VÁLIDA
-    $es_imagen_valida = getimagesize($_FILES["foto_perfil"]["tmp_name"]);
-    
-    // SI ES UNA IMAGEN VÁLIDA, PROCEDEMOS CON LAS VALIDACIONES
-    if($es_imagen_valida !== false) {
-        // VERIFICAMOS EL TAMAÑO DEL ARCHIVO (MÁXIMO 2MB)
-        if($_FILES["foto_perfil"]["size"] > 2000000) {
-            $mensaje_error_foto = "❌ La imagen es demasiado grande. Máximo 2MB permitido.";
-        } 
-        // VERIFICAMOS QUE SEA UN FORMATO DE IMAGEN PERMITIDO
-        else if($tipo_archivo != "jpg" && $tipo_archivo != "png" && $tipo_archivo != "jpeg" && $tipo_archivo != "gif") {
-            $mensaje_error_foto = "❌ Solo se permiten archivos JPG, JPEG, PNG y GIF.";
-        } 
-        // SI PASÓ TODAS LAS VALIDACIONES, PROCEDEMOS A SUBIR LA IMAGEN
-        else {
-            // PRIMERO INTENTAMOS SUBIR LA NUEVA IMAGEN
-            if(move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $ruta_archivo_final)) {
-                // SI LA SUBIDA FUE EXITOSA, ELIMINAMOS LA FOTO ANTERIOR SI EXISTE
-                if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_destino_fotos . $datos_usuario['imagen_perfil'])) {
-                    // ELIMINAMOS LA FOTO ANTERIOR DEL SERVIDOR
-                    unlink($carpeta_destino_fotos . $datos_usuario['imagen_perfil']);
+    $check = getimagesize($_FILES["foto_perfil"]["tmp_name"]);
+    if($check !== false) {
+        if($_FILES["foto_perfil"]["size"] <= 2000000 && in_array($tipo, ['jpg','jpeg','png','gif'])) {
+            if(move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $ruta_final)) {
+                if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_destino . $datos_usuario['imagen_perfil'])) {
+                    unlink($carpeta_destino . $datos_usuario['imagen_perfil']);
                 }
-                
-                // ACTUALIZAMOS LA BASE DE DATOS CON LA NUEVA FOTO
-                $sql_actualizar_foto = "UPDATE usuarios SET imagen_perfil = ? WHERE id = ?";
-                $declaracion_actualizar = $conexion->prepare($sql_actualizar_foto);
-                $declaracion_actualizar->bind_param("si", $nombre_archivo_final, $usuario_id);
-                
-                // EJECUTAMOS LA ACTUALIZACIÓN
-                if($declaracion_actualizar->execute()) {
-                    $mensaje_exito_foto = "✅ Foto de perfil actualizada correctamente.";
-                    // ACTUALIZAMOS LA VARIABLE LOCAL CON EL NUEVO NOMBRE DE ARCHIVO
-                    $datos_usuario['imagen_perfil'] = $nombre_archivo_final;
-                    // ACTUALIZAMOS TAMBIÉN EN LA SESIÓN POR SI ACASO
-                    $_SESSION['imagen_perfil'] = $nombre_archivo_final;
-                } else {
-                    $mensaje_error_foto = "❌ Error al actualizar en la base de datos.";
-                    // SI HUBO ERROR EN LA BD, ELIMINAMOS LA IMAGEN QUE ACABAMOS DE SUBIR
-                    if(file_exists($ruta_archivo_final)) {
-                        unlink($ruta_archivo_final);
-                    }
+                $stmt = $conexion->prepare("UPDATE usuarios SET imagen_perfil = ? WHERE id = ?");
+                $stmt->bind_param("si", $nombre_final, $usuario_id);
+                if($stmt->execute()) {
+                    $mensaje_exito_foto = "✅ Foto actualizada.";
+                    $datos_usuario['imagen_perfil'] = $nombre_final;
+                    $_SESSION['imagen_perfil'] = $nombre_final;
                 }
-                // CERRAMOS LA DECLARACIÓN DE ACTUALIZACIÓN
-                $declaracion_actualizar->close();
+                $stmt->close();
             } else {
-                $mensaje_error_foto = "❌ Error al subir la imagen al servidor.";
+                $mensaje_error_foto = "❌ Error al subir archivo.";
             }
+        } else {
+            $mensaje_error_foto = "❌ Archivo no válido (Max 2MB, JPG/PNG/GIF).";
         }
     } else {
-        $mensaje_error_foto = "❌ El archivo no es una imagen válida.";
+        $mensaje_error_foto = "❌ El archivo no es una imagen.";
     }
 }
 
-// =============================================================================
-// PROCESAMOS LA ELIMINACIÓN DE LA FOTO DE PERFIL (SOLO CUANDO SE HACE CLICK EN ELIMINAR)
-// =============================================================================
-
-// VERIFICAMOS SI EL USUARIO QUIERE ELIMINAR SU FOTO DE PERFIL (SOLO POR GET)
 if(isset($_GET['eliminar_foto']) && $_GET['eliminar_foto'] == '1') {
-    $carpeta_fotos = "uploads/perfiles/";
-    
-    // VERIFICAMOS SI EL USUARIO TIENE FOTO Y SI EL ARCHIVO EXISTE FÍSICAMENTE
-    if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_fotos . $datos_usuario['imagen_perfil'])) {
-        // ELIMINAMOS EL ARCHIVO FÍSICO DEL SERVIDOR
-        unlink($carpeta_fotos . $datos_usuario['imagen_perfil']);
+    if(!empty($datos_usuario['imagen_perfil'])) {
+        $ruta = "uploads/perfiles/" . $datos_usuario['imagen_perfil'];
+        if(file_exists($ruta)) unlink($ruta);
         
-        // ACTUALIZAMOS LA BASE DE DATOS PARA QUITAR LA REFERENCIA A LA FOTO
-        $sql_eliminar_foto = "UPDATE usuarios SET imagen_perfil = NULL WHERE id = ?";
-        $declaracion_eliminar = $conexion->prepare($sql_eliminar_foto);
-        $declaracion_eliminar->bind_param("i", $usuario_id);
-        
-        if($declaracion_eliminar->execute()) {
-            $mensaje_exito_foto = "✅ Foto de perfil eliminada correctamente.";
-            // ACTUALIZAMOS LA VARIABLE LOCAL
-            $datos_usuario['imagen_perfil'] = null;
-            // ACTUALIZAMOS LA SESIÓN
-            $_SESSION['imagen_perfil'] = null;
-        } else {
-            $mensaje_error_foto = "❌ Error al eliminar la foto de la base de datos.";
-        }
-        
-        $declaracion_eliminar->close();
-    } else {
-        $mensaje_error_foto = "❌ No se encontró la foto de perfil para eliminar.";
+        $conexion->query("UPDATE usuarios SET imagen_perfil = NULL WHERE id = $usuario_id");
+        $datos_usuario['imagen_perfil'] = null;
+        $_SESSION['imagen_perfil'] = null;
+        $mensaje_exito_foto = "✅ Foto eliminada.";
     }
-    
-    // REDIRIGIMOS PARA EVITAR REENVÍOS DEL FORMULARIO
     header("Location: perfil.php");
     exit;
 }
+
+// =============================================================================
+// OBTENER PEDIDOS
+// =============================================================================
+$pedidos = [];
+$stmt = $conexion->prepare("SELECT * FROM pedidos WHERE usuario_id = ? ORDER BY fecha DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$res_pedidos = $stmt->get_result();
+while($pedido = $res_pedidos->fetch_assoc()){
+    // Obtener detalles del pedido
+    $stmt_det = $conexion->prepare("SELECT dp.*, p.nombre, p.imagen FROM detalle_pedidos dp JOIN piezas p ON dp.pieza_id = p.id WHERE dp.pedido_id = ?");
+    $stmt_det->bind_param("i", $pedido['id']);
+    $stmt_det->execute();
+    $pedido['detalles'] = $stmt_det->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt_det->close();
+    $pedidos[] = $pedido;
+}
+$stmt->close();
+
+// =============================================================================
+// OBTENER LISTA DE DESEOS
+// =============================================================================
+$wishlist = [];
+$stmt = $conexion->prepare("SELECT w.id as wishlist_id, p.*, m.nombre as marca_nombre FROM wishlist w JOIN piezas p ON w.pieza_id = p.id LEFT JOIN marcas m ON p.marca_id = m.id WHERE w.usuario_id = ? ORDER BY w.fecha_agregado DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$wishlist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -169,262 +113,284 @@ if(isset($_GET['eliminar_foto']) && $_GET['eliminar_foto'] == '1') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - Mexican Racing Motor Parts</title>
-    
-    <!-- INCLUIMOS BOOTSTRAP PARA LOS ESTILOS Y COMPONENTES -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- INCLUIMOS FONT AWESOME PARA LOS ÍCONOS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- INCLUIMOS NUESTROS ARCHIVOS CSS PERSONALIZADOS -->
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="pagina-principal.css">
     <link rel="stylesheet" href="perfil.css">
+    <style>
+        .nav-tabs .nav-link { color: #495057; }
+        .nav-tabs .nav-link.active { font-weight: bold; color: #000; }
+        .badge-pendiente { background-color: #ffc107; color: #000; }
+        .badge-confirmado { background-color: #0dcaf0; color: #000; }
+        .badge-enviado { background-color: #198754; }
+        .badge-cancelado { background-color: #dc3545; }
+        .wishlist-card img { height: 150px; object-fit: cover; }
+    </style>
 </head>
 <body>
-    <!-- ============================================================================= -->
-    <!-- ENCABEZADO DE LA PÁGINA - IGUAL AL DE PAGINA-PRINCIPAL.PHP -->
-    <!-- ============================================================================= -->
-    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <!-- LOGO Y NOMBRE DE LA EMPRESA -->
             <a class="navbar-brand" href="pagina-principal.php">
                 <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
-                <span class="brand-text">Mexican Racing Motor Parts</span>
             </a>
-            
-            <!-- BOTÓN PARA MENÚ EN DISPOSITIVOS MÓVILES -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
-            <!-- MENÚ DE NAVEGACIÓN -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <!-- ENLACE A LA PÁGINA DE PIEZAS -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard-piezas.php">
-                            <i class="fas fa-cogs me-1"></i>Piezas
-                        </a>
-                    </li>
-                    <!-- ENLACE A LA PÁGINA DEL BLOG -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="blog.php">
-                            <i class="fas fa-blog me-1"></i>Blog
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard-piezas.php"><i class="fas fa-cogs me-1"></i>Piezas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.php"><i class="fas fa-blog me-1"></i>Blog</a></li>
                 </ul>
-                
-                <!-- MENÚ DEL LADO DERECHO (USUARIO) -->
                 <div class="navbar-nav">
-                    <?php if(isset($_SESSION['usuario_id'])): ?>
-                        <!-- SI EL USUARIO ESTÁ LOGUEADO, MOSTRAMOS SU MENÚ -->
-                        <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i>Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <!-- ENLACE AL PERFIL (ACTUAL) -->
-                                <li><a class="dropdown-item active" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
-                                <!-- ENLACE AL CARRITO CON CONTADOR -->
-                                <li><a class="dropdown-item" href="carrito.php"><i class="fas fa-shopping-cart me-2"></i>Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a></li>
-                                <!-- SEPARADOR -->
-                                <li><hr class="dropdown-divider"></li>
-                                <!-- OPCIÓN PARA CERRAR SESIÓN -->
-                                <li><a class="dropdown-item" href="pagina-principal.php?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
-                            </ul>
-                        </div>
-                    <?php else: ?>
-                        <!-- SI EL USUARIO NO ESTÁ LOGUEADO, MOSTRAMOS OPCIONES DE LOGIN -->
-                        <a class="nav-link" href="inicio_secion.php">
-                            <i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
                         </a>
-                        <a class="nav-link" href="register.php">
-                            <i class="fas fa-user-plus me-1"></i>Registrarse
-                        </a>
-                    <?php endif; ?>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="carrito.php"><i class="fas fa-shopping-cart me-2"></i>Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="pagina-principal.php?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- ============================================================================= -->
-    <!-- CONTENIDO PRINCIPAL DE LA PÁGINA DE PERFIL -->
-    <!-- ============================================================================= -->
-    <div class="container contenedor-perfil">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card tarjeta-perfil">
-                    <!-- ENCABEZADO DE LA TARJETA DE PERFIL -->
-                    <div class="encabezado-perfil">
-                        <div class="d-flex flex-column align-items-center">
-                            <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
-                                <!-- SI EL USUARIO TIENE FOTO DE PERFIL, LA MOSTRAMOS - USANDO imagen_perfil -->
-                                <img src="uploads/perfiles/<?= htmlspecialchars($datos_usuario['imagen_perfil']) ?>" 
-                                     alt="Foto de perfil" class="foto-perfil">
-                            <?php else: ?>
-                                <!-- SI NO TIENE FOTO, MOSTRAMOS UN AVATAR POR DEFECTO -->
-                                <div class="foto-perfil avatar-sin-foto d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-user fa-4x text-muted"></i>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <!-- Sidebar Perfil -->
+                <div class="card text-center p-3 tarjeta-perfil">
+                    <div class="mb-3">
+                        <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
+                            <img src="uploads/perfiles/<?= htmlspecialchars($datos_usuario['imagen_perfil']) ?>" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        <?php else: ?>
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-4x text-white"></i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <h4 class="fw-bold text-white"><?= htmlspecialchars($datos_usuario['nombre']) ?></h4>
+                    <p class="fw-bold text-white">Miembro desde <?= date('M Y', strtotime($datos_usuario['fecha_creacion'])) ?></p>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-4" id="perfilTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button" role="tab"><i class="fas fa-id-card me-2"></i>Mis Datos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pedidos-tab" data-bs-toggle="tab" data-bs-target="#pedidos" type="button" role="tab"><i class="fas fa-box-open me-2"></i>Mis Pedidos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="wishlist-tab" data-bs-toggle="tab" data-bs-target="#wishlist" type="button" role="tab"><i class="fas fa-heart me-2"></i>Lista de Deseos</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="perfilTabsContent">
+                    
+                    <!-- Tab: Mis Datos -->
+                    <div class="tab-pane fade show active" id="datos" role="tabpanel">
+                        <div class="card informacion-perfil">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4 text-white">Información Personal</h5>
+                                
+                                <?php if(isset($mensaje_exito_foto)): ?>
+                                    <div class="alert alert-success"><?= $mensaje_exito_foto ?></div>
+                                <?php endif; ?>
+                                <?php if(isset($mensaje_error_foto)): ?>
+                                    <div class="alert alert-danger"><?= $mensaje_error_foto ?></div>
+                                <?php endif; ?>
+
+                                <form method="POST" enctype="multipart/form-data" class="mb-4">
+                                    <div class="mb-3">
+                                        <label class="form-label text-white">Cambiar Foto de Perfil</label>
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" name="foto_perfil" accept="image/*">
+                                            <button class="btn btn-outline-primary" type="submit">Actualizar</button>
+                                        </div>
+                                        <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
+                                            <div class="mt-2">
+                                                <a href="?eliminar_foto=1" class="text-danger small" onclick="return confirm('¿Borrar foto?')">Eliminar foto actual</a>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </form>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="fw-bold text-white">Nombre:</label>
+                                        <p class="fw-bold text-white fs-5"><?= htmlspecialchars($datos_usuario['nombre']) ?></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fw-bold text-white">Email:</label>
+                                        <p class="fw-bold text-white fs-5"><?= htmlspecialchars($datos_usuario['correo']) ?></p>
+                                    </div>
                                 </div>
-                            <?php endif; ?>
-                            <!-- NOMBRE DEL USUARIO -->
-                            <h3 class="mt-3 nombre-usuario"><?= htmlspecialchars($datos_usuario['nombre']) ?></h3>
-                            <!-- FECHA DE REGISTRO DEL USUARIO -->
-                            <p class="mb-0 texto-miembro-desde">Miembro desde: <?= date('d/m/Y', strtotime($datos_usuario['fecha_creacion'])) ?></p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- INFORMACIÓN DEL PERFIL -->
-                    <div class="informacion-perfil">
-                        <!-- ============================================================================= -->
-                        <!-- MOSTRAMOS MENSAJES DE ÉXITO O ERROR -->
-                        <!-- ============================================================================= -->
-                        
-                        <?php if(isset($mensaje_exito_foto)): ?>
-                            <!-- MENSAJE DE ÉXITO CUANDO LA FOTO SE ACTUALIZA CORRECTAMENTE -->
-                            <div class="alert alert-success alert-dismissible fade show">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <?= $mensaje_exito_foto ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <!-- Tab: Mis Pedidos -->
+                    <div class="tab-pane fade" id="pedidos" role="tabpanel">
+                        <?php if(empty($pedidos)): ?>
+                            <div class="alert alert-info">No has realizado ningún pedido aún.</div>
+                        <?php else: ?>
+                            <div class="accordion" id="accordionPedidos">
+                                <?php foreach($pedidos as $index => $pedido): 
+                                    $estado_clase = 'badge-pendiente';
+                                    if($pedido['estado'] == 'confirmado') $estado_clase = 'badge-confirmado';
+                                    if($pedido['estado'] == 'enviado') $estado_clase = 'badge-enviado';
+                                    if($pedido['estado'] == 'cancelado') $estado_clase = 'badge-cancelado';
+                                ?>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button <?= $index > 0 ? 'collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $pedido['id'] ?>">
+                                            <div class="d-flex justify-content-between w-100 me-3 align-items-center">
+                                                <span>Pedido #<?= $pedido['id'] ?> - <?= date('d/m/Y', strtotime($pedido['fecha'])) ?></span>
+                                                <span class="badge <?= $estado_clase ?>"><?= ucfirst($pedido['estado']) ?></span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $pedido['id'] ?>" class="accordion-collapse collapse <?= $index === 0 ? 'show' : '' ?>" data-bs-parent="#accordionPedidos">
+                                        <div class="accordion-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Total:</strong> $<?= number_format($pedido['total'], 2) ?></p>
+                                                    <p class="mb-1"><strong>Pago:</strong> <?= ucfirst($pedido['metodo_pago']) ?></p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?php if($pedido['estado'] == 'enviado'): ?>
+                                                        <div class="alert alert-success py-2 mb-2">
+                                                            <i class="fas fa-shipping-fast me-2"></i>
+                                                            <strong>Enviado por:</strong> <?= htmlspecialchars($pedido['paqueteria']) ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <p class="mb-1"><strong>Dirección:</strong> <?= htmlspecialchars($pedido['direccion']) ?>, <?= htmlspecialchars($pedido['ciudad']) ?></p>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6 class="border-bottom pb-2">Productos</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm align-middle">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th>Cant.</th>
+                                                            <th>Precio</th>
+                                                            <th class="text-end">Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach($pedido['detalles'] as $detalle): ?>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <?php if($detalle['imagen']): ?>
+                                                                        <img src="uploads/<?= htmlspecialchars($detalle['imagen']) ?>" width="40" class="me-2 rounded">
+                                                                    <?php endif; ?>
+                                                                    <?= htmlspecialchars($detalle['nombre']) ?>
+                                                                </div>
+                                                            </td>
+                                                            <td><?= $detalle['cantidad'] ?></td>
+                                                            <td>$<?= number_format($detalle['precio_unitario'], 2) ?></td>
+                                                            <td class="text-end">$<?= number_format($detalle['cantidad'] * $detalle['precio_unitario'], 2) ?></td>
+                                                        </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-
-                        <?php if(isset($mensaje_error_foto)): ?>
-                            <!-- MENSAJE DE ERROR CUANDO HAY PROBLEMAS CON LA FOTO -->
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                <?= $mensaje_error_foto ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- ============================================================================= -->
-                        <!-- FORMULARIO PARA SUBIR FOTO DE PERFIL -->
-                        <!-- ============================================================================= -->
-                        <div class="item-informacion">
-                            <div class="etiqueta-informacion">Foto de Perfil</div>
-                            <!-- FORMULARIO CON ENCTYPE PARA PODER SUBIR ARCHIVOS -->
-                            <form method="POST" enctype="multipart/form-data" class="d-flex align-items-center gap-3">
-                                <div class="flex-grow-1">
-                                    <!-- INPUT PARA SELECCIONAR ARCHIVO -->
-                                    <input type="file" class="form-control" name="foto_perfil" accept="image/*" required>
-                                    <!-- TEXTO DE AYUDA SOBRE LOS FORMATOS PERMITIDOS -->
-                                    <div class="form-text">Formatos permitidos: JPG, PNG, GIF. Máximo 2MB</div>
-                                </div>
-                                <!-- BOTÓN PARA SUBIR LA FOTO -->
-                                <button type="submit" class="btn btn-subir-foto">
-                                    <i class="fas fa-upload me-2"></i>Subir Foto
-                                </button>
-                            </form>
-                            
-                            <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
-                                <!-- SI EL USUARIO TIENE FOTO, MOSTRAMOS OPCIÓN PARA ELIMINARLA - USANDO imagen_perfil -->
-                                <div class="acciones-foto">
-                                    <a href="perfil.php?eliminar_foto=1" class="btn btn-outline-danger btn-sm" 
-                                       onclick="return confirm('¿Estás seguro de que quieres eliminar tu foto de perfil?')">
-                                        <i class="fas fa-trash me-1"></i>Eliminar Foto Actual
-                                    </a>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- ============================================================================= -->
-                        <!-- INFORMACIÓN PERSONAL DEL USUARIO -->
-                        <!-- ============================================================================= -->
-                        
-                        <!-- NOMBRE COMPLETO -->
-                        <div class="item-informacion">
-                            <div class="etiqueta-informacion">Nombre Completo</div>
-                            <div class="valor-informacion"><?= htmlspecialchars($datos_usuario['nombre']) ?></div>
-                        </div>
-
-                        <!-- CORREO ELECTRÓNICO -->
-                        <div class="item-informacion">
-                            <div class="etiqueta-informacion">Correo Electrónico</div>
-                            <div class="valor-informacion"><?= htmlspecialchars($datos_usuario['correo']) ?></div>
-                        </div>
-
-                        <!-- FECHA DE REGISTRO -->
-                        <div class="item-informacion">
-                            <div class="etiqueta-informacion">Fecha de Registro</div>
-                            <div class="valor-informacion"><?= date('d/m/Y H:i', strtotime($datos_usuario['fecha_creacion'])) ?></div>
-                        </div>
-
-                        <!-- ============================================================================= -->
-                        <!-- BOTONES DE ACCIÓN -->
-                        <!-- ============================================================================= -->
-                        <div class="d-flex gap-2 mt-4">
-                            <!-- BOTÓN PARA VOLVER AL INICIO -->
-                            <a href="pagina-principal.php" class="btn btn-outline-primary">
-                                <i class="fas fa-home me-2"></i>Volver al Inicio
-                            </a>
-                            <!-- BOTÓN PARA VER LAS PIEZAS -->
-                            <a href="dashboard-piezas.php" class="btn btn-primary">
-                                <i class="fas fa-cogs me-2"></i>Ver Piezas
-                            </a>
-                        </div>
                     </div>
+
+                    <!-- Tab: Lista de Deseos -->
+                    <div class="tab-pane fade" id="wishlist" role="tabpanel">
+                        <?php if(empty($wishlist)): ?>
+                            <div class="text-center py-5">
+                                <i class="far fa-heart fa-3x text-muted mb-3"></i>
+                                <h5>Tu lista de deseos está vacía</h5>
+                                <a href="dashboard-piezas.php" class="btn btn-primary mt-3">Explorar Piezas</a>
+                            </div>
+                        <?php else: ?>
+                            <div class="row g-3">
+                                <?php foreach($wishlist as $item): ?>
+                                <div class="col-md-6 col-lg-4" id="wishlist-item-<?= $item['id'] ?>">
+                                    <div class="card h-100 wishlist-card">
+                                        <?php if($item['imagen']): ?>
+                                            <img src="uploads/<?= htmlspecialchars($item['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($item['nombre']) ?>">
+                                        <?php endif; ?>
+                                        <div class="card-body">
+                                            <h6 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h6>
+                                            <p class="text-muted small mb-2"><?= htmlspecialchars($item['marca_nombre']) ?></p>
+                                            <p class="fw-bold text-primary">$<?= number_format($item['precio'], 2) ?></p>
+                                            
+                                            <div class="d-grid gap-2">
+                                                <a href="dashboard-piezas.php?agregar=<?= $item['id'] ?>" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-cart-plus me-1"></i>Agregar
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger btn-remove-wishlist" data-id="<?= $item['id'] ?>">
+                                                    <i class="fas fa-trash me-1"></i>Eliminar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================================================= -->
-    <!-- PIE DE PÁGINA -->
-    <!-- ============================================================================= -->
+    <!-- Footer -->
     <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <!-- INFORMACIÓN DE LA EMPRESA -->
-                <div class="col-md-6">
-                    <h5>Mexican Racing Motor Parts</h5>
-                    <p class="mb-0">Tu aliado confiable en piezas automotrices de mayor desempeño</p>
-                </div>
-                <!-- REDES SOCIALES Y COPYRIGHT -->
-                <div class="col-md-6 text-md-end">
-                    <div class="enlaces-sociales">
-                        <a href="https://www.facebook.com/profile.php?id=61583404693123" target="_blank" class="text-white me-3">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" target="_blank" class="text-white me-3">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                    <p class="mt-2 mb-0">&copy; <?= date('Y') ?> Mexican Racing Motor Parts.</p>
-                </div>
-            </div>
+        <div class="container text-center">
+            <p class="mb-0">&copy; <?= date('Y') ?> Mexican Racing Motor Parts.</p>
         </div>
     </footer>
 
-    <!-- ============================================================================= -->
-    <!-- SCRIPTS JAVASCRIPT -->
-    <!-- ============================================================================= -->
-    
-    <!-- INCLUIMOS BOOTSTRAP JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- SCRIPT PERSONALIZADO PARA FUNCIONALIDADES EXTRA -->
     <script>
-        // ESTE SCRIPT SE EJECUTA CUANDO LA PÁGINA TERMINA DE CARGAR
         document.addEventListener('DOMContentLoaded', function() {
-            // OBTENEMOS EL INPUT DE SUBIR FOTO
-            const inputFoto = document.querySelector('input[name="foto_perfil"]');
-            
-            // AGREGAMOS UN EVENTO PARA CUANDO EL USUARIO SELECCIONE UNA IMAGEN
-            if(inputFoto) {
-                inputFoto.addEventListener('change', function(evento) {
-                    // OBTENEMOS EL ARCHIVO SELECCIONADO
-                    const archivo = evento.target.files[0];
+            // Eliminar de Wishlist
+            document.querySelectorAll('.btn-remove-wishlist').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if(!confirm('¿Eliminar de la lista de deseos?')) return;
                     
-                    // SI SE SELECCIONÓ UN ARCHIVO, MOSTRAMOS INFORMACIÓN EN CONSOLA
-                    if (archivo) {
-                        console.log('✅ Imagen seleccionada:', archivo.name);
-                        console.log('📏 Tamaño:', Math.round(archivo.size / 1024) + ' KB');
-                        console.log('📄 Tipo:', archivo.type);
-                    }
+                    const piezaId = this.getAttribute('data-id');
+                    const card = document.getElementById('wishlist-item-' + piezaId);
+                    
+                    fetch('wishlist_action.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: `action=remove&pieza_id=${piezaId}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            card.remove();
+                            // Recargar si está vacío
+                            if(document.querySelectorAll('.wishlist-card').length === 0) location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    });
                 });
-            }
+            });
         });
     </script>
 </body>

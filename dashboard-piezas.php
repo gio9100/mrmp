@@ -302,26 +302,20 @@ unset($_SESSION['mensaje']);
                                     Stock: <?= intval($p['cantidad']) ?>
                                 </span>
                             </div>
-                            <div class="product-actions">
-                                <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2 ver-desc" 
-                                        data-bs-toggle="modal" data-bs-target="#modalDesc<?= $p['id'] ?>">
-                                    <i class="fas fa-eye me-1"></i>Ver Detalles
-                                </button>
+                            <div class="d-flex gap-2 mb-3">
                                 <?php if(isset($_SESSION['usuario_id'])): ?>
-                                    <a href="?agregar=<?= intval($p['id']) ?>" 
-                                       class="btn btn-primary btn-sm w-100">
-                                        <i class="fas fa-cart-plus me-1"></i>Agregar al Carrito
+                                    <a href="?agregar=<?= intval($p['id']) ?>" class="btn btn-primary flex-grow-1">
+                                        <i class="fas fa-cart-plus me-1"></i>Agregar
                                     </a>
+                                    <button class="btn btn-outline-danger btn-wishlist" data-id="<?= $p['id'] ?>" title="Agregar a Lista de Deseos">
+                                        <i class="far fa-heart"></i>
+                                    </button>
                                 <?php else: ?>
-                                    <small class="text-muted d-block text-center">
-                                        <a href="inicio_secion.php" class="text-decoration-underline">Inicia sesión</a> para comprar
-                                    </small>
+                                    <a href="inicio_secion.php" class="btn btn-primary w-100">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Login para comprar
+                                    </a>
                                 <?php endif; ?>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Modal Descripción -->
                 <div class="modal fade" id="modalDesc<?= $p['id'] ?>" tabindex="-1">
                     <div class="modal-dialog modal-lg">
@@ -453,6 +447,39 @@ unset($_SESSION['mensaje']);
                     const bsAlert = new bootstrap.Alert(alert);
                     bsAlert.close();
                 }, 5000);
+            });
+
+            // Wishlist Functionality
+            const wishlistButtons = document.querySelectorAll('.btn-wishlist');
+            wishlistButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const piezaId = this.getAttribute('data-id');
+                    const icon = this.querySelector('i');
+                    
+                    // Animación simple
+                    icon.classList.remove('fas');
+                    icon.classList.add('far'); // Cambiar a outline temporalmente
+                    
+                    fetch('wishlist_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `action=add&pieza_id=${piezaId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status === 'success' || data.status === 'info') {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas'); // Volver a solid
+                            // Mostrar toast o alerta pequeña (opcional, por ahora solo alerta)
+                            alert(data.message); 
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
             });
         });
     </script>
