@@ -529,18 +529,21 @@ if(isset($_POST['actualizar_marca'])){
 <!-- 221: Si SÍ está logueado (Else del if principal) -->
 <?php else: ?>
 <!-- 222: Comentario: Panel principal -->
-<!-- Panel Admin -->
 <!-- 223: Header del panel -->
 <header>
 <!-- 224: Título del panel -->
 <h1>Panel de Administración MRMP</h1>
 <!-- 225: Botón de cerrar sesión -->
-<a href="dashboard-piezas.php">dashboard</a>
+<a href="gestionar_pedidos.php" style="color:#ff0000;">
+     Gestionar Pedidos
+</a> | 
+<a href="dashboard-piezas.php" style="color:#ff0000;">
+      Pagina de Piezas
+</a> | 
+
 <a href="?logout" style="color:#ff0000;">Cerrar sesión</a>
 <!-- 226: Cierre header -->
 </header>
-
-<!-- 227: Main del panel -->
 <main>
 <!-- 228: Si hay mensaje... -->
 <?php if($mensaje): ?>

@@ -1,0 +1,384 @@
+<?php
+// INICIAMOS LA SESIÓN PARA PODER USAR LOS DATOS DEL USUARIO GUARDADOS
+session_start();
+
+// INCLUIMOS EL ARCHIVO QUE NOS CONECTA A LA BASE DE DATOS
+require_once "conexion.php";
+
+// VERIFICAMOS SI EL USUARIO HA INICIADO SESIÓN
+if(!isset($_SESSION['usuario_id'])) {
+    header("Location: inicio_secion.php");
+    exit;
+}
+
+$usuario_id = $_SESSION['usuario_id'];
+
+// OBTENEMOS LOS DATOS DEL USUARIO
+$stmt = $conexion->prepare("SELECT * FROM usuarios WHERE id = ?");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$datos_usuario = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if(!$datos_usuario) {
+    session_destroy();
+    header("Location: inicio_secion.php");
+    exit;
+}
+
+// =============================================================================
+// LÓGICA PARA SUBIR/ELIMINAR FOTO DE PERFIL
+// =============================================================================
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto_perfil'])) {
+    $carpeta_destino = "uploads/perfiles/";
+    if(!is_dir($carpeta_destino)) mkdir($carpeta_destino, 0777, true);
+    
+    $tipo = strtolower(pathinfo($_FILES["foto_perfil"]["name"], PATHINFO_EXTENSION));
+    $nombre_final = "perfil_" . $usuario_id . "_" . time() . "." . $tipo;
+    $ruta_final = $carpeta_destino . $nombre_final;
+    
+    $check = getimagesize($_FILES["foto_perfil"]["tmp_name"]);
+    if($check !== false) {
+        if($_FILES["foto_perfil"]["size"] <= 2000000 && in_array($tipo, ['jpg','jpeg','png','gif'])) {
+            if(move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $ruta_final)) {
+                if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_destino . $datos_usuario['imagen_perfil'])) {
+                    unlink($carpeta_destino . $datos_usuario['imagen_perfil']);
+                }
+                $stmt = $conexion->prepare("UPDATE usuarios SET imagen_perfil = ? WHERE id = ?");
+                $stmt->bind_param("si", $nombre_final, $usuario_id);
+                if($stmt->execute()) {
+                    $mensaje_exito_foto = "✅ Foto actualizada.";
+                    $datos_usuario['imagen_perfil'] = $nombre_final;
+                    $_SESSION['imagen_perfil'] = $nombre_final;
+                }
+                $stmt->close();
+            } else {
+                $mensaje_error_foto = "❌ Error al subir archivo.";
+            }
+        } else {
+            $mensaje_error_foto = "❌ Archivo no válido (Max 2MB, JPG/PNG/GIF).";
+        }
+    } else {
+        $mensaje_error_foto = "❌ El archivo no es una imagen.";
+    }
+}
+
+if(isset($_GET['eliminar_foto']) && $_GET['eliminar_foto'] == '1') {
+    if(!empty($datos_usuario['imagen_perfil'])) {
+        $ruta = "uploads/perfiles/" . $datos_usuario['imagen_perfil'];
+        if(file_exists($ruta)) unlink($ruta);
+        
+        $conexion->query("UPDATE usuarios SET imagen_perfil = NULL WHERE id = $usuario_id");
+        $datos_usuario['imagen_perfil'] = null;
+        $_SESSION['imagen_perfil'] = null;
+        $mensaje_exito_foto = "✅ Foto eliminada.";
+    }
+    header("Location: perfil.php");
+    exit;
+}
+
+// =============================================================================
+// OBTENER PEDIDOS
+// =============================================================================
+$pedidos = [];
+$stmt = $conexion->prepare("SELECT * FROM pedidos WHERE usuario_id = ? ORDER BY fecha DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$res_pedidos = $stmt->get_result();
+while($pedido = $res_pedidos->fetch_assoc()){
+    // Obtener detalles del pedido
+    $stmt_det = $conexion->prepare("SELECT dp.*, p.nombre, p.imagen FROM detalle_pedidos dp JOIN piezas p ON dp.pieza_id = p.id WHERE dp.pedido_id = ?");
+    $stmt_det->bind_param("i", $pedido['id']);
+    $stmt_det->execute();
+    $pedido['detalles'] = $stmt_det->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt_det->close();
+    $pedidos[] = $pedido;
+}
+$stmt->close();
+
+// =============================================================================
+// OBTENER LISTA DE DESEOS
+// =============================================================================
+$wishlist = [];
+$stmt = $conexion->prepare("SELECT w.id as wishlist_id, p.*, m.nombre as marca_nombre FROM wishlist w JOIN piezas p ON w.pieza_id = p.id LEFT JOIN marcas m ON p.marca_id = m.id WHERE w.usuario_id = ? ORDER BY w.fecha_agregado DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$wishlist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Mexican Racing Motor Parts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="pagina-principal.css">
+    <link rel="stylesheet" href="perfil.css">
+    <style>
+        .nav-tabs .nav-link { color: #495057; }
+        .nav-tabs .nav-link.active { font-weight: bold; color: #000; }
+        .badge-pendiente { background-color: #ffc107; color: #000; }
+        .badge-confirmado { background-color: #0dcaf0; color: #000; }
+        .badge-enviado { background-color: #198754; }
+        .badge-cancelado { background-color: #dc3545; }
+        .wishlist-card img { height: 150px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="pagina-principal.php">
+                <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="dashboard-piezas.php"><i class="fas fa-cogs me-1"></i>Piezas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.php"><i class="fas fa-blog me-1"></i>Blog</a></li>
+                </ul>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="carrito.php"><i class="fas fa-shopping-cart me-2"></i>Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="pagina-principal.php?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                        </ul>
+                            <img src="uploads/perfiles/<?= htmlspecialchars($datos_usuario['imagen_perfil']) ?>" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        <?php else: ?>
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-4x text-white"></i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <h4 class="fw-bold text-white"><?= htmlspecialchars($datos_usuario['nombre']) ?></h4>
+                    <p class="fw-bold text-white">Miembro desde <?= date('M Y', strtotime($datos_usuario['fecha_creacion'])) ?></p>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-4" id="perfilTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button" role="tab"><i class="fas fa-id-card me-2"></i>Mis Datos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pedidos-tab" data-bs-toggle="tab" data-bs-target="#pedidos" type="button" role="tab"><i class="fas fa-box-open me-2"></i>Mis Pedidos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="wishlist-tab" data-bs-toggle="tab" data-bs-target="#wishlist" type="button" role="tab"><i class="fas fa-heart me-2"></i>Lista de Deseos</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="perfilTabsContent">
+                    
+                    <!-- Tab: Mis Datos -->
+                    <div class="tab-pane fade show active" id="datos" role="tabpanel">
+                        <div class="card informacion-perfil">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4 text-white">Información Personal</h5>
+                                
+                                <?php if(isset($mensaje_exito_foto)): ?>
+                                    <div class="alert alert-success"><?= $mensaje_exito_foto ?></div>
+                                <?php endif; ?>
+                                <?php if(isset($mensaje_error_foto)): ?>
+                                    <div class="alert alert-danger"><?= $mensaje_error_foto ?></div>
+                                <?php endif; ?>
+
+                                <form method="POST" enctype="multipart/form-data" class="mb-4">
+                                    <div class="mb-3">
+                                        <label class="form-label text-white">Cambiar Foto de Perfil</label>
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" name="foto_perfil" accept="image/*">
+                                            <button class="btn btn-outline-primary" type="submit">Actualizar</button>
+                                        </div>
+                                        <?php if(!empty($datos_usuario['imagen_perfil'])): ?>
+                                            <div class="mt-2">
+                                                <a href="?eliminar_foto=1" class="text-danger small" onclick="return confirm('¿Borrar foto?')">Eliminar foto actual</a>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </form>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="fw-bold text-white">Nombre:</label>
+                                        <p class="fw-bold text-white fs-5"><?= htmlspecialchars($datos_usuario['nombre']) ?></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fw-bold text-white">Email:</label>
+                                        <p class="fw-bold text-white fs-5"><?= htmlspecialchars($datos_usuario['correo']) ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Mis Pedidos -->
+                    <div class="tab-pane fade" id="pedidos" role="tabpanel">
+                        <?php if(empty($pedidos)): ?>
+                            <div class="alert alert-info">No has realizado ningún pedido aún.</div>
+                        <?php else: ?>
+                            <div class="accordion" id="accordionPedidos">
+                                <?php foreach($pedidos as $index => $pedido): 
+                                    $estado_clase = 'badge-pendiente';
+                                    if($pedido['estado'] == 'confirmado') $estado_clase = 'badge-confirmado';
+                                    if($pedido['estado'] == 'enviado') $estado_clase = 'badge-enviado';
+                                    if($pedido['estado'] == 'cancelado') $estado_clase = 'badge-cancelado';
+                                ?>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button <?= $index > 0 ? 'collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $pedido['id'] ?>">
+                                            <div class="d-flex justify-content-between w-100 me-3 align-items-center">
+                                                <span>Pedido #<?= $pedido['id'] ?> - <?= date('d/m/Y', strtotime($pedido['fecha'])) ?></span>
+                                                <span class="badge <?= $estado_clase ?>"><?= ucfirst($pedido['estado']) ?></span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $pedido['id'] ?>" class="accordion-collapse collapse <?= $index === 0 ? 'show' : '' ?>" data-bs-parent="#accordionPedidos">
+                                        <div class="accordion-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <p class="mb-1"><strong>Total:</strong> $<?= number_format($pedido['total'], 2) ?></p>
+                                                    <p class="mb-1"><strong>Pago:</strong> <?= ucfirst($pedido['metodo_pago']) ?></p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <?php if($pedido['estado'] == 'enviado'): ?>
+                                                        <div class="alert alert-success py-2 mb-2">
+                                                            <i class="fas fa-shipping-fast me-2"></i>
+                                                            <strong>Enviado por:</strong> <?= htmlspecialchars($pedido['paqueteria']) ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <p class="mb-1"><strong>Dirección:</strong> <?= htmlspecialchars($pedido['direccion']) ?>, <?= htmlspecialchars($pedido['ciudad']) ?></p>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6 class="border-bottom pb-2">Productos</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm align-middle">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th>Cant.</th>
+                                                            <th>Precio</th>
+                                                            <th class="text-end">Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach($pedido['detalles'] as $detalle): ?>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex align-items-center">
+                                                                    <?php if($detalle['imagen']): ?>
+                                                                        <img src="uploads/<?= htmlspecialchars($detalle['imagen']) ?>" width="40" class="me-2 rounded">
+                                                                    <?php endif; ?>
+                                                                    <?= htmlspecialchars($detalle['nombre']) ?>
+                                                                </div>
+                                                            </td>
+                                                            <td><?= $detalle['cantidad'] ?></td>
+                                                            <td>$<?= number_format($detalle['precio_unitario'], 2) ?></td>
+                                                            <td class="text-end">$<?= number_format($detalle['cantidad'] * $detalle['precio_unitario'], 2) ?></td>
+                                                        </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Tab: Lista de Deseos -->
+                    <div class="tab-pane fade" id="wishlist" role="tabpanel">
+                        <?php if(empty($wishlist)): ?>
+                            <div class="text-center py-5">
+                                <i class="far fa-heart fa-3x text-muted mb-3"></i>
+                                <h5>Tu lista de deseos está vacía</h5>
+                                <a href="dashboard-piezas.php" class="btn btn-primary mt-3">Explorar Piezas</a>
+                            </div>
+                        <?php else: ?>
+                            <div class="row g-3">
+                                <?php foreach($wishlist as $item): ?>
+                                <div class="col-md-6 col-lg-4" id="wishlist-item-<?= $item['id'] ?>">
+                                    <div class="card h-100 wishlist-card">
+                                        <?php if($item['imagen']): ?>
+                                            <img src="uploads/<?= htmlspecialchars($item['imagen']) ?>" class="card-img-top" alt="<?= htmlspecialchars($item['nombre']) ?>">
+                                        <?php endif; ?>
+                                        <div class="card-body">
+                                            <h6 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h6>
+                                            <p class="text-muted small mb-2"><?= htmlspecialchars($item['marca_nombre']) ?></p>
+                                            <p class="fw-bold text-primary">$<?= number_format($item['precio'], 2) ?></p>
+                                            
+                                            <div class="d-grid gap-2">
+                                                <a href="dashboard-piezas.php?agregar=<?= $item['id'] ?>" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-cart-plus me-1"></i>Agregar
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger btn-remove-wishlist" data-id="<?= $item['id'] ?>">
+                                                    <i class="fas fa-trash me-1"></i>Eliminar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <?= date('Y') ?> Mexican Racing Motor Parts.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Eliminar de Wishlist
+            document.querySelectorAll('.btn-remove-wishlist').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if(!confirm('¿Eliminar de la lista de deseos?')) return;
+                    
+                    const piezaId = this.getAttribute('data-id');
+                    const card = document.getElementById('wishlist-item-' + piezaId);
+                    
+                    fetch('wishlist_action.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: `action=remove&pieza_id=${piezaId}`
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            card.remove();
+                            // Recargar si está vacío
+                            if(document.querySelectorAll('.wishlist-card').length === 0) location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

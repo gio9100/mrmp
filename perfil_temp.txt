@@ -1,0 +1,110 @@
+<?php
+// INICIAMOS LA SESIÓN PARA PODER USAR LOS DATOS DEL USUARIO GUARDADOS
+session_start();
+
+// INCLUIMOS EL ARCHIVO QUE NOS CONECTA A LA BASE DE DATOS
+require_once "conexion.php";
+
+// VERIFICAMOS SI EL USUARIO HA INICIADO SESIÓN
+if(!isset($_SESSION['usuario_id'])) {
+    header("Location: inicio_secion.php");
+    exit;
+}
+
+$usuario_id = $_SESSION['usuario_id'];
+
+// OBTENEMOS LOS DATOS DEL USUARIO
+$stmt = $conexion->prepare("SELECT * FROM usuarios WHERE id = ?");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$datos_usuario = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if(!$datos_usuario) {
+    session_destroy();
+    header("Location: inicio_secion.php");
+    exit;
+}
+
+// =============================================================================
+// LÓGICA PARA SUBIR/ELIMINAR FOTO DE PERFIL
+// =============================================================================
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto_perfil'])) {
+    $carpeta_destino = "uploads/perfiles/";
+    if(!is_dir($carpeta_destino)) mkdir($carpeta_destino, 0777, true);
+    
+    $tipo = strtolower(pathinfo($_FILES["foto_perfil"]["name"], PATHINFO_EXTENSION));
+    $nombre_final = "perfil_" . $usuario_id . "_" . time() . "." . $tipo;
+    $ruta_final = $carpeta_destino . $nombre_final;
+    
+    $check = getimagesize($_FILES["foto_perfil"]["tmp_name"]);
+    if($check !== false) {
+        if($_FILES["foto_perfil"]["size"] <= 2000000 && in_array($tipo, ['jpg','jpeg','png','gif'])) {
+            if(move_uploaded_file($_FILES["foto_perfil"]["tmp_name"], $ruta_final)) {
+                if(!empty($datos_usuario['imagen_perfil']) && file_exists($carpeta_destino . $datos_usuario['imagen_perfil'])) {
+                    unlink($carpeta_destino . $datos_usuario['imagen_perfil']);
+                }
+                $stmt = $conexion->prepare("UPDATE usuarios SET imagen_perfil = ? WHERE id = ?");
+                $stmt->bind_param("si", $nombre_final, $usuario_id);
+                if($stmt->execute()) {
+                    $mensaje_exito_foto = "✅ Foto actualizada.";
+                    $datos_usuario['imagen_perfil'] = $nombre_final;
+                    $_SESSION['imagen_perfil'] = $nombre_final;
+                }
+                $stmt->close();
+            } else {
+                $mensaje_error_foto = "❌ Error al subir archivo.";
+            }
+        } else {
+            $mensaje_error_foto = "❌ Archivo no válido (Max 2MB, JPG/PNG/GIF).";
+        }
+    } else {
+        $mensaje_error_foto = "❌ El archivo no es una imagen.";
+    }
+}
+
+if(isset($_GET['eliminar_foto']) && $_GET['eliminar_foto'] == '1') {
+    if(!empty($datos_usuario['imagen_perfil'])) {
+        $ruta = "uploads/perfiles/" . $datos_usuario['imagen_perfil'];
+        if(file_exists($ruta)) unlink($ruta);
+        
+        $conexion->query("UPDATE usuarios SET imagen_perfil = NULL WHERE id = $usuario_id");
+        $datos_usuario['imagen_perfil'] = null;
+        $_SESSION['imagen_perfil'] = null;
+        $mensaje_exito_foto = "✅ Foto eliminada.";
+    }
+    header("Location: perfil.php");
+    exit;
+}
+
+// =============================================================================
+// OBTENER PEDIDOS
+// =============================================================================
+$pedidos = [];
+$stmt = $conexion->prepare("SELECT * FROM pedidos WHERE usuario_id = ? ORDER BY fecha DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$res_pedidos = $stmt->get_result();
+while($pedido = $res_pedidos->fetch_assoc()){
+    // Obtener detalles del pedido
+    $stmt_det = $conexion->prepare("SELECT dp.*, p.nombre, p.imagen FROM detalle_pedidos dp JOIN piezas p ON dp.pieza_id = p.id WHERE dp.pedido_id = ?");
+    $stmt_det->bind_param("i", $pedido['id']);
+    $stmt_det->execute();
+    $pedido['detalles'] = $stmt_det->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt_det->close();
+    $pedidos[] = $pedido;
+}
+$stmt->close();
+
+// =============================================================================
+// OBTENER LISTA DE DESEOS
+// =============================================================================
+$wishlist = [];
+$stmt = $conexion->prepare("SELECT w.id as wishlist_id, p.*, m.nombre as marca_nombre FROM wishlist w JOIN piezas p ON w.pieza_id = p.id LEFT JOIN marcas m ON p.marca_id = m.id WHERE w.usuario_id = ? ORDER BY w.fecha_agregado DESC");
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$wishlist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+?>
+<!DOCTYPE html>

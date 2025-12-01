@@ -79,7 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
 <meta charset="UTF-8">
 <title>Registro MRMP</title>
-<link rel="stylesheet" href="registro.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="inicio_secion.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -107,9 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                placeholder="ejemplo@gmail.com"
                value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>"
                required>
-        <div id="mensaje-correo" class="mensaje-correo">
-            ⚠️ Solo se aceptan correos de: Gmail, Outlook, Hotmail, Yahoo, iCloud, etc.
-        </div>
 
         <label>Contraseña</label>
         <input type="password" 
@@ -118,7 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                placeholder="Mínimo 6 caracteres"
                required 
                minlength="6">
-        <div id="mensaje-contrasena" class="mensaje-validacion"></div>
     </section>
 
     <section class="seccion-botones">
@@ -151,32 +148,5 @@ function cerrarModal() {
 </script>
 <?php endif; ?>
 
-<script>
-
-
-//lista de dominios válidos
-const dominiosValidos = [
-    'gmail.com',
-    'outlook.com',
-    'outlook.es',
-    'hotmail.com',
-    'hotmail.es',
-    'yahoo.com',
-    'yahoo.es',
-    'icloud.com',
-];
-
-//validación del correo
-const correoInput = document.getElementById('correo');
-const mensajeCorreo = document.getElementById('mensaje-correo');
-
-correoInput.addEventListener('input'), function() {
-    const val = this.value.trim().toLowerCase();
-    
-    if (!val) {
-        correoInput.classList.remove('error', 'success');
-        mensajeCorreo.style.display = 'none';
-        return;
-    }
-
-}
+</body>
+</html>
