@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <section class="seccion-informacion">
         <label>Correo</label>
-        <!-- value="<?= ... ?>": Mantiene el valor ingresado si hay error. -->
+        <!-- value: Mantiene el valor ingresado si hay error. -->
         <!-- htmlspecialchars(): Previene inyección de código HTML/JS (XSS) al mostrar el valor. -->
         <input type="email" name="correo" value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
 

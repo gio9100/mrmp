@@ -1,211 +1,289 @@
-/* body: Configuración principal del cuerpo para la página de login. */
+/* body: Configuración principal - Define el fondo y la alineación central */
 body {
-    /* margin: 0; Elimina los márgenes por defecto del navegador. */
+    /* Sin margen externo */
     margin: 0;
-
-    /* padding: 0; Elimina el espaciado interior por defecto. */
+    /* Sin relleno interno */
     padding: 0;
-
-    /* background-image: Imagen de fondo para el login. */
-    /* linear-gradient(...): Superpone una capa negra semitransparente (0.6 = 60% opacidad). 
-       Sirve para oscurecer la imagen y hacer legible el formulario blanco. */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("img/fondo login.jpg");
-
-    /* background-size: cover; Asegura que la imagen cubra toda la pantalla. */
+    /* Imagen de fondo con superposicion oscura para resaltar texto */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/inicio.png");
+    /* La imagen cubre todo el fondo */
     background-size: cover;
-
-    /* background-position: center; Centra la imagen. */
+    /* La imagen se centra */
     background-position: center;
-
-    /* background-attachment: fixed; Fija el fondo al hacer scroll. 
-       Sirve para un efecto visual de "parallax" simple. */
+    /* El fondo queda fijo al hacer scroll */
     background-attachment: fixed;
-
-    /* font-family: Tipografía global. */
+    /* Tipografia principal */
     font-family: 'Poppins', sans-serif;
-
-    /* height: 100vh; Altura del 100% de la ventana visual (Viewport Height). 
-       Sirve para centrar verticalmente el contenido si usamos flexbox en el body (aunque aquí no se usa directo). */
+    /* Altura completa de la pantalla */
     height: 100vh;
+    /* Color de texto blanco general */
+    color: #fff;
+    /* Usar Flexbox para centrar */
+    display: flex;
+    /* Centrar verticalmente */
+    align-items: center;
+    /* Centrar horizontalmente */
+    justify-content: center;
 }
 
-/* .formulario: Contenedor del formulario de login. */
+/* .formulario: Contenedor principal del login con estilo transparente */
 .formulario {
-    /* width: 400px; Ancho fijo base. */
-    width: 400px;
-
-    /* background: Fondo negro muy oscuro y muy transparente (0.95 = 95% opacidad). 
-       Sirve para contrastar con el fondo pero dejar ver un poco la imagen detrás. */
-    background: rgba(10, 10, 10, 0.95);
-
-    /* padding: 40px; Espaciado interno generoso. */
-    padding: 40px;
-
-    /* margin: auto; Centrado horizontal automático. */
-    margin: auto;
-
-    /* margin-top: 50px; Separación superior. */
-    margin-top: 50px;
-
-    /* border-radius: 10px; Bordes redondeados. */
-    border-radius: 10px;
-
-    /* box-shadow: Sombra negra suave. 
-       Sirve para resaltar el formulario sobre el fondo. */
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
-
-    /* color: white; Texto blanco por defecto. */
-    color: white;
+    /* Fondo totalmente transparente */
+    background: rgba(255, 255, 255, 0.0);
+    /* Desenfoque del fondo (efecto vidrio) */
+    backdrop-filter: blur(5px);
+    /* Soporte para Safari */
+    -webkit-backdrop-filter: blur(5px);
+    /* Borde blanco sutil */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Borde azul grisaceo solicitado */
+    border: 2px solid #7390A0;
+    /* Bordes redondeados */
+    border-radius: 14px;
+    /* Relleno interno generoso */
+    padding: 40px 50px;
+    /* Ancho relativo */
+    width: 90%;
+    /* Ancho maximo */
+    max-width: 420px;
+    /* Sombra suave inferior */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* Transicion suave para todos los cambios */
+    transition: all 0.3s ease;
+    /* Texto centrado */
+    text-align: center;
+    /* Color de texto blanco */
+    color: #fff;
 }
 
-/* .logo-taller img: Estilo para el logo dentro del formulario. */
+/* .logo-taller img: Imagen del logo inside del formulario */
 .logo-taller img {
-    /* width: 100px; Ancho fijo. */
+    /* Ancho del logo */
     width: 100px;
-
-    /* display: block; Se comporta como bloque. */
+    /* Comportamiento de bloque */
     display: block;
-
-    /* margin: 0 auto; Centrado horizontal. */
-    margin: 0 auto;
-
-    /* margin-bottom: 15px; Espacio debajo del logo. */
-    margin-bottom: 15px;
+    /* Centrado horizontal con margen inferior */
+    margin: 0 auto 15px auto;
+    /* Sombra blanca para resaltar sobre oscuro */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
-/* .seccion-informacion label: Etiquetas de los campos. */
+/* .logo-taller h1: Titulo principal (Nombre del taller) */
+.logo-taller h1 {
+    /* Alineacion centrada */
+    text-align: center;
+    /* Color blanco */
+    color: #fff;
+    /* Tamaño de fuente grande */
+    font-size: 1.6rem;
+    /* Margen inferior pequeño */
+    margin: 0 0 5px 0;
+    /* Negrita */
+    font-weight: 700;
+    /* Sombra de texto para legibilidad */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* .subtitulo: Texto debajo del titulo principal */
+.logo-taller .subtitulo {
+    /* Alineacion centrada */
+    text-align: center;
+    /* Color gris claro */
+    color: #ddd;
+    /* Tamaño de fuente mediano */
+    font-size: 0.9rem;
+    /* Sin margen superior */
+    margin-top: 0;
+    /* Margen inferior para separar de inputs */
+    margin-bottom: 30px;
+    /* Peso de fuente medio */
+    font-weight: 500;
+}
+
+/* label: Etiquetas de texto encima de los inputs */
 .seccion-informacion label {
-    /* display: block; Ocupa toda la línea. 
-       Sirve para que el label quede arriba del input. */
+    /* Ocupar todo el ancho */
     display: block;
-
-    /* margin-bottom: 5px; Espacio pequeño debajo del label. */
-    margin-bottom: 5px;
-
-    /* font-weight: bold; Negrita. */
-    font-weight: bold;
+    /* Margen inferior */
+    margin-bottom: 8px;
+    /* Color blanco */
+    color: #fff;
+    /* Negrita */
+    font-weight: 600;
+    /* Tamaño de letra */
+    font-size: 0.9rem;
+    /* Sombra sutil */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* .seccion-informacion input: Campos de texto y contraseña. */
+/* input: Campos de texto para usuario y contraseña */
 .seccion-informacion input {
-    /* width: 100%; Ocupa todo el ancho disponible del formulario. */
+    /* Ancho total */
     width: 100%;
-
-    /* padding: 10px; Relleno interno cómodo. */
-    padding: 10px;
-
-    /* margin-bottom: 20px; Espacio entre inputs. */
+    /* Relleno interno */
+    padding: 12px 15px;
+    /* Espacio debajo de cada input */
     margin-bottom: 20px;
-
-    /* border: none; Sin borde inicial. */
+    /* Sin borde predeterminado */
     border: none;
+    /* Fondo blanco solido */
+    background: #ffffff;
+    /* Color de texto oscuro */
+    color: #333;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Sombra interna suave */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Tamaño de letra */
+    font-size: 14px;
+    /* Incluir padding en el ancho total */
+    box-sizing: border-box;
+    /* Animacion suave */
+    transition: transform 0.2s;
+}
 
-    /* border-bottom: 2px solid white; Solo borde inferior blanco. 
-       Sirve para un estilo minimalista. */
-    border-bottom: 2px solid white;
-
-    /* background: transparent; Fondo transparente. */
-    background: transparent;
-
-    /* color: white; Texto blanco al escribir. */
-    color: white;
-
-    /* outline: none; Quita el borde azul de selección por defecto de los navegadores. */
+/* input:focus -> Cuando el usuario selecciona el campo */
+.seccion-informacion input:focus {
+    /* Quitar linea azul por defecto */
     outline: none;
+    /* Borde azul al activar */
+    border: 2px solid #0d6efd;
+    /* Efecto de lupa/zoom ligero */
+    transform: scale(1.02);
 }
 
-/* input:focus: Estado al hacer clic en el input. */
-input:focus {
-    /* border-bottom-color: var(--primary-color); Cambia color borde inferior. 
-       Sirve para indicar que el campo está activo. */
-    border-bottom-color: #d32f2f;
-}
-
-/* button: Botón de envío. */
+/* button: Boton de "Iniciar Sesion" */
 button {
-    /* width: 100%; Ancho total. */
+    /* Ancho total */
     width: 100%;
-    padding: 10px;
-    border: none;
-
-    /* background: Rojo corporativo. */
+    /* Relleno */
+    padding: 12px;
+    /* Fondo rojo */
     background: #d32f2f;
+    /* Texto blanco */
     color: white;
+    /* Sin borde */
+    border: none;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Tamaño de letra */
     font-size: 16px;
-
-    /* cursor: pointer; Cambia el cursor a manita. 
-       Sirve para indicar que es clickeable. */
+    /* Negrita */
+    font-weight: 700;
+    /* Cursor de mano */
     cursor: pointer;
-    border-radius: 5px;
+    /* Espacio superior */
+    margin-top: 10px;
+    /* Sombra inferior */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    /* Transicion de fondo */
     transition: background 0.3s;
 }
 
+/* button:hover -> Al pasar el mouse por el boton */
 button:hover {
+    /* Oscurecer el rojo */
     background: #b71c1c;
-    /* Rojo más oscuro al pasar mouse. */
 }
 
-/* a: Enlaces. */
-a {
-    /* text-decoration: none; Quita el subrayado. */
+/* p: Texto "No tienes cuenta?" */
+.seccion-botones p {
+    /* Centrado */
+    text-align: center;
+    /* Espacio superior */
+    margin-top: 25px;
+    /* Tamaño de letra grande */
+    font-size: 1.1rem;
+    /* Color gris claro */
+    color: #eee;
+    /* Peso medio */
+    font-weight: 500;
+}
+
+/* a: Enlaces "Registrate" y "Olvidaste contraseña" */
+.seccion-botones a {
+    /* Color azul original */
+    color: #0d6efd;
+    /* Negrita */
+    font-weight: 700;
+    /* Sin subrayado */
     text-decoration: none;
-    color: #d32f2f;
-    font-weight: bold;
+    /* Tamaño grande */
+    font-size: 1.15rem;
 }
 
-a:hover {
-    /* text-decoration: underline; Subraya al pasar mouse. */
+/* a:hover -> Al pasar el mouse por enlace */
+.seccion-botones a:hover {
+    /* Azul mas oscuro */
+    color: #0a58ca;
+    /* Subrayado */
     text-decoration: underline;
 }
 
-/* .modal-mensaje: Contenedor del modal de alertas. */
+/* .panel-admin: Enlace especial para ir al panel de admin */
+.panel-admin {
+    /* Margen superior */
+    margin-top: 25px;
+    /* Centrado */
+    text-align: center;
+    /* Linea divisoria superior */
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    /* Espacio superior interno */
+    padding-top: 20px;
+    /* Tamaño de letra */
+    font-size: 1.1rem;
+}
+
+/* .modal-mensaje: Contenedor oscuro full-screen para alertas */
 .modal-mensaje {
-    /* position: fixed; Fijo en la pantalla, no se mueve con el scroll. */
+    /* Posicion fija */
     position: fixed;
+    /* Pegado arriba */
     top: 0;
+    /* Pegado izquierda */
     left: 0;
+    /* Ancho total */
     width: 100%;
+    /* Alto total */
     height: 100%;
-
-    /* background: Fondo semitransparente oscuro. 
-       Sirve para enfocar la atención en el mensaje. */
+    /* Fondo negro semitransparente */
     background: rgba(0, 0, 0, 0.8);
-
-    /* display: flex; Flexbox para centrar contenido. */
+    /* Flexbox centrado */
     display: flex;
+    /* Centrar horizontal */
     justify-content: center;
+    /* Centrar vertical */
     align-items: center;
-
-    /* z-index: 1000; Orden muy alto para estar encima de todo. */
+    /* Capa superior absoluta */
     z-index: 1000;
 }
 
-/* .modal-contenido: Caja blanca del mensaje. */
+/* .modal-contenido: La cajita de alerta */
 .modal-contenido {
+    /* Fondo oscuro gris */
     background: #222;
-    /* Fondo gris oscuro */
-    color: white;
+    /* Texto blanco */
+    color: #fff;
+    /* Relleno */
     padding: 30px;
-    border-radius: 10px;
-    text-align: center;
+    /* Bordes redondeados */
+    border-radius: 15px;
+    /* Ancho fijo */
     width: 300px;
-
-    /* animation: Animación de entrada. */
-    animation: slideDown 0.4s ease;
+    /* Texto centrado */
+    text-align: center;
+    /* Sombra fuerte */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    /* Borde gris */
+    border: 1px solid #444;
 }
 
-/* @keyframes slideDown: Define la animación. */
-@keyframes slideDown {
-
-    /* from: Estado inicial (arriba y transparente). */
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    /* to: Estado final (posición original y visible). */
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+/* Button dentro del modal */
+.modal-contenido button {
+    /* Ancho automatico al contenido */
+    width: auto;
+    /* Fondo gris */
+    background: #666;
+    /* Margen superior */
+    margin-top: 15px;
 }

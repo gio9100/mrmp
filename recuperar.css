@@ -1,220 +1,220 @@
-/* 1: Configuración básica universal */
+/* 1: Configuración básica universal para limpiar estilos por defecto */
 * {
+    /* Quitamos margenes por defecto */
     margin: 0;
-    /* 2: Eliminamos márgenes por defecto */
+    /* Quitamos relleno por defecto */
     padding: 0;
-    /* 3: Eliminamos relleno por defecto */
+    /* El borde y relleno se incluyen en el tamaño total */
     box-sizing: border-box;
-    /* 4: El borde y relleno se incluyen en el tamaño total */
+    /* Fuente tipográfica principal */
     font-family: 'Poppins', sans-serif;
-    /* 5: Fuente tipográfica principal */
 }
 
-/* 6: Configuración del cuerpo */
+/* body: Configuración principal del cuerpo de la página */
 body {
+    /* Fondo blanco limpio */
     background-color: #fff;
-    /* 7: Fondo blanco */
+    /* Texto casi negro para contraste */
     color: #111;
-    /* 8: Texto casi negro */
+    /* Usar Flexbox para centrar contenido vertical y horizontalmente */
     display: flex;
-    /* 9: Flexbox para centrar contenido */
+    /* Centrar horizontalmente */
     justify-content: center;
-    /* 10: Centrado horizontal */
+    /* Centrar verticalmente */
     align-items: center;
-    /* 11: Centrado vertical */
+    /* Ocupar al menos toda la altura de la pantalla */
     min-height: 100vh;
-    /* 12: Altura mínima igual a la pantalla */
 }
 
-
-/* 13: Estilos de Formularios de Recuperación */
-
+/* .formulario: Contenedor principal del formulario de recuperación */
 .formulario {
+    /* Fondo gris muy claro */
     background: #f8f8f8;
-    /* 14: Fondo gris muy claro */
+    /* Borde rojo sólido destacado */
     border: 2px solid #c00;
-    /* 15: Borde rojo sólido */
+    /* Esquinas redondeadas */
     border-radius: 14px;
-    /* 16: Bordes redondeados */
+    /* Espacio interno amplio */
     padding: 40px 50px;
-    /* 17: Relleno interno amplio */
+    /* Ancho relativo responsivo */
     width: 90%;
-    /* 18: Ancho adaptable */
+    /* Ancho máximo fijo */
     max-width: 420px;
-    /* 19: Ancho máximo fijo */
+    /* Sombra suave inferior */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* 20: Sombra suave */
+    /* Transición suave para efectos hover */
     transition: all 0.3s ease;
-    /* 21: Transición suave */
+    /* Centrar todo el texto interno */
     text-align: center;
-    /* 22: Texto centrado */
 }
 
+/* .formulario:hover: Efecto de elevación al pasar el mouse sobre el formulario */
 .formulario:hover {
+    /* Mover ligeramente hacia arriba */
     transform: translateY(-5px);
-    /* 23: Mover arriba al pasar mouse */
+    /* Sombra más intensa y difusa */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    /* 24: Sombra más intensa */
 }
 
-
-/* 25: Acomodo del logo del taller */
-
+/* .logo-taller img: Imagen del logo dentro del formulario */
 .logo-taller img {
+    /* Ancho fijo para el logo */
     width: 120px;
-    /* 26: Ancho logo fijo */
+    /* Altura automática proporcional */
     height: auto;
-    /* 27: Altura automática */
+    /* Separación inferior */
     margin-bottom: 10px;
-    /* 28: Espacio abajo */
 }
 
+/* .logo-taller h1: Título principal debajo del logo */
 .logo-taller h1 {
+    /* Peso de fuente negrita */
     font-weight: 700;
-    /* 29: Texto negrita */
+    /* Color de texto oscuro */
     color: #111;
-    /* 30: Color oscuro */
+    /* Tamaño de fuente grande */
     font-size: 24px;
-    /* 31: Tamaño grande */
 }
 
+/* .subtitulo: Texto descriptivo o secundario */
 .subtitulo {
+    /* Tamaño de fuente mediano-grande */
     font-size: 20px;
-    /* 32: Tamaño mediano-grande */
+    /* Color rojo brillante para destacar */
     color: #f80a0a;
-    /* 33: Rojo brillante */
+    /* Margen inferior grande */
     margin-bottom: 20px;
-    /* 34: Espacio abajo */
 }
 
-
-/* 35: Inputs para recuperar contraseña */
-
+/* label: Etiquetas de los campos de entrada */
 label {
+    /* Comportamiento de bloque para ocupar su propia línea */
     display: block;
-    /* 36: Bloque para salto de línea */
+    /* Alineación de texto a la izquierda */
     text-align: left;
-    /* 37: Alinear texto a izquierda */
+    /* Pequeño espacio con el input */
     margin-bottom: 6px;
-    /* 38: Espacio con el input */
+    /* Peso de fuente medio */
     font-weight: 500;
-    /* 39: Peso medio */
+    /* Color de texto oscuro suave */
     color: #222;
-    /* 40: Color texto */
 }
 
+/* input: Campos de texto para correo o contraseña */
 input {
+    /* Ancho total disponible */
     width: 100%;
-    /* 41: Ancho total */
+    /* Relleno interno cómodo */
     padding: 10px 14px;
-    /* 42: Relleno cómodo */
+    /* Espacio separador inferior */
     margin-bottom: 20px;
-    /* 43: Espacio separador abajo */
+    /* Borde gris claro */
     border: 1.8px solid #ccc;
-    /* 44: Borde gris claro */
+    /* Bordes redondeados */
     border-radius: 6px;
-    /* 45: Bordes redondeados */
+    /* Fondo blanco */
     background: #fff;
-    /* 46: Fondo blanco */
+    /* Transición para el borde y la sombra */
     transition: border 0.3s box-shadow 0.3s;
-    /* 47: Animaciones */
 }
 
+/* input:focus: Estado activo del campo de texto cuando se escribe */
 input:focus {
+    /* Cambia borde a rojo */
     border-color: #c00;
-    /* 48: Borde rojo al seleccionar */
+    /* Añade resplandor rojo suave */
     box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
-    /* 49: Resplandor rojo */
+    /* Quita el contorno por defecto del navegador */
     outline: none;
-    /* 50: Quitar borde defecto */
 }
 
+/* button: Botón principal de acción */
 button {
+    /* Ancho total */
     width: 100%;
-    /* 51: Ancho total */
+    /* Fondo rojo corporativo */
     background: #c00;
-    /* 52: Fondo rojo */
+    /* Texto blanco */
     color: #fff;
-    /* 53: Texto blanco */
+    /* Sin borde */
     border: none;
-    /* 54: Sin borde */
+    /* Relleno interno */
     padding: 12px;
-    /* 55: Relleno */
+    /* Bordes redondeados */
     border-radius: 8px;
-    /* 56: Bordes redondeados */
+    /* Tamaño de letra */
     font-size: 16px;
-    /* 57: Tamaño letra */
+    /* Negrita */
     font-weight: 600;
-    /* 58: Negrita */
+    /* Cursor de mano al pasar por encima */
     cursor: pointer;
-    /* 59: Cursor mano */
+    /* Transición de color de fondo */
     transition: 0.3s;
-    /* 60: Animación */
 }
 
+/* button:hover: Efecto al pasar el mouse por el botón */
 button:hover {
+    /* Oscurecer el rojo para feedback */
     background: #a30000;
-    /* 61: Rojo oscuro al pasar mouse */
 }
 
-
-/* 62: Link a Inicio de Sesión */
-
+/* a: Enlaces de texto (como volver al inicio) */
 a {
+    /* Color rojo */
     color: #c00;
-    /* 63: Color rojo */
+    /* Sin subrayado inicial */
     text-decoration: none;
-    /* 64: Sin subrayado */
+    /* Peso medio */
     font-weight: 500;
-    /* 65: Peso medio */
 }
 
+/* a:hover: Efecto al pasar mouse por enlace */
 a:hover {
+    /* Añadir subrayado */
     text-decoration: underline;
-    /* 66: Subrayar al pasar mouse */
 }
 
-
-/* 67: Diseño Responsivo Móvil */
-
+/* @media: Estilos para dispositivos móviles */
 @media (max-width: 480px) {
+
+    /* .formulario: Ajustes para pantallas pequeñas */
     .formulario {
+        /* Reducir el relleno interno */
         padding: 25px 30px;
-        /* 68: Menos relleno */
     }
 
+    /* h1: Reducir tamaño de título */
     h1 {
         font-size: 22px;
-        /* 69: Título ajustado */
     }
 }
 
-
-/* 70: Mensajes de éxito o error (envío email / cambio pass) */
-
+/* .message: Cajas de notificación (éxito/error) */
 .message {
+    /* Relleno interno */
     padding: 10px;
-    /* 71: Relleno interno */
+    /* Espacio inferior */
     margin-bottom: 15px;
-    /* 72: Espacio abajo */
+    /* Bordes redondeados */
     border-radius: 6px;
-    /* 73: Bordes redondeados */
+    /* Texto en negrita */
     font-weight: bold;
-    /* 74: Texto negrita */
+    /* Texto centrado */
     text-align: center;
-    /* 75: Texto centrado */
 }
 
+/* .message.success: Estilo específico para mensajes de éxito */
 .message.success {
+    /* Texto verde */
     color: green;
-    /* 76: Texto verde */
+    /* Fondo verde muy claro */
     background: #e6ffe6;
-    /* 77: Fondo verde claro */
 }
 
+/* .message.error: Estilo específico para mensajes de error */
 .message.error {
+    /* Texto rojo */
     color: red;
-    /* 78: Texto rojo */
+    /* Fondo rojo muy claro */
     background: #ffe6e6;
-    /* 79: Fondo rojo claro */
 }

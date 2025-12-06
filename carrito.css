@@ -1,11 +1,12 @@
 /* 1: Reset Básico */
 /* Este archivo contiene estilos mínimos, ya que el diseño se maneja mayormente con Tailwind CSS en el HTML */
 
+/* *: Selector universal, afecta a todos los elementos */
 * {
+    /* Modelo de caja incluye bordes y padding en el tamaño total */
     box-sizing: border-box;
-    /* 2: Modelo de caja incluye bordes y padding */
+    /* Sin márgenes por defecto */
     margin: 0;
-    /* 3: Sin márgenes por defecto */
+    /* Sin relleno por defecto */
     padding: 0;
-    /* 4: Sin relleno por defecto */
 }

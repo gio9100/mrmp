@@ -1,147 +1,133 @@
 /* :root: Define variables globales CSS. 
    Sirve para mantener consistencia en colores y facilitar cambios de tema en toda la web. */
 :root {
+    /* Rojo MRMP: Color corporativo principal (Mantenido). */
     --primary-color: #d32f2f;
-    /* Rojo MRMP: Color corporativo principal. */
-    --secondary-color: #1a1a1a;
-    /* Negro suave: Color secundario para fondos oscuros. */
-    --text-color: #333;
-    /* Gris oscuro: Color base para texto legible. */
+    /* Blanco: Nuevo color base para fondos. */
+    --secondary-color: #ffffff;
+    /* Negro: Para títulos y textos principales. */
+    --text-primary: #000000;
+    /* Gris oscuro: Para textos secundarios o párrafos. */
+    --text-secondary: #333333;
+    /* Gris muy claro: Para fondos de secciones alternas. */
     --light-bg: #f8f9fa;
-    /* Blanco humo: Color para fondos claros y limpios. */
 }
 
 /* body: Selector de etiqueta para el cuerpo del documento. */
 body {
-    /* font-family: Define la tipografía. 
-       Sirve para usar 'Poppins' como principal y 'sans-serif' como respaldo si no carga. */
+    /* Define la tipografía principal y respaldo */
     font-family: 'Poppins', sans-serif;
-
-    /* background-color: Establece el color de fondo. 
-       Sirve para dar un tono base suave a toda la página. */
-    background-color: var(--light-bg);
-
-    /* color: Define el color del texto. */
-    color: var(--text-color);
+    /* Establece el color de fondo blanco base */
+    background-color: var(--secondary-color);
+    /* Define el color del texto base oscuro */
+    color: var(--text-secondary);
 }
 
-/* h1, h2, h3, h4, h5, h6: Encabezados HTML. */
+/* h1-h6: Títulos y encabezados HTML. */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-    /* font-weight: Grosor de la fuente. 
-       Sirve para que los títulos se vean más robustos y destaquen. */
+    /* Grosor de la fuente para destacar */
     font-weight: 600;
+    /* Color negro puro para encabezados */
+    color: var(--text-primary);
 }
 
-/* .btn-primary: Clase para botones primarios. */
+/* .btn-primary: Clase para botones de acción principal. */
 .btn-primary {
-    /* background-color: Fondo del botón. Usa la variable roja. */
+    /* Fondo del botón rojo */
     background-color: var(--primary-color);
-
-    /* border-color: Color del borde. */
+    /* Color del borde rojo */
     border-color: var(--primary-color);
-
-    /* transition: Define la animación de cambio de estado. 
-       Sirve para suavizar el efecto hover durante 0.3 segundos. */
+    /* Transición suave para efectos hover */
     transition: all 0.3s ease;
 }
 
 /* .btn-primary:hover: Estado del botón al pasar el mouse por encima. */
 .btn-primary:hover {
-    /* darken(): No existe en CSS puro, aquí lo simulamos con un color fijo. 
-       Sirve para dar feedback visual oscureciendo el botón. */
+    /* Oscurecer fondo al pasar el mouse */
     background-color: #b71c1c;
+    /* Oscurecer borde al pasar el mouse */
     border-color: #b71c1c;
-
-    /* transform: Modifica la geometría del elemento. 
-       translateY(-2px) sirve para mover el botón ligeramente hacia arriba, simulando elevación. */
+    /* Efecto de elevación (mover arriba) */
     transform: translateY(-2px);
 }
 
-/* .card: Contenedor tipo tarjeta. */
+/* .card: Contenedor tipo tarjeta para productos o contenido. */
 .card {
-    /* border: Define el borde. 'none' lo quita. 
-       Sirve para un diseño más limpio sin líneas duras. */
+    /* Sin borde visible para diseño limpio */
     border: none;
-
-    /* box-shadow: Sombra de la caja. 
-       Sirve para dar profundidad y separación del fondo. */
+    /* Fondo blanco para la tarjeta */
+    background-color: #ffffff;
+    /* Sombra suave para dar profundidad */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-    /* transition: Suaviza la animación de hover. */
+    /* Transición suave para la sombra y movimiento */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .card:hover: Estado tarjeta al pasar mouse. */
+/* .card:hover: Estado de la tarjeta al pasar el mouse. */
 .card:hover {
-    /* transform: translateY(-5px); Mueve la tarjeta hacia arriba. 
-       Sirve para indicar interactividad. */
+    /* Mueve la tarjeta hacia arriba */
     transform: translateY(-5px);
-
-    /* Aumenta la sombra para simular mayor elevación. */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    /* Aumenta la sombra para simular mayor elevación */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* .form-control: Inputs de formularios (texto, email, password). */
+/* .form-control: Inputs estandarizados de Bootstrap. */
 .form-control {
-    /* border-radius: Redondeo de las esquinas. 
-       0.5rem (8px) sirve para un look moderno pero no excesivo. */
+    /* Redondeo de las esquinas del input */
     border-radius: 0.5rem;
-
-    /* padding: Espaciado interno. 0.75rem (12px). 
-       Sirve para que el texto no esté pegado a los bordes. */
+    /* Espaciado interno cómodo */
     padding: 0.75rem 1rem;
+    /* Borde gris claro */
+    border: 1px solid #ced4da;
+    /* Fondo blanco */
+    background-color: #fff;
+    /* Color de texto oscuro */
+    color: var(--text-secondary);
 }
 
 /* .form-control:focus: Estado del input cuando se escribe en él. */
 .form-control:focus {
-    /* box-shadow: Resplandor alrededor del input. 
-       Sirve para indicar claramente qué campo está activo (foco). */
+    /* Resplandor rojo suave alrededor */
     box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
-
-    /* border-color: Cambia el color del borde al primario. */
+    /* Cambia el borde al rojo primario */
     border-color: var(--primary-color);
 }
 
-/* .navbar-dark .navbar-nav .nav-link: Enlaces de navegación en barra oscura. */
-.navbar-dark .navbar-nav .nav-link {
-    /* font-weight: Grosor medio (500). */
+/* .navbar-light .nav-link: Enlaces de navegación en la barra superior. */
+.navbar-light .navbar-nav .nav-link {
+    /* Grosor medio de fuente */
     font-weight: 500;
-
-    /* transition: Suaviza el cambio de color. */
+    /* Color gris oscuro */
+    color: var(--text-secondary);
+    /* Suaviza cambio de color */
     transition: color 0.3s ease;
 }
 
-/* .navbar-dark .navbar-nav .nav-link:hover: Hover en enlaces nav. */
-.navbar-dark .navbar-nav .nav-link:hover {
-    /* color: Cambia el texto al color primario (rojo). 
-       Sirve para resaltar la opción bajo el cursor. */
+/* .navbar-light .nav-link:hover: Efecto hover en enlaces de menú. */
+.navbar-light .navbar-nav .nav-link:hover {
+    /* Cambia a rojo al pasar el mouse */
     color: var(--primary-color);
 }
 
-/* .badge: Etiquetas pequeñas (ej. 'Nuevo', Stock). */
+/* .badge: Etiquetas pequeñas para notificaciones o estados. */
 .badge {
-    /* padding: Relleno interno. 
-       0.5em 0.8em sirve para dar aire alrededor del texto del badge. */
+    /* Relleno interno ajustado */
     padding: 0.5em 0.8em;
-
-    /* font-weight: Grosor de fuente. */
+    /* Peso de fuente medio */
     font-weight: 500;
 }
 
-/* Utilidad rápida para objetos centrados. */
+/* .center-xy: Clase utilitaria personalizada para centrar contenido. */
 .center-xy {
-    /* display: flex; Activa Flexbox. 
-       Sirve para controlar alienación de hijos. */
+    /* Habilita Flexbox */
     display: flex;
-
-    /* align-items: center; Alineación vertical al centro. */
+    /* Centra verticalmente */
     align-items: center;
-
-    /* justify-content: center; Alineación horizontal al centro. */
+    /* Centra horizontalmente */
     justify-content: center;
 }

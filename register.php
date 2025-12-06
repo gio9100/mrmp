@@ -95,8 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <title>Registro MRMP</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Reutilizamos CSS de inicio de sesión para mantener la consistencia visual. -->
-    <link rel="stylesheet" href="inicio_secion.css">
+    <!-- Usamos CSS de registro con Tema Claro. -->
+    <link rel="stylesheet" href="registro.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>

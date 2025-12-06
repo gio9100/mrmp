@@ -1,165 +1,607 @@
-/* body: Estilos base para el panel de administración. */
+/* Configuracion principal del cuerpo */
+/* Body: Define la base visual de toda la pagina */
 body {
-    /* background-color: Gris muy claro. Pantalla limpia para trabajar. */
+    /* Color de fondo gris suave */
     background-color: #f4f6f9;
-    font-family: 'Roboto', sans-serif;
-}
-
-/* header: Barra superior del admin. */
-header {
-    background-color: #343a40;
-    /* Gris oscuro (Bootstrap dark) */
-    color: white;
-    padding: 15px 20px;
-
-    /* display: flex; Alineación horizontal. */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* nav ul: Lista de navegación horizontal. */
-nav ul {
-    list-style: none;
-    /* Quita los puntos de lista */
-    padding: 0;
+    /* Tipografia principal */
+    font-family: 'Poppins', 'Roboto', sans-serif;
+    /* Color de texto gris oscuro */
+    color: #333;
+    /* Sin margen */
     margin: 0;
+    /* Sin relleno */
+    padding: 0;
+}
+
+/* Header: La barra superior donde va el menu */
+header {
+    /* Fondo blanco */
+    background-color: #ffffff;
+    /* Texto oscuro */
+    color: #333;
+    /* Espaciado interno */
+    padding: 15px 30px;
+    /* Sombra sutil inferior */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* Flexbox para alinear elementos */
     display: flex;
-    /* Elementos en fila */
+    /* Espacio entre logo y menu */
+    justify-content: space-between;
+    /* Alineacion vertical centrada */
+    align-items: center;
+    /* Borde inferior gris claro */
+    border-bottom: 1px solid #eee;
 }
 
-/* nav ul li: Elementos de lista. */
-nav ul li {
-    margin-left: 20px;
-}
-
-/* nav a: Enlaces de menú. */
-nav a {
-    color: #adb5bd;
-    /* Gris claro */
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-nav a:hover,
-nav a.active {
-    color: white;
-    /* Blanco al hover o activo */
-}
-
-/* main: Contenedor principal. */
-main {
-    padding: 30px;
-    max-width: 1200px;
-    /* Ancho máximo para no estirar demasiado en monitores anchos */
-    margin: 0 auto;
-    /* Centrado */
-}
-
-/* .admin-section: Cada sección del panel (ej. Gestión Marcas, Piezas). */
-.admin-section {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    /* Bordes suaves */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* Sombra muy sutil */
-    margin-bottom: 40px;
-}
-
-/* h2: Títulos de sección. */
-h2 {
-    color: #343a40;
-    border-bottom: 2px solid #dee2e6;
-    /* Línea separadora inferior */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-/* table: Estilos para tablas de datos. */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    /* Bordes compartidos */
-    margin-top: 15px;
-}
-
-/* th, td: Celdas de tabla. */
-th,
-td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
-}
-
-/* th: Cabeceras de tabla. */
-th {
-    background-color: #e9ecef;
-    color: #495057;
+/* h1: Titulo principal dentro del header */
+header h1 {
+    /* Tamaño de fuente grande */
+    font-size: 1.5rem;
+    /* Sin margen externo */
+    margin: 0;
+    /* Peso de fuente seminegrita */
     font-weight: 600;
 }
 
-/* tr:hover: Al pasar el mouse por una fila. */
-tr:hover {
-    background-color: #f8f9fa;
-    /* Resalta la fila */
+/* Enlaces de navegacion: Los botones del menu */
+header a {
+    /* Color gris medio */
+    color: #555;
+    /* Sin subrayado */
+    text-decoration: none;
+    /* Peso medio */
+    font-weight: 500;
+    /* Margen izquierdo */
+    margin-left: 15px;
+    /* Relleno interno */
+    padding: 5px 10px;
+    /* Bordes redondeados */
+    border-radius: 5px;
+    /* Transicion suave */
+    transition: all 0.2s;
 }
 
-/* Actions buttons in table */
-.actions {
-    display: flex;
-    gap: 10px;
-    /* Espacio entre botones */
+/* a:hover -> Se activa cuando pasas el mouse por encima del enlace */
+header a:hover {
+    /* Fondo gris claro al pasar mouse */
+    background-color: #f0f0f0;
+    /* Texto rojo al pasar mouse */
+    color: #d32f2f;
 }
 
-/* .btn-danger: Botón eliminar. */
+/* Main: El contenedor central donde va todo el contenido */
+main {
+    /* Ancho maximo centrado */
+    max-width: 1200px;
+    /* Margen vertical 30px, automatico horizontal */
+    margin: 30px auto;
+    /* Relleno lateral */
+    padding: 0 20px;
+}
+
+/* .formulario: Clase para las tarjetas blancas del dashboard */
+.formulario {
+    /* Fondo blanco */
+    background: #ffffff;
+    /* Bordes redondeados */
+    border-radius: 12px;
+    /* Sombra suave */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    /* Relleno interno */
+    padding: 30px;
+    /* Margen inferior */
+    margin-bottom: 30px;
+    /* Borde gris claro */
+    border: 1px solid #f0f0f0;
+}
+
+/* Titulos h2 y h3 dentro de los formularios */
+.formulario h2,
+h3 {
+    /* Sin margen superior */
+    margin-top: 0;
+    /* Color texto oscuro */
+    color: #222;
+    /* Peso negrita */
+    font-weight: 600;
+    /* Linea divisoria inferior */
+    border-bottom: 2px solid #f4f4f4;
+    /* Espacio inferior interno */
+    padding-bottom: 15px;
+    /* Espacio inferior externo */
+    margin-bottom: 25px;
+}
+
+/* Inputs: Estilos generales para todos los campos de texto */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea,
+input[type="file"] {
+    /* Ancho completo */
+    width: 100%;
+    /* Relleno interno */
+    padding: 12px 15px;
+    /* Margen inferior */
+    margin-bottom: 15px;
+    /* Borde gris */
+    border: 1px solid #e1e1e1;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Fondo gris muy claro */
+    background-color: #f9f9f9;
+    /* Heredar tipografia */
+    font-family: inherit;
+    /* Tamaño de letra */
+    font-size: 14px;
+    /* Color de texto */
+    color: #444;
+    /* Transicion suave */
+    transition: all 0.3s ease;
+    /* Modelo de caja borde */
+    box-sizing: border-box;
+}
+
+/* :focus -> Se activa cuando haces clic dentro del campo para escribir */
+input:focus,
+select:focus,
+textarea:focus {
+    /* Borde azul al enfocar */
+    border-color: #0d6efd;
+    /* Fondo blanco al enfocar */
+    background-color: #ffffff;
+    /* Quitar contorno por defecto */
+    outline: none;
+    /* Sombra de foco azul */
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+/* Button: Estilo base para todos los botones */
+button {
+    /* Relleno del boton */
+    padding: 12px 25px;
+    /* Sin borde */
+    border: none;
+    /* Bordes muy redondeados (pildora) */
+    border-radius: 50px;
+    /* Tamaño de letra */
+    font-size: 15px;
+    /* Peso negrita */
+    font-weight: 600;
+    /* Cursor de mano */
+    cursor: pointer;
+    /* Transicion de efectos */
+    transition: transform 0.2s, background-color 0.2s;
+    /* Color de fondo rojo */
+    background-color: #d32f2f;
+    /* Texto blanco */
+    color: white;
+}
+
+/* button:hover -> Efecto al pasar el mouse por encima del boton */
+button:hover {
+    /* Oscurecer ligeramente */
+    filter: brightness(90%);
+    /* Mover un poco hacia arriba */
+    transform: translateY(-2px);
+}
+
+/* .btn-danger: Botones rojos para acciones de borrar/peligro */
+.eliminar,
 .btn-danger {
+    /* Fondo rojo peligro */
     background-color: #dc3545;
+    /* Texto blanco */
     color: white;
-    border: none;
+    /* Bordes redondeados */
+    border-radius: 5px;
+    /* Relleno pequeño */
     padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
 }
 
-/* .btn-edit: Botón editar (azul). */
-.btn-edit {
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+/* Table: Estructura general de las tablas de datos */
+table {
+    /* Ancho completo */
+    width: 100%;
+    /* Bordes separados */
+    border-collapse: separate;
+    /* Sin espacio entre celdas */
+    border-spacing: 0;
+    /* Margen superior */
+    margin-top: 20px;
+    /* Fondo blanco */
+    background: white;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Ocultar desbordamiento */
+    overflow: hidden;
+    /* Sombra suave */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Formularios de administración */
-.admin-form {
+/* th, td: Celdas de cabecera y cuerpo de tabla */
+th,
+td {
+    /* Relleno de celdas */
+    padding: 15px;
+    /* Alineacion izquierda */
+    text-align: left;
+    /* Linea divisoria inferior */
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* th: Estilos especificos para la cabecera (negrita, gris) */
+th {
+    /* Fondo gris claro cabecera */
+    background-color: #fafafa;
+    /* Peso negrita */
+    font-weight: 600;
+    /* Color gris medio */
+    color: #555;
+    /* Mayusculas */
+    text-transform: uppercase;
+    /* Tamaño letra pequeño */
+    font-size: 0.85rem;
+}
+
+/* Ultima fila: Quita el borde inferior para que se vea limpio */
+tr:last-child td {
+    /* Quitar borde ultima fila */
+    border-bottom: none;
+}
+
+/* tr:hover -> Resalta la fila de la tabla donde esta el mouse */
+tr:hover {
+    /* Fondo gris claro al pasar mouse */
+    background-color: #fbfbfb;
+}
+
+/* Grid: Cuadricula para mostrar las tarjetas de marcas */
+.lista-marcas {
+    /* Quitar viñetas */
+    list-style: none;
+    /* Sin relleno */
+    padding: 0;
+    /* Usar Grid */
     display: grid;
-    /* Grid CSS para layout del formulario */
-    grid-template-columns: 1fr 1fr;
-    /* Dos columnas iguales */
-    gap: 20px;
+    /* Columnas auto-ajustables */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* Espacio entre items */
+    gap: 15px;
+}
+
+/* .marca-item: Cada cajita individual de una marca */
+.marca-item {
+    /* Fondo blanco */
+    background: #fff;
+    /* Borde gris claro */
+    border: 1px solid #eee;
+    /* Relleno */
+    padding: 15px;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Texto centrado */
+    text-align: center;
+}
+
+/* .modal-mensaje: Fondo oscuro que cubre la pantalla */
+.modal-mensaje {
+    /* Posicion fija pantalla completa */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Fondo oscuro semitransparente */
+    background: rgba(0, 0, 0, 0.5);
+    /* Flexbox centrado */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Capa superior */
+    z-index: 1000;
+}
+
+/* .modal-contenido: La cajita blanca del mensaje en el centro */
+.modal-contenido {
+    /* Fondo blanco */
+    background: white;
+    /* Relleno */
+    padding: 30px;
+    /* Bordes redondeados */
+    border-radius: 12px;
+    /* Texto centrado */
+    text-align: center;
+    /* Sombra fuerte */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Ancho responsivo */
+    width: 90%;
+    max-width: 400px;
+}
+
+/* Boton dentro del modal (generalmente cerrar/aceptar) */
+.modal-contenido button {
+    /* Color gris para boton cerrar */
+    background-color: #6c757d;
+    /* Margen superior */
+    margin-top: 15px;
+}
+
+/* --- ESTILOS ESPECIFICOS PAR EL LOGIN DE ADMIN --- */
+
+/* body.login-page: Layout exclusivo pantalla de login */
+body.login-page {
+    /* Imagen de fondo con degradado oscuro */
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('img/admin.png') no-repeat center center fixed;
+    /* Ajuste de tamaño imagen */
+    background-size: cover;
+    /* Flexbox para centrar tarjeta */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Altura completa pantalla */
+    height: 100vh;
+}
+
+/* .login-card: La tarjeta transparente (Glassmorphism) */
+.login-card {
+    /* Fondo transparente */
+    background: rgba(255, 255, 255, 0.0);
+    /* Desenfoque de fondo */
+    backdrop-filter: blur(5px);
+    /* Soporte Safari */
+    -webkit-backdrop-filter: blur(5px);
+    /* Borde sutil blanco */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Borde solicitado azul grisaceo */
+    border: 2px solid #7390A0;
+    /* Bordes redondeados */
+    border-radius: 14px;
+    /* Relleno interno */
+    padding: 40px 50px;
+    /* Ancho relativo */
+    width: 90%;
+    /* Ancho maximo */
+    max-width: 420px;
+    /* Sombra suave */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* Transicion suave */
+    transition: all 0.3s ease;
+    /* Texto centrado */
+    text-align: center;
+    /* Color texto blanco */
+    color: #fff;
+    /* Animacion de entrada */
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* @keyframes: Define la animacion de "aparecer suavemente" */
+@keyframes fadeIn {
+    from {
+        /* Inicio invisible desplazado */
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        /* Final visible posicion original */
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo dentro del login */
+.logo-taller img {
+    /* Ancho logo */
+    width: 100px;
+    /* Bloque para permitir margen */
+    display: block;
+    /* Centrado horizontal */
+    margin: 0 auto 15px auto;
+    /* Sombra blanca al logo */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+/* Titulo del logo (H1) */
+.logo-taller h1 {
+    /* Tamaño titulo */
+    font-size: 1.6rem;
+    /* Texto centrado */
+    text-align: center;
+    /* Margen inferior */
+    margin-bottom: 5px;
+    /* Color blanco */
+    color: #fff;
+    /* Negrita */
+    font-weight: 700;
+    /* Sombra texto para lectura */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Subtitulo del logo */
+.logo-taller .subtitulo {
+    /* Texto centrado */
+    text-align: center;
+    /* Color gris claro */
+    color: #ddd;
+    /* Tamaño pequeño */
+    font-size: 0.9rem;
+    /* Sin margen superior */
+    margin-top: 0;
+    /* Margen inferior */
+    margin-bottom: 20px;
+    /* Peso medio */
+    font-weight: 600;
+}
+
+/* .input-group: Contenedor para poner icono junto al input */
+.input-group {
+    /* Posicion relativa para icono absoluto */
+    position: relative;
+    /* Margen inferior */
     margin-bottom: 20px;
 }
 
-/* .full-width: Clase utilitaria para elementos que deben ocupar las 2 columnas. */
-.full-width {
-    grid-column: span 2;
-    /* Ocupa 2 columnas del grid */
+/* Iconos FontAwesome dentro del input */
+.input-group i {
+    /* Posicion absoluta */
+    position: absolute;
+    /* Izquierda 15px */
+    left: 15px;
+    /* Centrado vertical */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Color icono oscuro */
+    color: #444;
+    /* Capa superior */
+    z-index: 2;
 }
 
-.admin-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.admin-form input,
-.admin-form select,
-.admin-form textarea {
+/* El campo de texto dentro del grupo */
+.input-group input {
+    /* Ancho total */
     width: 100%;
+    /* Relleno ajustado para icono */
+    padding: 12px 12px 12px 45px;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Sin borde por defecto */
+    border: none;
+    /* Fondo blanco */
+    background-color: #ffffff;
+    /* Tamaño letra */
+    font-size: 15px;
+    /* Sombra suave */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Color texto oscuro */
+    color: #333;
+}
+
+/* Estado Focus dentro del grupo */
+.input-group input:focus {
+    /* Fondo blanco al foco */
+    background-color: #fff;
+    /* Borde azul al foco */
+    border: 2px solid #0d6efd;
+    /* Sombra azul al foco */
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+}
+
+/* Wrapper invisible solo para estructura */
+.login-wrapper {
+    /* Ancho total */
+    width: 100%;
+    /* Maximo ancho */
+    max-width: 400px;
+    /* Centrado horizontal */
+    margin: 0 auto;
+}
+
+/* .btn-login: Clase exclusiva boton 'Iniciar Sesion' */
+.btn-login {
+    /* Ancho total */
+    width: 100%;
+    /* Relleno generoso */
+    padding: 12px;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Margen superior */
+    margin-top: 10px;
+    /* Fondo rojo */
+    background: #d32f2f;
+    /* Tamaño letra */
+    font-size: 16px;
+    /* Mayusculas */
+    text-transform: uppercase;
+    /* Espaciado letras */
+    letter-spacing: 1px;
+    /* Sombra roja */
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+    /* Texto blanco */
+    color: white;
+    /* Sin borde */
+    border: none;
+}
+
+/* Hover del boton login */
+.btn-login:hover {
+    /* Fondo mas oscuro */
+    background: #b71c1c;
+    /* Elevacion */
+    transform: translateY(-2px);
+    /* Sombra mas difusa */
+    box-shadow: 0 8px 20px rgba(211, 47, 47, 0.4);
+}
+
+/* Footer con enlaces abajo de los botones */
+.login-footer {
+    /* Texto centrado */
+    text-align: center;
+    /* Margen superior */
+    margin-top: 25px;
+    /* Tamaño aumentado */
+    font-size: 1.1rem;
+}
+
+.login-footer p {
+    /* Color gris claro */
+    color: #eee;
+    /* Margen inferior */
+    margin-bottom: 10px;
+}
+
+.login-footer a {
+    /* Color azul clasico */
+    color: #0d6efd;
+    /* Negrita */
+    font-weight: 700;
+    /* Sin subrayado */
+    text-decoration: none;
+    /* Tamaño grande */
+    font-size: 1.15rem;
+}
+
+.login-footer a:hover {
+    /* Subrayado al pasar */
+    text-decoration: underline;
+}
+
+/* Enlace 'Volver a la tienda' */
+.back-link {
+    /* Mostrar bloque */
+    display: block;
+    /* Margen superior */
+    margin-top: 15px;
+    /* Color gris claro forzado */
+    color: #ccc !important;
+    /* Tamaño normal */
+    font-size: 1rem;
+}
+
+/* Hover enlace volver */
+.back-link:hover {
+    /* Color blanco al pasar */
+    color: #fff !important;
+}
+
+/* Cajas de alerta para errores de login */
+.alert-box {
+    /* Fondo rojo muy claro */
+    background-color: #ffebee;
+    /* Texto rojo oscuro */
+    color: #c62828;
+    /* Relleno */
     padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Margen inferior */
+    margin-bottom: 20px;
+    /* Texto centrado */
+    text-align: center;
+    /* Tamaño pequeño */
+    font-size: 0.9rem;
+    /* Borde rojo claro */
+    border: 1px solid #ffcdd2;
 }

@@ -1,153 +1,102 @@
 <?php
-// session_start: Inicia sesión para persistencia de usuario
+// Iniciar sesión para gestionar el acceso
 session_start();
-// require_once: Carga archivo de conexión a la base de datos
+
+// Conexión a la base de datos
 require_once "conexion.php";
 
-// Clave secreta para crear nuevos administradores
+// Clave maestra para registrar nuevos administradores
 $claveCreador = "CBTIS52";
-// Obtiene el mensaje de la sesión si existe, o vacío si no
+
+// Obtener y limpiar mensajes de sesión
 $mensaje = $_SESSION['mensaje'] ?? '';
-// Elimina el mensaje para que no persista tras recargar
 unset($_SESSION['mensaje']);
 
-// Bloque de Logout (Cerrar sesión)
-// Verifica si hay parámetro logout en la URL
+// --- LOGOUT ---
 if(isset($_GET['logout'])){
-    // Destruye la sesión actual
-    session_destroy();
-    // Redirecciona al panel (ahora limpio)
-    header("Location: admin_panel.php");
-    // Detiene ejecución
+    session_destroy(); // Destruir sesión
+    header("Location: admin_panel.php"); // Redirigir al inicio
     exit;
 }
 
-// Bloque de Crear Admin
-// Verifica variable POST del formulario crear admin
+// --- REGISTRO DE ADMIN (Procesar Formulario) ---
 if(isset($_POST['crear_admin'])){
-    // Limpia espacios nombre
     $nombre = trim($_POST['nombre']);
-    // Limpia espacios correo
     $correo = trim($_POST['correo']);
-    // Contraseña sin trim (puede llevar espacios)
     $contrasena = $_POST['contrasena'];
-    // Clave de seguridad proporcionada
     $clave = $_POST['clave_creador'];
 
-    // Valida clave maestra
+    // Validar clave maestra
     if($clave !== $claveCreador){
-        $_SESSION['mensaje'] = "❌ Clave del creador incorrecta.";
+        $_SESSION['mensaje'] = "❌ Clave incorrecta.";
     } 
-    // Valida que campos no estén vacíos
     elseif($nombre && $correo && $contrasena){
-        // Hash seguro de contraseña
+        // Encriptar contraseña
         $hash = password_hash($contrasena, PASSWORD_DEFAULT);
-        // Prepara inserción SQL
+        
+        // Insertar nuevo admin
         $stmt = $conexion->prepare("INSERT INTO admins(nombre, correo, contrasena_hash) VALUES(?,?,?)");
-        // Bind parámetros (string, string, string)
-        $stmt->bind_param("sss",$nombre,$correo,$hash);
-        // Ejecuta query
+        $stmt->bind_param("sss", $nombre, $correo, $hash);
         $stmt->execute();
-        // Cierra statement
         $stmt->close();
-        $_SESSION['mensaje'] = "✅ Admin creado correctamente.";
+        
+        $_SESSION['mensaje'] = "✅ Admin registrado.";
     }
-    // Recarga página
     header("Location: admin_panel.php");
     exit;
 }
 
-// Bloque de Login Admin
-// Verifica POST login
+// --- LOGIN (Procesar Formulario) ---
 if(isset($_POST['login_admin'])){
-    // Limpia correo
     $correo = trim($_POST['correo']);
     $contrasena = $_POST['contrasena'];
 
-    // Prepara consulta buscar admin por correo
+    // Buscar admin por correo
     $stmt = $conexion->prepare("SELECT * FROM admins WHERE correo=?");
-    $stmt->bind_param("s",$correo);
+    $stmt->bind_param("s", $correo);
     $stmt->execute();
     $res = $stmt->get_result();
 
-    // Si encuentra resultado único
-    if($res && $res->num_rows==1){
+    if($res && $res->num_rows == 1){
         $admin = $res->fetch_assoc();
-        // Verifica hash contraseña
+        // Verificar contraseña
         if(password_verify($contrasena, $admin['contrasena_hash'])){
-            // Guarda ID en sesión
             $_SESSION['admin_id'] = $admin['id'];
-            // Guarda Nombre en sesión
             $_SESSION['admin_nombre'] = $admin['nombre'];
-            // Redirecciona al panel logueado
             header("Location: admin_panel.php");
             exit;
         }
     }
-    // Si falla
-    $_SESSION['mensaje'] = "❌ Correo o contraseña incorrectos.";
-    $stmt->close();
+    $_SESSION['mensaje'] = "❌ Datos incorrectos.";
     header("Location: admin_panel.php");
     exit;
 }
 
-// Bloque Principal: Usuario Logueado
-// Si existe sesión admin, procesa lógica del panel
+// --- ACCIONES DEL PANEL (Solo si está logueado) ---
 if(isset($_SESSION['admin_id'])){
 
-    // Agregar Nueva Marca
+    // 1. Agregar Marca
     if(isset($_POST['nueva_marca'])){
         $nombre_marca = trim($_POST['nombre_marca']);
         $imagen_marca = '';
-
-        // Procesa subida imagen marca
+        
+        // Procesar imagen si se subió
         if(isset($_FILES['imagen_marca']) && $_FILES['imagen_marca']['error']==0){
-            // Nombre único con timestamp
             $imagen_marca = time().'_'.basename($_FILES['imagen_marca']['name']);
-            // Mueve archivo a uploads
             move_uploaded_file($_FILES['imagen_marca']['tmp_name'], "uploads/".$imagen_marca);
         }
-
-        if($nombre_marca !== ''){
-            // Insertar marca en BD
+        
+        if($nombre_marca){
             $stmt = $conexion->prepare("INSERT INTO marcas(nombre, imagen) VALUES(?, ?)");
             $stmt->bind_param("ss", $nombre_marca, $imagen_marca);
             $stmt->execute();
-            $stmt->close();
-            $_SESSION['mensaje'] = "✅ Marca agregada correctamente.";
-            header("Location: admin_panel.php");
-            exit;
+            $_SESSION['mensaje'] = "✅ Marca agregada.";
         }
-    }
-
-    // Actualizar Marca Existente
-    if(isset($_POST['actualizar_marca'])){
-        $id = intval($_POST['id_marca']);
-        $nombre_marca = trim($_POST['nombre_marca']);
-        $imagen_marca = $_POST['imagen_actual']; // Mantiene actual por defecto
-
-        // Si sube nueva imagen
-        if(isset($_FILES['imagen_marca']) && $_FILES['imagen_marca']['error']==0){
-            $imagen_marca = time().'_'.basename($_FILES['imagen_marca']['name']);
-            move_uploaded_file($_FILES['imagen_marca']['tmp_name'], "uploads/".$imagen_marca);
-            
-            // Borra imagen anterior para no acumular basura
-            if($_POST['imagen_actual'] && file_exists("uploads/".$_POST['imagen_actual'])){
-                unlink("uploads/".$_POST['imagen_actual']);
-            }
-        }
-
-        // Update SQL
-        $stmt = $conexion->prepare("UPDATE marcas SET nombre=?, imagen=? WHERE id=?");
-        $stmt->bind_param("ssi", $nombre_marca, $imagen_marca, $id);
-        $stmt->execute();
-        $stmt->close();
-        $_SESSION['mensaje'] = "✅ Marca actualizada correctamente.";
         header("Location: admin_panel.php");
         exit;
     }
 
-    // Eliminar Marca
+    // 2. Eliminar Marca
     if(isset($_GET['eliminar_marca'])){
         $id = intval($_GET['eliminar_marca']);
         $conexion->query("DELETE FROM marcas WHERE id=$id");
@@ -155,451 +104,292 @@ if(isset($_SESSION['admin_id'])){
         header("Location: admin_panel.php");
         exit;
     }
-
-    // Eliminar TODAS las piezas (Peligro)
-    if(isset($_POST['eliminar_todas_piezas'])){
-        $conexion->query("DELETE FROM piezas");
-        $_SESSION['mensaje'] = "✅ Todas las piezas han sido eliminadas.";
-        header("Location: admin_panel.php");
-        exit;
-    }
-
-    // Eliminar TODAS las marcas (Peligro)
-    if(isset($_POST['eliminar_todas_marcas'])){
-        $conexion->query("DELETE FROM marcas");
-        $_SESSION['mensaje'] = "✅ Todas las marcas han sido eliminadas.";
-        header("Location: admin_panel.php");
-        exit;
-    }
-
-    // Agregar Nueva Pieza
+    
+    // 3. Agregar Pieza
     if(isset($_POST['agregar_pieza'])){
-        $nombre = trim($_POST['nombre']);
-        $descripcion = trim($_POST['descripcion']);
-        $precio = floatval($_POST['precio']);
-        $cantidad = intval($_POST['cantidad']);
-        $marca_id = intval($_POST['marca_id']);
         $imagen = '';
-
-        // Subir imagen principal
         if(isset($_FILES['imagen']) && $_FILES['imagen']['error']==0){
             $imagen = time().'_'.basename($_FILES['imagen']['name']);
             move_uploaded_file($_FILES['imagen']['tmp_name'], "uploads/".$imagen);
         }
 
-        // Insertar Pieza
+        // Insertar pieza
         $stmt = $conexion->prepare("INSERT INTO piezas(nombre, descripcion, precio, cantidad, marca_id, imagen) VALUES(?,?,?,?,?,?)");
-        $stmt->bind_param("ssdiis",$nombre,$descripcion,$precio,$cantidad,$marca_id,$imagen);
+        $stmt->bind_param("ssdiis", $_POST['nombre'], $_POST['descripcion'], $_POST['precio'], $_POST['cantidad'], $_POST['marca_id'], $imagen);
         $stmt->execute();
-        
-        // Obtener ID generado para galería
         $pieza_id = $stmt->insert_id;
         $stmt->close();
 
-        // Procesar Galería (múltiples archivos)
+        // Procesar galería de imágenes
         if(isset($_FILES['galeria'])){
             $total = count($_FILES['galeria']['name']);
             for($i=0; $i<$total; $i++){
                 if($_FILES['galeria']['error'][$i] == 0){
                     $img_gal = time().'_'.$i.'_'.basename($_FILES['galeria']['name'][$i]);
                     move_uploaded_file($_FILES['galeria']['tmp_name'][$i], "uploads/".$img_gal);
-                    // Insertar en tabla secundaria
-                    $stmt_gal = $conexion->prepare("INSERT INTO piezas_imagenes(pieza_id, imagen) VALUES(?, ?)");
-                    $stmt_gal->bind_param("is", $pieza_id, $img_gal);
-                    $stmt_gal->execute();
-                    $stmt_gal->close();
+                    $conexion->query("INSERT INTO piezas_imagenes(pieza_id, imagen) VALUES($pieza_id, '$img_gal')");
                 }
             }
         }
-
-        $_SESSION['mensaje'] = "✅ Pieza agregada correctamente.";
+        $_SESSION['mensaje'] = "✅ Pieza agregada.";
         header("Location: admin_panel.php");
         exit;
     }
 
-    // Eliminar una imagen de la galería de una pieza
-    if(isset($_GET['eliminar_img_gal'])){
-        $id_img = intval($_GET['eliminar_img_gal']);
-        // Busca nombre archivo
-        $res_img = $conexion->query("SELECT imagen FROM piezas_imagenes WHERE id=$id_img");
-        if($row_img = $res_img->fetch_assoc()){
-            // Borra archivo físico
-            if(file_exists("uploads/".$row_img['imagen'])){
-                unlink("uploads/".$row_img['imagen']);
-            }
-        }
-        // Borra registro BD
-        $conexion->query("DELETE FROM piezas_imagenes WHERE id=$id_img");
-        $_SESSION['mensaje'] = "✅ Imagen de galería eliminada.";
-        header("Location: admin_panel.php");
-        exit;
-    }
-
-    // Eliminar Pieza individual (y sus dependencias)
+    // 4. Eliminar Pieza
     if(isset($_GET['eliminar_pieza'])){
         $id = intval($_GET['eliminar_pieza']);
-        
-        // 1. Borrar dependencias en detalle_pedidos (si aplica)
-        $conexion->query("DELETE FROM detalle_pedidos WHERE pieza_id=$id");
-        
-        // 2. Borrar imágenes de galería asociadas y sus archivos
-        $res_imgs = $conexion->query("SELECT imagen FROM piezas_imagenes WHERE pieza_id=$id");
-        while($img_row = $res_imgs->fetch_assoc()){
-            if(file_exists("uploads/".$img_row['imagen'])){
-                unlink("uploads/".$img_row['imagen']);
-            }
-        }
-        $conexion->query("DELETE FROM piezas_imagenes WHERE pieza_id=$id");
-        
-        // 3. Borrar imagen principal y archivo
-        $res_pieza = $conexion->query("SELECT imagen FROM piezas WHERE id=$id");
-        if($pieza_data = $res_pieza->fetch_assoc()){
-            if(!empty($pieza_data['imagen']) && file_exists("uploads/".$pieza_data['imagen'])){
-                unlink("uploads/".$pieza_data['imagen']);
-            }
-        }
-        
-        // 4. Borrar pieza final
         $conexion->query("DELETE FROM piezas WHERE id=$id");
-        $_SESSION['mensaje'] = "✅ Pieza eliminada correctamente.";
+        $_SESSION['mensaje'] = "✅ Pieza eliminada.";
         header("Location: admin_panel.php");
         exit;
     }
-
-    // Actualizar Pieza
-    if(isset($_POST['actualizar_pieza'])){
-        $id = intval($_POST['id']);
-        $nombre = trim($_POST['nombre']);
-        $descripcion = trim($_POST['descripcion']);
-        $precio = floatval($_POST['precio']);
-        $cantidad = intval($_POST['cantidad']);
-        $marca_id = intval($_POST['marca_id']);
-
-        // Si se sube nueva imagen principal
-        if(isset($_FILES['imagen']) && $_FILES['imagen']['error']==0){
-            $imagen = time().'_'.basename($_FILES['imagen']['name']);
-            move_uploaded_file($_FILES['imagen']['tmp_name'], "uploads/".$imagen);
-            // Update con imagen
-            $stmt = $conexion->prepare("UPDATE piezas SET nombre=?, descripcion=?, precio=?, cantidad=?, marca_id=?, imagen=? WHERE id=?");
-            $stmt->bind_param("ssdiisi",$nombre,$descripcion,$precio,$cantidad,$marca_id,$imagen,$id);
-        } else {
-            // Update sin cambiar imagen
-            $stmt = $conexion->prepare("UPDATE piezas SET nombre=?, descripcion=?, precio=?, cantidad=?, marca_id=? WHERE id=?");
-            $stmt->bind_param("ssdiii",$nombre,$descripcion,$precio,$cantidad,$marca_id,$id);
-        }
-        $stmt->execute();
-        $stmt->close();
-
-        // Agregar más imágenes a galería (opcional)
-        if(isset($_FILES['galeria'])){
-            $total = count($_FILES['galeria']['name']);
-            for($i=0; $i<$total; $i++){
-                if($_FILES['galeria']['error'][$i] == 0){
-                    $img_gal = time().'_'.$i.'_'.basename($_FILES['galeria']['name'][$i]);
-                    move_uploaded_file($_FILES['galeria']['tmp_name'][$i], "uploads/".$img_gal);
-                    $stmt_gal = $conexion->prepare("INSERT INTO piezas_imagenes(pieza_id, imagen) VALUES(?, ?)");
-                    $stmt_gal->bind_param("is", $id, $img_gal);
-                    $stmt_gal->execute();
-                    $stmt_gal->close();
-                }
-            }
-        }
-
-        $_SESSION['mensaje'] = "✅ Pieza actualizada correctamente.";
-        header("Location: admin_panel.php");
-        exit;
-    }
-
-    // Consultas para listar en tablas
-    $marcas = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
-    $piezas = $conexion->query("SELECT p.*, m.nombre as marca_nombre FROM piezas p LEFT JOIN marcas m ON p.marca_id = m.id ORDER BY p.id DESC");
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin MRMC</title>
-<link rel="stylesheet" href="admin.css"> <!-- Carga CSS externo -->
-</head>
-<body>
 
-<!-- Si NO hay sesión de admin, mostrar login/registro -->
-<?php if(!isset($_SESSION['admin_id'])): ?>
-<main>
-    <!-- Mostrar mensaje flash style -->
-    <?php if($mensaje): ?>
-    <div class="modal-mensaje exito">
-    <div class="modal-contenido">
-    <h2>Mensaje</h2>
-    <p><?= htmlspecialchars($mensaje) ?></p>
-    <button onclick="this.parentElement.parentElement.style.display='none'">Cerrar</button>
-    </div>
-    </div>
-    <?php endif; ?>
+<?php 
+// VISTA: Si no hay sesión iniciada, mostrar Login
+if(!isset($_SESSION['admin_id'])): 
+?>
 
-    <!-- Formulario Login -->
-    <section class="formulario">
-    <h2>Login Admin</h2>
-    <form method="post">
-    <input type="email" name="correo" placeholder="Correo" required>
-    <input type="password" name="contrasena" placeholder="Contraseña" required>
-    <button type="submit" name="login_admin">Iniciar Sesión</button>
-    <!-- Enlace dashborad -->
-    <header>
-    <div class="formulario">
-    <a href="dashboard-piezas.php">dashboard</a>
-    </header>
-    </div>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Admin MRMP - Acceso</title>
+        <link rel="stylesheet" href="admin.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="login-page">
 
-    </form>
-    </section>
-
-    <!-- Formulario Registro -->
-    <section class="formulario">
-    <h2>Crear Nuevo Admin</h2>
-    <form method="post">
-    <input type="text" name="nombre" placeholder="Nombre" required>
-    <input type="email" name="correo" placeholder="Correo" required>
-    <input type="password" name="contrasena" placeholder="Contraseña" required>
-    <input type="text" name="clave_creador" placeholder="Clave del creador" required>
-    <button type="submit" name="crear_admin">Crear Admin</button>
-    </form>
-    </section>
-</main>
-
-<!-- Si SÍ hay sesión, mostrar Panel Completo -->
-<?php else: ?>
-<header>
-<h1>Panel de Administración MRMP</h1>
-<a href="gestionar_pedidos.php" style="color:#ff0000;">
-     Gestionar Pedidos
-</a> | 
-<a href="dashboard-piezas.php" style="color:#ff0000;">
-      Pagina de Piezas
-</a> | 
-<a href="?logout" style="color:#ff0000;">Cerrar sesión</a>
-</header>
-<main>
-    <!-- Mensajes Flash -->
-    <?php if($mensaje): ?>
-    <div class="modal-mensaje exito">
-    <div class="modal-contenido">
-    <h2>Mensaje</h2>
-    <p><?= htmlspecialchars($mensaje) ?></p>
-    <button onclick="this.parentElement.parentElement.style.display='none'">Cerrar</button>
-    </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Botón Eliminar Marcas Masivo -->
-    <div class="acciones-rapidas">
-        <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las marcas?')">
-            <button type="submit" name="eliminar_todas_marcas" class="eliminar">Eliminar Todas las Marcas</button>
-        </form>
-    </div>
-
-    <!-- Gestión Marcas -->
-    <section class="formulario">
-    <h2>Gestionar Marcas</h2>
-    <form method="post" enctype="multipart/form-data">
-        <input type="text" name="nombre_marca" placeholder="Nombre de la marca" required>
-        <input type="file" name="imagen_marca" accept="image/*">
-        <small>Formatos: PNG, JPG, JPEG. Las imágenes se guardarán en uploads/</small>
-        <button type="submit" name="nueva_marca">Agregar Marca</button>
-    </form>
-
-    <!-- Botón duplicado eliminado -->
-
-    <h3>Marcas Registradas</h3>
-    <ul class="lista-marcas">
-    <?php 
-    // Query marcas
-    $marcas_lista = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
-    while($m = $marcas_lista->fetch_assoc()): 
-    ?>
-        <li class="marca-item">
-            <div class="marca-info">
-                <?php if($m['imagen']): ?>
-                    <img src="uploads/<?= htmlspecialchars($m['imagen']) ?>" alt="<?= htmlspecialchars($m['nombre']) ?>" width="50" style="margin-right: 10px;">
-                <?php endif; ?>
-                <strong><?= htmlspecialchars($m['nombre']) ?></strong>
-            </div>
-            <div class="marca-acciones">
-                <a href="#editar-marca-<?= $m['id'] ?>" style="color: #007bff;">Editar</a> - 
-                <a href="?eliminar_marca=<?= $m['id'] ?>" style="color:red;" onclick="return confirm('¿Eliminar esta marca?')">Eliminar</a>
-            </div>
+        <div class="login-wrapper">
             
-            <!-- Bloque Edición Marca -->
-            <div id="editar-marca-<?= $m['id'] ?>" class="form-edicion-marca">
-                <h4>Editar Marca: <?= htmlspecialchars($m['nombre']) ?></h4>
-                <form method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="id_marca" value="<?= $m['id'] ?>">
-                    <input type="hidden" name="imagen_actual" value="<?= htmlspecialchars($m['imagen']) ?>">
-                    
-                    <input type="text" name="nombre_marca" value="<?= htmlspecialchars($m['nombre']) ?>" placeholder="Nombre de la marca" required>
-                    
-                    <div style="margin: 10px 0;">
-                        <?php if($m['imagen']): ?>
-                            <img src="uploads/<?= htmlspecialchars($m['imagen']) ?>" alt="Imagen actual" width="80" style="display: block; margin-bottom: 5px;">
-                            <small>Imagen actual (uploads/<?= htmlspecialchars($m['imagen']) ?>)</small>
-                        <?php else: ?>
-                            <small>No hay imagen</small>
-                        <?php endif; ?>
+            <!-- FORMULARIO LOGIN -->
+            <div class="login-card" id="card-login">
+                <div class="logo-taller">
+                    <img src="img/logo2.png" alt="Logo MRMP">
+                    <h1>Admin Login</h1>
+                    <p class="subtitulo">Panel de Administración MRMP</p>
+                </div>
+                
+                <?php if($mensaje): ?>
+                    <div class="alert-box"><?= htmlspecialchars($mensaje) ?></div>
+                <?php endif; ?>
+
+                <form method="post">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="correo" placeholder="Correo Electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="contrasena" placeholder="Contraseña" required>
                     </div>
                     
-                    <input type="file" name="imagen_marca" accept="image/*">
-                    <small>Dejar vacío para mantener la imagen actual</small>
-                    
-                    <button type="submit" name="actualizar_marca">Actualizar Marca</button>
+                    <button type="submit" name="login_admin" class="btn-login">Iniciar Sesión</button>
                 </form>
+                
+                <div class="login-footer">
+                    <p>¿No estás registrado? <a href="#" onclick="toggleForms()">Crear cuenta admin</a></p>
+                    <a href="dashboard-piezas.php" class="back-link"><i class="fas fa-arrow-left"></i> Volver a la Tienda</a>
+                </div>
             </div>
-        </li>
-    <?php endwhile; ?>
-    </ul>
-    </section>
 
-    <!-- Botón Masivo duplicado -->
-    <div class="acciones-rapidas">
-    <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las marcas?')">
-    <button type="submit" name="eliminar_todas_marcas" class="eliminar">Eliminar Todas las Marcas</button>
-    </form>
-    </div>
+            <!-- FORMULARIO REGISTRO -->
+            <div class="login-card" id="card-register" style="display: none;">
+                 <div class="logo-taller">
+                    <img src="img/logo2.png" alt="Logo MRMP">
+                    <h1>Nuevo Admin</h1>
+                    <p class="subtitulo">Registro Autorizado</p>
+                </div>
 
-    <!-- Gestión Piezas -->
-    <section class="formulario">
-    <h2>Agregar Pieza</h2>
-    <form method="post" enctype="multipart/form-data">
-    <input type="text" name="nombre" placeholder="Nombre de la pieza" required>
-    <textarea name="descripcion" placeholder="Descripción" rows="3" required></textarea>
-    <input type="number" step="0.01" name="precio" placeholder="Precio" required>
-    <input type="number" name="cantidad" placeholder="Cantidad" required>
-    <select name="marca_id" required>
-    <option value="">Selecciona marca</option>
-    <?php 
-    $marcas_sel = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
-    while($m2 = $marcas_sel->fetch_assoc()): ?>
-    <option value="<?= $m2['id'] ?>"><?= htmlspecialchars($m2['nombre']) ?></option>
-    <?php endwhile; ?>
-    </select>
-    <label>Imagen Principal:</label>
-    <input type="file" name="imagen">
-    <label>Galería de Imágenes (Selecciona varias):</label>
-    <input type="file" name="galeria[]" multiple accept="image/*">
-    <button type="submit" name="agregar_pieza">Agregar Pieza</button>
-    </form>
+                <form method="post">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="nombre" placeholder="Nombre Completo" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="correo" placeholder="Correo Electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="contrasena" placeholder="Contraseña" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="password" name="clave_creador" placeholder="Clave Maestra" required>
+                    </div>
+                    
+                    <button type="submit" name="crear_admin" class="btn-login">Registrar Admin</button>
+                </form>
 
-    <!-- Eliminar Todas Piezas -->
-    <div class="acciones-rapidas">
-    <form method="post" onsubmit="return confirm('¿Estás seguro de eliminar TODAS las piezas?')">
-    <button type="submit" name="eliminar_todas_piezas" class="eliminar">Eliminar Todas las Piezas</button>
-    </form>
-    </div>
-
-    <!-- Tabla Piezas -->
-    <h3>Piezas Registradas</h3>
-    <table>
-    <tr>
-    <th>ID</th>
-    <th>Nombre</th>
-    <th>Descripción</th>
-    <th>Marca</th>
-    <th>Precio</th>
-    <th>Cantidad</th>
-    <th>Imagen</th>
-    <th>Acciones</th>
-    </tr>
-    <?php 
-    // Join para traer nombre de marca
-    $piezas_lista = $conexion->query("SELECT p.*, m.nombre as marca_nombre FROM piezas p LEFT JOIN marcas m ON p.marca_id = m.id ORDER BY p.id DESC");
-    while($p = $piezas_lista->fetch_assoc()): 
-    ?>
-    <tr>
-    <td><?= $p['id'] ?></td>
-    <td><?= htmlspecialchars($p['nombre']) ?></td>
-    <td><?= htmlspecialchars($p['descripcion']) ?></td>
-    <td><?= htmlspecialchars($p['marca_nombre']) ?></td>
-    <td>$<?= number_format($p['precio'],2) ?></td>
-    <td><?= intval($p['cantidad']) ?></td>
-    <td><?php if($p['imagen']): ?><img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" width="50"><?php endif;?></td>
-    <td>
-    <!-- Botón Toggle Edición JS -->
-    <button onclick="toggleEdit(<?= $p['id'] ?>)" style="cursor:pointer; color:blue; background:none; border:none; text-decoration:underline;">Editar</button>
-     - 
-    <a href="?eliminar_pieza=<?= $p['id'] ?>" style="color:red;" onclick="return confirm('¿Eliminar esta pieza?')">Eliminar</a>
-    </td>
-    </tr>
-    <!-- Fila oculta de edición -->
-    <tr id="edit-row-<?= $p['id'] ?>" style="display:none; background-color: #f9f9f9;">
-    <td colspan="8">
-    <div class="form-edicion" style="padding: 20px; border: 1px solid #ddd;">
-    <h4>Editar Pieza: <?= htmlspecialchars($p['nombre']) ?></h4>
-    <form method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" value="<?= $p['id'] ?>">
-    <input type="text" name="nombre" value="<?= htmlspecialchars($p['nombre']) ?>" placeholder="Nombre" required>
-    <textarea name="descripcion" placeholder="Descripción" rows="3" required><?= htmlspecialchars($p['descripcion']) ?></textarea>
-    <input type="number" step="0.01" name="precio" value="<?= $p['precio'] ?>" placeholder="Precio" required>
-    <input type="number" name="cantidad" value="<?= $p['cantidad'] ?>" placeholder="Cantidad" required>
-    <select name="marca_id" required>
-    <option value="">Selecciona marca</option>
-    <?php 
-    $marcas_edit = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
-    while($m3 = $marcas_edit->fetch_assoc()): 
-    ?>
-    <option value="<?= $m3['id'] ?>" <?= $m3['id'] == $p['marca_id'] ? 'selected' : '' ?>>
-    <?= htmlspecialchars($m3['nombre']) ?>
-    </option>
-    <?php endwhile; ?>
-    </select>
-    <label>Imagen Principal:</label>
-    <input type="file" name="imagen">
-    <small>Dejar vacío para mantener la imagen actual</small><br>
-
-    <label>Agregar más imágenes a la galería:</label>
-    <input type="file" name="galeria[]" multiple accept="image/*">
-
-    <div style="margin-top:10px;">
-        <h5>Galería Actual:</h5>
-        <?php
-        $gal_res = $conexion->query("SELECT * FROM piezas_imagenes WHERE pieza_id=".$p['id']);
-        while($gal = $gal_res->fetch_assoc()):
-        ?>
-        <div style="display:inline-block; margin:5px; text-align:center;">
-            <img src="uploads/<?= $gal['imagen'] ?>" width="60" height="60" style="object-fit:cover; border:1px solid #ccc;">
-            <br>
-            <a href="?eliminar_img_gal=<?= $gal['id'] ?>" style="color:red; font-size:12px;" onclick="return confirm('¿Borrar esta imagen?')">Borrar</a>
+                <div class="login-footer">
+                    <p>¿Ya tienes cuenta? <a href="#" onclick="toggleForms()">Iniciar sesión</a></p>
+                </div>
+            </div>
         </div>
-        <?php endwhile; ?>
-    </div>
 
-    <button type="submit" name="actualizar_pieza">Actualizar Pieza</button>
-    <button type="button" onclick="toggleEdit(<?= $p['id'] ?>)" style="background-color: #6c757d;">Cancelar</button>
-    </form>
-    </div>
-    </td>
-    </tr>
-    <?php endwhile; ?>
-    </table>
-    </section>
-</main>
+        <script>
+            // Alternar entre login y registro
+            function toggleForms() {
+                const login = document.getElementById('card-login');
+                const register = document.getElementById('card-register');
+                
+                if (login.style.display === 'none') {
+                    login.style.display = 'block';
+                    register.style.display = 'none';
+                } else {
+                    login.style.display = 'none';
+                    register.style.display = 'block';
+                }
+            }
+        </script>
+    </body>
+    </html>
 
-<footer style="text-align: center; margin-top: 20px; color: #888;">
-&copy; <?= date('Y') ?> Mexican Racing Motor Parts
-</footer>
+<?php 
+// VISTA: Si hay sesión iniciada, mostrar Panel
+else: 
 
-<script>
-// JS para mostrar/ocultar fila edición
-function toggleEdit(id) {
-    var row = document.getElementById('edit-row-' + id);
-    if (row.style.display === 'none') {
-        row.style.display = 'table-row';
-    } else {
-        row.style.display = 'none';
-    }
-}
-</script>
+    // Obtener piezas y marcas para el dashboard
+    $piezas = $conexion->query("SELECT p.*, m.nombre as marca_nombre FROM piezas p LEFT JOIN marcas m ON p.marca_id = m.id ORDER BY p.id DESC");
+    $marcas = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
+?>
 
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel de Administración MRMP</title>
+        <link rel="stylesheet" href="admin.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <header>
+            <h1>Panel MRMP <small style="font-size: 0.6em; font-weight: 400;">Bienvenido, <?= htmlspecialchars($_SESSION['admin_nombre']) ?></small></h1>
+            <nav>
+                <a href="gestionar_pedidos.php"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+                <a href="dashboard-piezas.php"><i class="fas fa-store"></i> Tienda Publica</a>
+                <a href="?logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </nav>
+        </header>
+
+        <main>
+            <?php if($mensaje): ?>
+                <div class="modal-mensaje">
+                    <div class="modal-contenido">
+                        <h2>Notificación</h2>
+                        <p><?= htmlspecialchars($mensaje) ?></p>
+                        <button onclick="this.parentElement.parentElement.style.display='none'">Aceptar</button>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Sección Marcas -->
+            <section class="formulario">
+                <h2><i class="fas fa-tag"></i> Gestión de Marcas</h2>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="text" name="nombre_marca" placeholder="Nombre de la Nueva Marca" required>
+                    <input type="file" name="imagen_marca" accept="image/*">
+                    <button type="submit" name="nueva_marca">Agregar Marca</button>
+                </form>
+
+                <h3>Marcas Disponibles</h3>
+                <ul class="lista-marcas">
+                    <?php while($m = $marcas->fetch_assoc()): ?>
+                        <li class="marca-item">
+                            <?php if($m['imagen']): ?>
+                                <img src="uploads/<?= htmlspecialchars($m['imagen']) ?>" width="50" style="display:block; margin: 0 auto 10px;">
+                            <?php endif; ?>
+                            <strong><?= htmlspecialchars($m['nombre']) ?></strong>
+                            <div style="margin-top: 10px;">
+                                <a href="?eliminar_marca=<?= $m['id'] ?>" class="eliminar" onclick="return confirm('¿Borrar marca?')">Eliminar</a>
+                            </div>
+                        </li>
+                    <?php endwhile; ?>
+                </ul>
+            </section>
+
+            <!-- Sección Piezas -->
+            <section class="formulario">
+                <h2><i class="fas fa-cogs"></i> Agregar Nueva Pieza</h2>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="text" name="nombre" placeholder="Nombre de la pieza" required>
+                    <textarea name="descripcion" placeholder="Descripción detallada" rows="3" required></textarea>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <input type="number" step="0.01" name="precio" placeholder="Precio ($)" required>
+                        <input type="number" name="cantidad" placeholder="Stock disponible" required>
+                    </div>
+
+                    <select name="marca_id" required>
+                        <option value="">Selecciona una marca...</option>
+                        <?php 
+                        $marcas->data_seek(0); 
+                        while($m = $marcas->fetch_assoc()): 
+                        ?>
+                            <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['nombre']) ?></option>
+                        <?php endwhile; ?>
+                    </select>
+
+                    <label>Imagen Principal:</label>
+                    <input type="file" name="imagen">
+                    
+                    <label>Galería (Opcional):</label>
+                    <input type="file" name="galeria[]" multiple accept="image/*">
+
+                    <button type="submit" name="agregar_pieza" style="margin-top: 15px;">Guardar Pieza</button>
+                </form>
+            </section>
+
+            <!-- Tabla Inventario -->
+            <section>
+                <h3>Inventario Actual</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while($p = $piezas->fetch_assoc()): ?>
+                                <tr>
+                                    <td>#<?= $p['id'] ?></td>
+                                    <td>
+                                        <?php if($p['imagen']): ?>
+                                            <img src="uploads/<?= htmlspecialchars($p['imagen']) ?>" width="40" style="border-radius: 4px;">
+                                        <?php else: ?>
+                                            <span style="color:#ccc;">Sin img</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <strong><?= htmlspecialchars($p['nombre']) ?></strong>
+                                    </td>
+                                    <td><?= htmlspecialchars($p['marca_nombre']) ?></td>
+                                    <td style="color: #d32f2f;">$<?= number_format($p['precio'], 2) ?></td>
+                                    <td><?= $p['cantidad'] ?> un.</td>
+                                    <td>
+                                        <a href="?eliminar_pieza=<?= $p['id'] ?>" class="eliminar" onclick="return confirm('¿Eliminar pieza?')">X</a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            &copy; <?= date('Y') ?> Mexican Racing Motor Parts
+        </footer>
+    </body>
+    </html>
 <?php endif; ?>
-</body>
-</html>
