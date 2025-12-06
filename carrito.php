@@ -1,238 +1,249 @@
 <?php
-// Iniciamos la sesión para mantener la persistencia de datos del usuario y el carrito entre páginas
+// session_start inicia la "memoria" del servidor para recordar quién es el usuario mientras navega entre páginas
 session_start();
 
-// Incluimos el archivo de conexión a la base de datos para poder realizar consultas
+// require_once pega el contenido de conexion.php aquí; si falla, detiene todo el código
 require_once "conexion.php";
 
-// Incluimos el helper para el envío de correos electrónicos (confirmaciones de pedido, notificaciones)
+// require_once carga el archivo para enviar correos, necesario para mandar las notificaciones de compra
 require_once "enviar_correo.php";
 
-// Lógica de Cerrar Sesión
-// Verificamos si se ha recibido el parámetro 'logout' en la URL (método GET)
+// isset verifica si la palabra 'logout' aparece en la barra de direcciones (URL)
 if(isset($_GET['logout'])){
-    // Destruimos todas las variables de sesión activas para cerrar la sesión del usuario
+    // session_destroy borra toda la información guardada de la sesión (desconecta al usuario)
     session_destroy();
     
-    // Redirigimos al usuario a la página principal después de cerrar sesión
+    // header envía una instrucción invisible al navegador para redirigir a 'pagina-principal.php'
     header("Location: pagina-principal.php");
     
-    // Detenemos la ejecución del script para asegurar que no se procese nada más
+    // exit detiene la ejecución del script aquí mismo para que no se procese nada más
     exit;
 }
 
-// Inicialización del Carrito
-// Si la variable de sesión 'carrito' no existe, la inicializamos como un array vacío para evitar errores
-if(!isset($_SESSION['carrito'])) $_SESSION['carrito'] = [];
+// !isset verifica si NO existe la variable 'carrito' en la sesión del usuario
+if(!isset($_SESSION['carrito'])) {
+    // Si no existe, creamos el carrito como una lista vacía [] para empezar a guardar productos
+    $_SESSION['carrito'] = [];
+}
 
-// Variable para almacenar mensajes de retroalimentación al usuario (éxito o error)
+// Inicializamos $mensaje vacío; lo usaremos después para mostrar alertas de éxito o error en la pantalla
 $mensaje = "";
 
-// Procesamiento del Checkout (Finalizar Compra)
-// Verificamos si se envió el formulario de checkout (POST) y si el carrito no está vacío
+// isset verifica si presionaron el botón 'checkout' Y (!empty) revisa que el carrito tenga productos
 if(isset($_POST['checkout']) && !empty($_SESSION['carrito'])){
-    // Obtenemos el ID del usuario desde la sesión actual
+    // $_SESSION accede a la información guardada del usuario logueado actualmente
     $usuario_id = $_SESSION['usuario_id'];
     
-    // Recogemos los datos del formulario de envío enviados por POST
+    // $_POST captura los datos que el usuario escribió en los campos del formulario HTML
     $direccion = $_POST['direccion'];
     $ciudad = $_POST['ciudad'];
     $postal = $_POST['postal'];
     $telefono = $_POST['telefono'];
     
-    // Obtenemos el método de pago, asignando 'tarjeta' por defecto si no viene definido (operador null coalescing ??)
+    // El operador ?? significa: "si 'metodo_pago' no viene, usa 'tarjeta' por defecto"
     $metodo_pago = $_POST['metodo_pago'] ?? 'tarjeta';
     
-    // Calcular el Total del Pedido
-    // Extraemos los IDs de los productos del carrito (keys del array) y los unimos con comas para la consulta SQL
+    // implode convierte la lista de IDs (1, 2, 5) en un texto plano "1,2,5" que SQL sí entiende
     $ids = implode(",", array_keys($_SESSION['carrito']));
     
-    // Consultamos la base de datos para obtener los detalles (precio, etc.) de las piezas en el carrito
-    // Usamos la cláusula IN para buscar múltiples IDs a la vez
+    // SELECT pide datos. "WHERE id IN ($ids)" busca solamente las piezas que coincidan con esa lista de IDs
     $sql = "SELECT * FROM piezas WHERE id IN ($ids)";
+    
+    // -> (flecha) se usa para dar órdenes al objeto $conexion. query ejecuta la consulta SQL
     $resultado = $conexion->query($sql);
     
-    $total = 0; // Inicializamos el acumulador del total
+    $total = 0; // Creamos una variable en 0 para ir sumando el precio total
     
-    // Iteramos sobre cada producto encontrado en la base de datos
+    // while es un bucle que se repite mientras haya datos. fetch_assoc convierte cada fila de la DB en una lista con nombres
     while($row = $resultado->fetch_assoc()){
-        // Obtenemos la cantidad seleccionada por el usuario desde la sesión
+        // Buscamos cuántas unidades de este producto quiere el usuario (lo tenemos en sesión)
         $cant = $_SESSION['carrito'][$row['id']];
         
-        // Sumamos al total: precio del producto multiplicado por la cantidad
+        // += suma al acumulador. Multiplicamos precio de la pieza * cantidad
         $total += $row['precio'] * $cant;
     }
     
-    // Insertar el Pedido en la Base de Datos
-    // Preparamos la consulta INSERT para la tabla 'pedidos' con marcadores de posición (?) para seguridad
+    // INSERT INTO prepara la orden para guardar el pedido nuevo en la tabla 'pedidos'
+    // Los signos ? son "huecos de seguridad" que llenaremos después para evitar hackeos (SQL Injection)
     $sql_pedido = "INSERT INTO pedidos (usuario_id, total, direccion, ciudad, codigo_postal, telefono, metodo_pago, estado) VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente')";
+    
+    // prepare crea una "declaración preparada" ($stmt). Es como una caja segura donde metemos la consulta antes de enviarla
     $stmt = $conexion->prepare($sql_pedido);
     
-    // Vinculamos los parámetros a la consulta preparada
-    // 'idsssss' indica los tipos: i (integer), d (double), s (string) para cada variable en orden
+    // bind_param rellena esos huecos (?) de forma segura con los datos reales.
+    // "idsssss" le dice a PHP qué tipo de dato es cada variable en orden: i=entero (número), d=decimal, s=string (texto)
     $stmt->bind_param("idsssss", $usuario_id, $total, $direccion, $ciudad, $postal, $telefono, $metodo_pago);
     
-    // Ejecutamos la consulta para crear el registro del pedido
+    // execute da la orden final para guardar la información en la base de datos
     $stmt->execute();
     
-    // Obtenemos el ID autogenerado del pedido recién insertado para usarlo en los detalles
+    // insert_id recupera el ID numérico que la base de datos le asignó automáticamente a este nuevo pedido
     $pedido_id = $conexion->insert_id;
     
-    // Cerramos el statement para liberar recursos
+    // close cierra la "caja segura" ($stmt) para liberar memoria del servidor
     $stmt->close();
     
-    // Insertar los Detalles del Pedido (Productos individuales)
-    // Reiniciamos el puntero de resultados de la consulta de piezas al inicio (índice 0) para volver a iterar
+    // data_seek(0) rebobina los resultados de la consulta de piezas al principio para volver a leerlos
     $resultado->data_seek(0);
     
+    // Volvemos a recorrer los productos uno por uno para guardar el detalle de cada pieza comprada
     while($row = $resultado->fetch_assoc()){
         $cant = $_SESSION['carrito'][$row['id']]; // Cantidad
-        $precio_unitario = $row['precio']; // Precio al momento de la compra
+        $precio_unitario = $row['precio'];        // Precio
         
-        // Preparamos la inserción en la tabla 'detalle_pedidos'
+        // Preparamos otra consulta segura para insertar en la tabla 'detalle_pedidos'
         $sql_detalle = "INSERT INTO detalle_pedidos (pedido_id, pieza_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
         $stmt_det = $conexion->prepare($sql_detalle);
         
-        // Vinculamos parámetros: i (int), i (int), i (int), d (double)
+        // Vinculamos: i (ID pedido), i (ID pieza), i (cantidad), d (precio decimal)
         $stmt_det->bind_param("iiid", $pedido_id, $row['id'], $cant, $precio_unitario);
         
-        // Ejecutamos la inserción del detalle
-        $stmt_det->execute();
-        $stmt_det->close();
+        $stmt_det->execute(); // Ejecutamos la inserción
+        $stmt_det->close();   // Cerramos
     }
     
-    // Enviar Correo de Confirmación al Comprador
+    // Preparamos el asunto del correo de confirmación
     $asunto_comprador = "Confirmación de Pedido #$pedido_id - MRMP";
     
-    // Construimos el cuerpo del mensaje concatenando cadenas y formateando el total con 2 decimales
+    // El punto (.) conecta textos. \n crea un salto de línea dentro del correo
     $cuerpo_comprador = "Hola " . $_SESSION['usuario_nombre'] . ",\n\nTu pedido #$pedido_id ha sido confirmado.\n\nTotal: $" . number_format($total, 2) . "\n\nGracias por tu compra.";
     
-    // Llamamos a la función helper para enviar el correo
+    // Llamamos a nuestra función personalizada para enviar el email
     enviarCorreo($_SESSION['usuario_correo'], $asunto_comprador, $cuerpo_comprador);
     
-    // Notificar a los Administradores
-    // Obtenemos todos los correos de la tabla 'admins'
+    // Pedimos a la base de datos los correos de todos los administradores
     $sql_admins = "SELECT correo FROM admins";
     $result_admins = $conexion->query($sql_admins);
     
     $asunto_admin = "Nuevo Pedido #$pedido_id - MRMP";
     $cuerpo_admin = "Se ha recibido un nuevo pedido.\n\nPedido ID: $pedido_id\nCliente: " . $_SESSION['usuario_nombre'] . "\nTotal: $" . number_format($total, 2);
     
-    // Iteramos sobre cada administrador y le enviamos la notificación
+    // Usamos while para enviar un correo separado a cada administrador encontrado
     while($admin = $result_admins->fetch_assoc()) {
         enviarCorreo($admin['correo'], $asunto_admin, $cuerpo_admin);
     }
     
-    // Limpiamos el carrito (array vacío) ya que la compra fue exitosa
+    // Vaciamos el carrito (lo convertimos en lista vacía) porque la compra ya terminó
     $_SESSION['carrito'] = [];
     
-    // Establecemos el mensaje de éxito para mostrar en la vista
+    // Guardamos un mensaje de éxito para que el usuario sepa que todo salió bien
     $mensaje = "¡Pedido realizado con éxito! Recibirás un correo de confirmación.";
 }
 
-// Agregar al Carrito (Acción GET)
+// isset verifica si en la URL viene el parámetro 'agregar' (ej: carrito.php?agregar=5)
 if(isset($_GET['agregar'])){
-    // Convertimos el ID a entero (intval) para seguridad y evitar inyecciones
+    // intval limpia cualquier basura y asegura que el ID sea solo un número entero
     $id = intval($_GET['agregar']);
     
-    // Si el producto no está en el carrito, lo inicializamos con cantidad 0
+    // Si el producto aún no está en el carrito, lo creamos empezando con cantidad 0
     if(!isset($_SESSION['carrito'][$id])) $_SESSION['carrito'][$id] = 0;
     
-    // Incrementamos la cantidad del producto en 1
+    // ++ suma 1 a la cantidad actual de ese producto
     $_SESSION['carrito'][$id]++;
     
-    // Redirigimos a la misma página para actualizar la vista y evitar reenvíos de formularios
+    // Redirigimos a la misma página para limpiar la URL y mostrar el cambio visualmente
     header("Location: carrito.php");
-    exit;
+    exit; // Fin del script
 }
 
-// Eliminar del Carrito (Acción GET)
+// isset verifica si quieren eliminar un producto (ej: carrito.php?eliminar=5)
 if(isset($_GET['eliminar'])){
-    // Convertimos el ID a entero por seguridad
     $id = intval($_GET['eliminar']);
     
-    // Eliminamos el elemento específico del array de sesión usando unset()
+    // unset destruye una variable específica. Aquí borra ese producto de la lista del carrito
     unset($_SESSION['carrito'][$id]);
     
-    // Redirigimos para refrescar la vista
-    header("Location: carrito.php");
+    header("Location: carrito.php"); // Recargamos
     exit;
 }
 
-// Actualizar Cantidades (Acción POST desde el formulario del carrito)
+// Verificamos si enviaron el formulario de actualización de cantidades (POST)
 if(isset($_POST['cantidad'])){
-    // Iteramos sobre el array de cantidades enviado (ID producto => Nueva Cantidad)
+    // foreach recorre uno por uno los elementos de una lista
+    // $id es la clave (ID del producto), $cant es el valor (nueva cantidad)
     foreach($_POST['cantidad'] as $id => $cant){
-        // Si la cantidad es mayor a 0, actualizamos el valor asegurándonos que sea entero
+        // Si pide más de 0, actualizamos el valor asegurando que sea entero
         if($cant > 0) $_SESSION['carrito'][$id] = intval($cant);
-        // Si la cantidad es 0 o menor, eliminamos el producto del carrito
+        // Si pone 0 o negativo, eliminamos el producto del carrito
         else unset($_SESSION['carrito'][$id]);
     }
     $mensaje = "Carrito actualizado";
 }
 ?>
+<!-- DOCTYPE le dice al navegador que este es un documento HTML5 moderno -->
 <!DOCTYPE html>
+<!-- lang="es" configura e idioma de la página como español -->
 <html lang="es">
 <head>
+    <!-- meta charset asegura que las tildes, eñes y caracteres especiales se vean bien -->
     <meta charset="UTF-8">
-    <!-- Configuración del viewport para asegurar que el sitio sea responsive en dispositivos móviles -->
+    <!-- meta viewport ajusta el ancho de la página al ancho de la pantalla para móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito - MRMP</title>
     
-    <!-- Fuentes de Google: Roboto y Poppins para una tipografía moderna y legible -->
+    <!-- EXPLICACIÓN DE RECURSOS EXTERNOS (CDN): -->
+    <!-- Google Fonts: Conecta con Google para usar letras "Roboto" y "Poppins" en lugar de las aburridas por defecto. -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Bootstrap 5 CSS: Framework para el diseño responsive y componentes preestilizados -->
+    <!-- Bootstrap CSS (CDN): 
+         Este archivo es el "maquillaje" profesional de tu sitio. Contiene miles de reglas de diseño (CSS) ya escritas.
+         ¿Cómo funciona? Funciona detectando las "clases" que pones en tu HTML:
+         - Botones: Cuando escribes class="btn btn-primary", este archivo le dice al navegador: "Pintalo de azul, ponle bordes redondos, letra blanca y cambia de color al pasar el mouse".
+         - Columnas: Cuando pones class="col-md-6", este archivo le dice: "Usa exactamente el 50% del ancho de la pantalla y ponte al lado del otro elemento".
+         Sin este enlace, todas esas clases (btn, col, card, alert) no harían nada y tu web se vería como texto plano y feo. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome: Librería de iconos vectoriales (carrito, usuario, etc.) -->
+    <!-- Font Awesome: Librería que nos deja poner iconos como el carrito de compras usando código. -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Hoja de estilos personalizada principal del sitio -->
+    <!-- main.css: Tus estilos propios para dar el toque final a la web. -->
     <link href="main.css" rel="stylesheet">
 </head>
-<body class="mrmp-home"> <!-- Clase personalizada para estilos específicos de la página -->
+<body class="mrmp-home">
 
-    <!-- Header / Barra de Navegación -->
-    <!-- navbar-expand-lg: Colapsa en móviles, fixed-top: Fija la barra arriba -->
+    <!-- navbar: Crea la barra de menú. navbar-expand-lg: Se ve completa en PC y se colapsa en móvil. navbar-dark bg-dark: Letras blancas con fondo negro -->
     <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <!-- container: Centra el contenido y le da márgenes laterales automáticos (es la caja principal de bootstrap) -->
         <div class="container">
-            <!-- Logo y Nombre de la Marca -->
+            <!-- navbar-brand: Clase especial para el logo o nombre de la marca en la barra -->
             <a class="navbar-brand" href="pagina-principal.php">
                 <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
                 <span class="brand-text">Mexican Racing Motor Parts</span>
             </a>
             
-            <!-- Botón Hamburguesa para móviles -->
+            <!-- navbar-toggler: Es el botón "hamburguesa" que aparece solo en móviles para abrir el menú -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <!-- Enlaces de Navegación -->
+            <!-- collapse navbar-collapse: Todo lo que esté aquí dentro se ocultará en móviles dentro del botón hamburguesa -->
             <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- navbar-nav: Lista de items del menú. me-auto: "Margin End Auto", empuja todo el contenido restante a la derecha -->
                 <ul class="navbar-nav me-auto">
+                    <!-- nav-item / nav-link: Estilos para cada botón del menú -->
                     <li class="nav-item"><a class="nav-link" href="dashboard-piezas.php"><i class="fas fa-cogs me-1"></i>Piezas</a></li>
                     <li class="nav-item"><a class="nav-link" href="blog.php"><i class="fas fa-blog me-1"></i>Blog</a></li>
                 </ul>
                 
-                <!-- Área de Usuario: Muestra menú si está logueado, o links de acceso si no -->
                 <div class="navbar-nav">
                     <?php if(isset($_SESSION['usuario_id'])): ?>
-                        <!-- Menú desplegable para usuario autenticado -->
+                        <!-- dropdown: Clase que activa un submenú desplegable al hacer clic -->
                         <div class="nav-item dropdown">
+                            <!-- dropdown-toggle: Añade la flechita que indica que hay más opciones -->
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>Hola, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
                             </a>
+                            <!-- dropdown-menu: La cajita con las opciones que aparece al hacer clic -->
                             <ul class="dropdown-menu">
+                                <!-- dropdown-item: Cada opción del submenú -->
                                 <li><a class="dropdown-item" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
-                                <!-- Muestra la cantidad total de items en el carrito sumando los valores del array -->
                                 <li><a class="dropdown-item active" href="carrito.php"><i class="fas fa-shopping-cart me-2"></i>Carrito (<?= array_sum($_SESSION['carrito'] ?? []) ?>)</a></li>
+                                <!-- dropdown-divider: Una línea fina para separar opciones -->
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="pagina-principal.php?logout=1"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
                             </ul>
                         </div>
                     <?php else: ?>
-                        <!-- Enlaces para visitantes no autenticados -->
                         <a class="nav-link" href="inicio_secion.php"><i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión</a>
                         <a class="nav-link" href="register.php"><i class="fas fa-user-plus me-1"></i>Registrarse</a>
                     <?php endif; ?>
@@ -241,45 +252,47 @@ if(isset($_POST['cantidad'])){
         </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <!-- Estilos inline para asegurar espaciado correcto con el header fijo y el footer -->
     <main style="padding-top: 100px; padding-bottom: 50px; min-height: calc(100vh - 150px);">
         <div class="container">
-            <!-- Título de la Página -->
+            <!-- text-center: Centra el texto. mb-5: "Margin Bottom 5", añade un espacio grande abajo -->
             <div class="text-center mb-5">
+                <!-- display-4: Título gigante y estilizado de Bootstrap. text-white: Color de texto blanco -->
                 <h1 class="display-4 mb-2 text-white">
                     <i class="fas fa-shopping-cart text-primary me-2"></i>
                     Tu Carrito de Cotización
                 </h1>
+                <!-- lead: Hace que el párrafo se vea un poco más grande y destacado que el texto normal -->
                 <p class="lead" style="color: #b0b0b0;">Revisa y gestiona tus piezas seleccionadas</p>
             </div>
 
-            <!-- Mensaje de Alerta (Éxito/Info) -->
             <?php if($mensaje): ?>
+            <!-- alert alert-success: Crea una cajita verde de confirmación -->
             <div class="alert alert-success text-center mb-4">
                 <i class="fas fa-check-circle me-2"></i>
                 <?= htmlspecialchars($mensaje) ?>
             </div>
             <?php endif; ?>
 
-            <!-- Lógica de Visualización del Carrito -->
             <?php if(empty($_SESSION['carrito'])): ?>
-            <!-- Estado Vacío: Se muestra si no hay items en el carrito -->
+            <!-- card: Contenedor con borde tipo tarjeta. mx-auto: Centra la tarjeta horizontalmente -->
             <div class="card text-center mx-auto bg-dark text-white border-secondary" style="max-width: 500px;">
+                <!-- card-body: El área de contenido dentro de la tarjeta. p-5: "Padding 5", mucho espacio interno -->
                 <div class="card-body p-5">
                     <i class="fas fa-shopping-cart mb-4" style="font-size: 4rem; color: #666;"></i>
                     <h2 class="h4 mb-3">El carrito está vacío</h2>
                     <p class="mb-4 text-muted">No has agregado ninguna pieza todavía</p>
+                    <!-- btn btn-primary: Botón azul estándar de Bootstrap -->
                     <a href="dashboard-piezas.php" class="btn btn-primary">
                         <i class="fas fa-search me-2"></i>Buscar Piezas
                     </a>
                 </div>
             </div>
+            
             <?php else: ?>
-                <!-- Formulario para actualizar cantidades -->
                 <form method="post" action="carrito.php">
+                    <!-- table-responsive: Hace que si la tabla es muy ancha, tenga su propio scroll horizontal en celulares -->
                     <div class="table-responsive mb-4">
-                        <!-- Tabla de Productos -->
+                        <!-- table: Estilos base de tabla. table-dark: Estilo oscuro. table-hover: Ilumina la fila donde pones el mouse -->
                         <table class="table table-dark table-hover align-middle">
                             <thead>
                                 <tr>
@@ -292,23 +305,29 @@ if(isset($_POST['cantidad'])){
                             </thead>
                             <tbody>
                                 <?php
-                                // Obtenemos los detalles de los productos en el carrito desde la BD
+                                // PHP para obtener y mostrar los productos del carrito
+                                
+                                // implode convierte la lista de IDs a texto plano para la base de datos
                                 $ids = implode(",", array_keys($_SESSION['carrito']));
+                                
+                                // Obtenemos solo las piezas que están en el carrito
                                 $sql = "SELECT * FROM piezas WHERE id IN ($ids)";
                                 $resultado = $conexion->query($sql);
                                 $total = 0;
                                 
-                                // Iteramos sobre cada producto para mostrarlo en la tabla
+                                // Repetimos este bloque por cada producto encontrado
                                 while($row = $resultado->fetch_assoc()):
+                                    // Calculamos el subtotal (precio x cantidad)
                                     $cant = $_SESSION['carrito'][$row['id']];
                                     $subtotal = $row['precio'] * $cant;
                                     $total += $subtotal;
                                 ?>
                                 <tr>
                                     <td>
+                                        <!-- d-flex: "Display Flex", pone los elementos uno al lado del otro. align-items-center: Los centra verticalmente -->
                                         <div class="d-flex align-items-center">
-                                            <!-- Imagen del producto: Si existe, la mostramos; si no, un placeholder -->
                                             <?php if($row['imagen']): ?>
+                                                <!-- rounded: Bordes redondeados. me-3: margin-end-3 (margen a la derecha) -->
                                                 <img src="uploads/<?= htmlspecialchars($row['imagen']) ?>" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                             <?php else: ?>
                                                 <div class="bg-secondary rounded me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
@@ -316,6 +335,7 @@ if(isset($_POST['cantidad'])){
                                                 </div>
                                             <?php endif; ?>
                                             <div>
+                                                <!-- Imprimimos el nombre del producto de forma segura -->
                                                 <h6 class="mb-0 text-white"><?= htmlspecialchars($row['nombre']) ?></h6>
                                                 <small class="text-muted"><?= htmlspecialchars($row['marca_nombre'] ?? '') ?></small>
                                             </div>
@@ -323,12 +343,13 @@ if(isset($_POST['cantidad'])){
                                     </td>
                                     <td class="text-white">$<?= number_format($row['precio'], 2) ?></td>
                                     <td>
-                                        <!-- Input numérico para ajustar la cantidad. Name es un array: cantidad[id_producto] -->
+                                        <!-- form-control: Estilo base para inputs. form-control-sm: Versión pequeña del input -->
                                         <input type="number" name="cantidad[<?= $row['id'] ?>]" value="<?= $cant ?>" min="1" max="<?= $row['cantidad'] ?>" class="form-control form-control-sm bg-dark text-white border-secondary">
                                     </td>
+                                    <!-- fw-bold: "Font Weight Bold", pone el texto en negrita -->
                                     <td class="text-white fw-bold">$<?= number_format($subtotal, 2) ?></td>
                                     <td>
-                                        <!-- Botón para eliminar el producto individualmente -->
+                                        <!-- btn-outline-danger: Botón transparente con borde rojo que se llena al pasar el mouse -->
                                         <a href="carrito.php?eliminar=<?= $row['id'] ?>" class="btn btn-outline-danger btn-sm" title="Eliminar">
                                             <i class="fas fa-trash"></i>
                                         </a>
@@ -338,6 +359,7 @@ if(isset($_POST['cantidad'])){
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <!-- text-end: Alinea el texto a la derecha -->
                                     <td colspan="3" class="text-end text-white h5">Total:</td>
                                     <td colspan="2" class="text-white h5">$<?= number_format($total, 2) ?></td>
                                 </tr>
@@ -345,7 +367,7 @@ if(isset($_POST['cantidad'])){
                         </table>
                     </div>
                     
-                    <!-- Botones de Acción del Carrito -->
+                    <!-- justify-content-between: Separa los botones a los extremos opuestos de la caja -->
                     <div class="d-flex justify-content-between mb-5">
                         <a href="dashboard-piezas.php" class="btn btn-outline-light">
                             <i class="fas fa-arrow-left me-2"></i>Seguir Comprando
@@ -356,22 +378,24 @@ if(isset($_POST['cantidad'])){
                     </div>
                 </form>
 
-                <!-- Formulario de Checkout (Finalizar Compra) -->
+                <!-- shadow-lg: Añade una sombra grande y difuminada alrededor de la tarjeta -->
                 <div class="card bg-dark text-white border-secondary shadow-lg">
+                    <!-- card-header: Encabezado visual de la tarjeta -->
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Finalizar Compra</h4>
                     </div>
                     <div class="card-body">
                         <form method="post" action="carrito.php">
-                            <!-- Input oculto para identificar que se está enviando el checkout -->
                             <input type="hidden" name="checkout" value="1">
                             
+                            <!-- row g-3: Crea una fila (sistema de rejilla) con un espacio de separación de 3 entre columnas -->
                             <div class="row g-3">
-                                <!-- Campos de Dirección y Contacto -->
+                                <!-- col-md-6: En pantallas medianas (PC/Tablet), esta columna ocupará la mitad (6 de 12) del ancho -->
                                 <div class="col-md-6">
                                     <label class="form-label">Dirección de Envío</label>
                                     <input type="text" name="direccion" class="form-control bg-secondary text-white border-0" required placeholder="Calle, Número, Colonia">
                                 </div>
+                                <!-- col-md-3: Ocupará un cuarto (3 de 12) del ancho -->
                                 <div class="col-md-3">
                                     <label class="form-label">Ciudad</label>
                                     <input type="text" name="ciudad" class="form-control bg-secondary text-white border-0" required>
@@ -386,6 +410,7 @@ if(isset($_POST['cantidad'])){
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Método de Pago</label>
+                                    <!-- form-select: Estilo especial de Bootstrap para los menús desplegables -->
                                     <select name="metodo_pago" class="form-select bg-secondary text-white border-0">
                                         <option value="tarjeta">Tarjeta de Crédito/Débito</option>
                                         <option value="paypal">PayPal</option>
@@ -394,12 +419,13 @@ if(isset($_POST['cantidad'])){
                                 </div>
                             </div>
                             
-                            <!-- Botón de Confirmación Final -->
+                            <!-- border-top: Añade una línea en la parte superior del div -->
                             <div class="mt-4 pt-3 border-top border-secondary">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="mb-0 text-muted small"><i class="fas fa-lock me-1"></i>Pago seguro y encriptado</p>
                                     </div>
+                                    <!-- btn-success: Botón de color verde para acciones positivas/confirmar. btn-lg: Botón grande -->
                                     <button type="submit" class="btn btn-success btn-lg px-5">
                                         <i class="fas fa-check-circle me-2"></i>Confirmar Pedido
                                     </button>
@@ -412,7 +438,7 @@ if(isset($_POST['cantidad'])){
         </div>
     </main>
 
-    <!-- Footer / Pie de Página -->
+    <!-- mt-auto: Si la página es corta, empuja el footer hasta el fondo de la ventana -->
     <footer class="bg-dark text-white py-4 mt-auto border-top border-danger">
         <div class="container">
             <div class="row">
@@ -434,8 +460,14 @@ if(isset($_POST['cantidad'])){
             </div>
         </div>
     </footer>
-
-    <!-- Bootstrap Bundle JS (incluye Popper) para funcionalidad de componentes interactivos -->
+    
+    <!-- Bootstrap Bundle JS:
+         Este archivo es el "cerebro" o el "músculo" del sitio. Mientras que el CSS hace que se vea bonito, este Script hace que las cosas SE MUEVAN.
+         ¿Qué hace realmente?
+         - Menú Móvil: Cuando picas el botón hamburguesa (navbar-toggler), este script escucha el clic y agrega una clase para mostrar/ocultar el menú.
+         - Desplegables: Cuando picas en tu nombre de usuario, este script calcula dónde abrir la cajita del menú y la muestra.
+         - Cierres: Permite cerrar alertas o ventanas modales con la X.
+         Sin este archivo, los botones se verían bonitos pero al hacerles clic NO PASARÍA NADA. -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

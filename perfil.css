@@ -1,116 +1,140 @@
-
 /* =============================================================================
-   VARIABLES GLOBALES Y CONFIGURACIÓN BASE - PERFIL
+   1: VARIABLES GLOBALES Y CONFIGURACIÓN BASE - PERFIL
    ============================================================================= */
 
-
-/* DEFINIMOS LAS VARIABLES DE COLOR PRINCIPALES */
-
+/* 2: DEFINIMOS LAS VARIABLES DE COLOR PRINCIPALES (Coinciden con main.css) */
 :root {
     --primary-red: #dc2626;
+    /* 3: Rojo principal */
     --primary-dark: #000000;
+    /* 4: Negro fondo */
     --primary-light: #ffffff;
+    /* 5: Blanco texto */
     --gray-dark: #1a1a1a;
+    /* 6: Gris oscuro tarjetas */
     --gray-medium: #404040;
+    /* 7: Gris medio bordes */
     --gray-light: #737373;
+    /* 8: Gris claro textos */
 }
 
 
 /* =============================================================================
-   ESTILOS ESPECÍFICOS PARA LA PÁGINA DE PERFIL
+   9: ESTILOS ESPECÍFICOS PARA LA PÁGINA DE PERFIL
    ============================================================================= */
 
-
-/* CONTENEDOR PRINCIPAL CON MARGEN SUPERIOR PARA EL HEADER FIJO */
-
+/* 10: Contenedor principal con margen superior para el header fijo */
 .contenedor-perfil {
     margin-top: 100px;
+    /* 11: Espacio para navbar fixed */
     margin-bottom: 50px;
+    /* 12: Margen inferior */
     min-height: calc(100vh - 200px);
+    /* 13: Altura mínima calculada */
 }
 
 
-/* TARJETA DE PERFIL CON ESTILOS OSCUROS */
-
+/* 14: Tarjeta de perfil con estilos oscuros */
 .tarjeta-perfil {
     border: none;
+    /* 15: Sin borde */
     border-radius: 8px;
+    /* 16: Bordes redondeados */
     background: var(--gray-dark);
+    /* 17: Fondo gris oscuro */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    /* 18: Sombra */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* 19: Animación */
     overflow: hidden;
+    /* 20: Contenido contenido */
 }
 
 
-/* EFECTO HOVER PARA LA TARJETA DE PERFIL */
-
+/* 21: Efecto Hover para la tarjeta de perfil */
 .tarjeta-perfil:hover {
     transform: translateY(-5px);
+    /* 22: Levantar */
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    /* 23: Sombra profunda */
 }
 
 
-/* ENCABEZADO DE LA TARJETA CON GRADIENTE ROJO */
-
+/* 24: Encabezado de la tarjeta con gradiente rojo */
 .encabezado-perfil {
     background: linear-gradient(135deg, var(--primary-dark) 0%, #b91c1c 100%);
+    /* 25: Degradado negro a rojo */
     color: var(--primary-dark);
+    /* 26: Texto oscuro (aunque suele ser blanco sobre rojo, ver contraste) */
     padding: 40px 30px;
+    /* 27: Relleno */
     text-align: center;
+    /* 28: Centrado */
     border-bottom: 2px solid var(--primary-red);
+    /* 29: Borde inferior */
 }
 
 
-/* FOTO DE PERFIL CON BORDES REDONDEADOS Y ESTILO */
-
+/* 30: Foto de perfil con bordes redondeados y estilo */
 .foto-perfil {
     width: 150px;
+    /* 31: Tamaño fijo */
     height: 150px;
     border-radius: 50%;
+    /* 32: Circular */
     object-fit: cover;
+    /* 33: Ajuste imagen */
     border: 4px solid var(--primary-light);
+    /* 34: Borde blanco foto */
     margin-bottom: 15px;
+    /* 35: Margen */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /* 36: Sombra foto */
 }
 
 
-/* AVATAR CUANDO NO HAY FOTO DE PERFIL */
-
+/* 37: Avatar cuando no hay foto de perfil */
 .avatar-sin-foto {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     background: var(--gray-medium);
+    /* 38: Fondo gris */
     border: 4px solid var(--primary-light);
+    /* 39: Borde blanco */
     display: flex;
+    /* 40: Flex */
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
+    /* 41: Centrado */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 
-/* ÍCONO DEL AVATAR SIN FOTO */
-
+/* 42: Ícono del avatar sin foto */
 .avatar-sin-foto i {
     font-size: 3rem;
+    /* 43: Icono grande */
     color: var(--primary-light);
+    /* 44: Blanco */
     opacity: 0.8;
+    /* 45: Transparencia */
 }
 
 
-/* NOMBRE DEL USUARIO EN EL ENCABEZADO */
-
+/* 46: Nombre del usuario en el encabezado */
 .nombre-usuario {
     font-weight: 700;
+    /* 47: Negrita */
     margin-bottom: 5px;
     font-size: 1.5rem;
     color: var(--primary-light);
+    /* 48: Texto blanco */
 }
 
 
-/* TEXTO "MIEMBRO DESDE" */
-
+/* 49: Texto "Miembro desde" */
 .texto-miembro-desde {
     opacity: 0.9;
     font-size: 0.9rem;
@@ -118,25 +142,24 @@
 }
 
 
-/* CONTENEDOR DE LA INFORMACIÓN DEL PERFIL */
-
+/* 50: Contenedor de la información del perfil */
 .informacion-perfil {
     padding: 30px;
     background: var(--gray-dark);
+    /* 51: Fondo gris oscuro */
 }
 
 
-/* CADA ITEM DE INFORMACIÓN (NOMBRE, EMAIL, ETC) */
-
+/* 52: Cada item de información (Nombre, Email, etc) */
 .item-informacion {
     margin-bottom: 25px;
     padding-bottom: 20px;
     border-bottom: 1px solid var(--gray-medium);
+    /* 53: Separador */
 }
 
 
-/* ÚLTIMO ITEM SIN BORDE INFERIOR */
-
+/* 54: Último item sin borde inferior */
 .item-informacion:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -144,20 +167,19 @@
 }
 
 
-/* ETIQUETA DE LA INFORMACIÓN (EJ: "NOMBRE COMPLETO") */
-
+/* 55: Etiqueta de la información (Ej: "Nombre Completo") */
 .etiqueta-informacion {
     font-weight: 600;
     color: var(--primary-light);
     margin-bottom: 8px;
     font-size: 0.9rem;
     text-transform: uppercase;
+    /* 56: Mayúsculas */
     letter-spacing: 0.5px;
 }
 
 
-/* VALOR DE LA INFORMACIÓN (EJ: "JUAN PÉREZ") */
-
+/* 57: Valor de la información (Ej: "Juan Pérez") */
 .valor-informacion {
     font-size: 1.1rem;
     color: var(--primary-light);
@@ -165,17 +187,17 @@
 }
 
 
-/* TEXTO MUTED PARA VALORES VACÍOS O NO ESPECIFICADOS */
-
+/* 58: Texto muted para valores vacíos o no especificados */
 .valor-informacion .text-muted {
     color: var(--gray-light) !important;
+    /* 59: Gris claro forzado */
 }
 
 
-/* BOTÓN PARA SUBIR FOTO CON ESTILO ESPECIAL */
-
+/* 60: Botón para subir foto con estilo especial */
 .btn-subir-foto {
     background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
+    /* 61: Gradiente botón */
     border: none;
     color: var(--primary-light);
     padding: 12px 30px;
@@ -188,18 +210,17 @@
 }
 
 
-/* EFECTO AL PASAR EL MOUSE SOBRE EL BOTÓN DE SUBIR */
-
+/* 62: Efecto al pasar el mouse sobre el botón de subir */
 .btn-subir-foto:hover {
     background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    /* 63: Oscurecer gradiente */
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
     color: var(--primary-light);
 }
 
 
-/* CONTENEDOR DE ACCIONES DE FOTO (ELIMINAR) */
-
+/* 64: Contenedor de acciones de foto (eliminar) */
 .acciones-foto {
     margin-top: 15px;
     padding-top: 15px;
@@ -207,8 +228,7 @@
 }
 
 
-/* BOTÓN PARA ELIMINAR FOTO */
-
+/* 65: Botón para eliminar foto */
 .acciones-foto .btn {
     border-radius: 4px;
     padding: 8px 20px;
@@ -220,20 +240,19 @@
 }
 
 
-/* FORM CONTROL PERSONALIZADO PARA INPUTS */
-
+/* 66: Form Control personalizado para inputs perfil */
 .informacion-perfil .form-control {
     border-radius: 4px;
     border: 2px solid var(--gray-medium);
     background: var(--gray-dark);
+    /* 67: Inputs oscuros */
     color: var(--primary-light);
     padding: 12px 15px;
     transition: all 0.3s ease;
 }
 
 
-/* EFECTO FOCUS PARA INPUTS */
-
+/* 68: Efecto Focus para inputs */
 .informacion-perfil .form-control:focus {
     border-color: var(--primary-red);
     background: var(--gray-dark);
@@ -242,8 +261,7 @@
 }
 
 
-/* TEXTO DE AYUDA EN FORMULARIOS */
-
+/* 69: Texto de ayuda en formularios */
 .informacion-perfil .form-text {
     color: var(--gray-light);
     font-size: 0.8rem;
@@ -251,8 +269,7 @@
 }
 
 
-/* ALERTAS PERSONALIZADAS */
-
+/* 70: Alertas personalizadas */
 .alert {
     border-radius: 4px;
     border: none;
@@ -262,24 +279,23 @@
 }
 
 
-/* ALERTA DE ÉXITO */
-
+/* 71: Alerta de Éxito */
 .alert-success {
     background-color: #16a34a;
+    /* 72: Verde */
     color: var(--primary-light);
 }
 
 
-/* ALERTA DE ERROR */
-
+/* 73: Alerta de Error */
 .alert-danger {
     background-color: var(--primary-red);
+    /* 74: Rojo */
     color: var(--primary-light);
 }
 
 
-/* BOTONES DE ACCIÓN EN EL PERFIL */
-
+/* 75: Botones de acción en el perfil */
 .informacion-perfil .btn {
     border-radius: 4px;
     padding: 12px 30px;
@@ -292,8 +308,7 @@
 }
 
 
-/* BOTÓN OUTLINE PRIMARY */
-
+/* 76: Botón Outline Primary */
 .informacion-perfil .btn-outline-primary {
     border: 2px solid var(--primary-red);
     color: var(--primary-red);
@@ -301,8 +316,7 @@
 }
 
 
-/* HOVER PARA BOTÓN OUTLINE PRIMARY */
-
+/* 77: Hover para Botón Outline Primary */
 .informacion-perfil .btn-outline-primary:hover {
     background-color: var(--primary-red);
     color: var(--primary-light);
@@ -311,16 +325,14 @@
 }
 
 
-/* BOTÓN PRIMARY */
-
+/* 78: Botón Primary Sólido */
 .informacion-perfil .btn-primary {
     background-color: var(--primary-red);
     color: var(--primary-light);
 }
 
 
-/* HOVER PARA BOTÓN PRIMARY */
-
+/* 79: Hover para Botón Primary */
 .informacion-perfil .btn-primary:hover {
     background-color: #b91c1c;
     transform: translateY(-2px);
@@ -328,17 +340,16 @@
 }
 
 
-/* BOTÓN OUTLINE DANGER */
-
+/* 80: Botón Outline Danger */
 .informacion-perfil .btn-outline-danger {
     border: 2px solid var(--primary-red);
+    /* 81: Usamos rojo primario */
     color: var(--primary-red);
     background: transparent;
 }
 
 
-/* HOVER PARA BOTÓN OUTLINE DANGER */
-
+/* 82: Hover para Botón Outline Danger */
 .informacion-perfil .btn-outline-danger:hover {
     background-color: var(--primary-red);
     color: var(--primary-light);
@@ -347,44 +358,52 @@
 
 
 /* =============================================================================
-   RESPONSIVE: AJUSTES PARA DISPOSITIVOS MÓVILES
+   83: RESPONSIVE: AJUSTES PARA DISPOSITIVOS MÓVILES
    ============================================================================= */
 
 @media (max-width: 768px) {
-    /* CONTENEDOR PRINCIPAL */
+
+    /* 84: Contenedor Principal */
     .contenedor-perfil {
         margin-top: 80px;
         padding: 0 15px;
     }
-    /* ENCABEZADO DEL PERFIL */
+
+    /* 85: Encabezado del Perfil */
     .encabezado-perfil {
         padding: 30px 20px;
     }
-    /* FOTO DE PERFIL EN MÓVIL */
+
+    /* 86: Foto de perfil en móvil */
     .foto-perfil,
     .avatar-sin-foto {
         width: 120px;
         height: 120px;
     }
-    /* INFORMACIÓN DEL PERFIL */
+
+    /* 87: Información del Perfil */
     .informacion-perfil {
         padding: 20px;
     }
-    /* NOMBRE DEL USUARIO */
+
+    /* 88: Nombre del usuario */
     .nombre-usuario {
         font-size: 1.3rem;
     }
-    /* FORMULARIO EN COLUMNA EN MÓVIL */
+
+    /* 89: Formulario en columna en móvil */
     .informacion-perfil form.d-flex {
         flex-direction: column;
         gap: 15px !important;
     }
-    /* BOTONES EN COLUMNA EN MÓVIL */
+
+    /* 90: Botones en columna en móvil */
     .informacion-perfil .d-flex.gap-2 {
         flex-direction: column;
         gap: 10px !important;
     }
-    /* BOTONES A ANCHO COMPLETO EN MÓVIL */
+
+    /* 91: Botones a ancho completo en móvil */
     .informacion-perfil .btn {
         width: 100%;
         text-align: center;
@@ -393,17 +412,16 @@
 
 
 /* =============================================================================
-   ANIMACIONES Y EFECTOS ESPECIALES
+   92: ANIMACIONES Y EFECTOS ESPECIALES
    ============================================================================= */
 
-
-/* ANIMACIÓN DE ENTRADA PARA LA TARJETA */
-
+/* 93: Animación de entrada para la tarjeta */
 @keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -411,23 +429,20 @@
 }
 
 
-/* APLICAR ANIMACIÓN A LA TARJETA */
-
+/* 94: Aplicar animación a la tarjeta */
 .tarjeta-perfil {
     animation: fadeInUp 0.6s ease-out;
 }
 
 
-/* ANIMACIÓN PARA LA FOTO DE PERFIL */
-
+/* 95: Animación para la foto de perfil */
 .foto-perfil,
 .avatar-sin-foto {
     transition: all 0.3s ease;
 }
 
 
-/* EFECTO HOVER PARA LA FOTO */
-
+/* 96: Efecto Hover para la foto */
 .foto-perfil:hover,
 .avatar-sin-foto:hover {
     transform: scale(1.05);
@@ -436,12 +451,10 @@
 
 
 /* =============================================================================
-   ESTADOS DE CARGA Y DESHABILITADO
+   97: ESTADOS DE CARGA Y DESHABILITADO
    ============================================================================= */
 
-
-/* ESTADO DE CARGA PARA BOTONES */
-
+/* 98: Estado de carga para botones */
 .btn-subir-foto:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -449,8 +462,7 @@
 }
 
 
-/* ESTADO DE CARGA PARA INPUTS */
-
+/* 99: Estado de carga para inputs */
 .form-control:disabled {
     background-color: var(--gray-medium);
     color: var(--gray-light);
@@ -459,708 +471,23 @@
 
 
 /* =============================================================================
-   UTILIDADES ADICIONALES
+   100: UTILIDADES ADICIONALES
    ============================================================================= */
 
-
-/* TEXTO CENTRADO */
-
+/* 101: Texto centrado */
 .text-center {
     text-align: center;
 }
 
 
-/* MARGIN AUTOMÁTICO */
-
+/* 102: Margin automático */
 .mx-auto {
     margin-left: auto;
     margin-right: auto;
 }
 
 
-/* SOMBRA DE TEXTO PARA MEJOR LEGIBILIDAD */
-
+/* 103: Sombra de texto para mejor legibilidad */
 .sombra-texto {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-=======
-body {
-    font-family: "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    background: #fff;
-    color: #111;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-header {
-    background: #fff;
-    border-bottom: 2px solid #c62828;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 40px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo img {
-    height: 60px;
-    width: auto;
-}
-
-.logo p {
-    color: #9C2007;
-    font-size: 1.6rem;
-}
-
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.usuario a {
-    text-decoration: none;
-    font-weight: 600;
-    color: #000;
-    border: 1px solid #c62828;
-    padding: 8px 14px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.usuario a:hover {
-    background: #c62828;
-    color: #fff;
-}
-
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 15px;
-    width: 100%;
-}
-
-
-/*modal*/
-
-.mensaje {
-    background: #c62828;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: center;
-    width: fit-content;
-}
-
-
-/*seccion*/
-
-.seccion {
-    background: rgba(198, 40, 40, 0.05);
-    padding: 20px 25px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.seccion img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 2px solid #c62828;
-}
-
-.perfil-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 0;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-.perfil-info h3 {
-    color: #c62828;
-    margin: 0 0 10px 0;
-}
-
-.perfil-info p {
-    margin: 2px 0;
-    color: #111;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-
-/* Verificado */
-
-.verificado {
-    color: #00ff00;
-    font-weight: 700;
-}
-
-.no-verificado {
-    color: #ff4444;
-    font-weight: 700;
-}
-
-
-/*inputs y botones*/
-
-.perfil-info input[type="text"],
-.perfil-info input[type="email"],
-.perfil-info input[type="password"],
-.perfil-info input[type="tel"],
-.perfil-info input[type="file"] {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #c62828;
-    background: #fff;
-    color: #111;
-    margin-bottom: 10px;
-}
-
-.perfil-info button {
-    background: #c62828;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
-    margin-top: 5px;
-}
-
-.perfil-info button:hover {
-    background: #a51f1f;
-}
-
-.perfil-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.perfil-links a {
-    color: #c62828;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.perfil-links a:hover {
-    text-decoration: underline;
-}
-
-footer {
-    background: #fff;
-    border-top: 2px solid #c62828;
-    text-align: center;
-    padding: 20px 0;
-    color: #000;
-    font-size: 0.95rem;
-}
-
-footer span {
-    color: #000000;
-    font-weight: 700;
-}
-
-
-/*responsivo*/
-
-@media (max-width: 700px) {
-    header {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    .usuario {
-        justify-content: center;
-    }
-    .seccion {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .perfil-info {
-        align-items: center;
-    }
->>>>>>> Stashed changes
-=======
-body {
-    font-family: "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    background: #fff;
-    color: #111;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-header {
-    background: #fff;
-    border-bottom: 2px solid #c62828;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 40px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo img {
-    height: 60px;
-    width: auto;
-}
-
-.logo p {
-    color: #9C2007;
-    font-size: 1.6rem;
-}
-
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.usuario a {
-    text-decoration: none;
-    font-weight: 600;
-    color: #000;
-    border: 1px solid #c62828;
-    padding: 8px 14px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.usuario a:hover {
-    background: #c62828;
-    color: #fff;
-}
-
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 15px;
-    width: 100%;
-}
-
-
-/*modal*/
-
-.mensaje {
-    background: #c62828;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: center;
-    width: fit-content;
-}
-
-
-/*seccion*/
-
-.seccion {
-    background: rgba(198, 40, 40, 0.05);
-    padding: 20px 25px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.seccion img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 2px solid #c62828;
-}
-
-.perfil-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 0;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-.perfil-info h3 {
-    color: #c62828;
-    margin: 0 0 10px 0;
-}
-
-.perfil-info p {
-    margin: 2px 0;
-    color: #111;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-
-/* Verificado */
-
-.verificado {
-    color: #00ff00;
-    font-weight: 700;
-}
-
-.no-verificado {
-    color: #ff4444;
-    font-weight: 700;
-}
-
-
-/*inputs y botones*/
-
-.perfil-info input[type="text"],
-.perfil-info input[type="email"],
-.perfil-info input[type="password"],
-.perfil-info input[type="tel"],
-.perfil-info input[type="file"] {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #c62828;
-    background: #fff;
-    color: #111;
-    margin-bottom: 10px;
-}
-
-.perfil-info button {
-    background: #c62828;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
-    margin-top: 5px;
-}
-
-.perfil-info button:hover {
-    background: #a51f1f;
-}
-
-.perfil-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.perfil-links a {
-    color: #c62828;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.perfil-links a:hover {
-    text-decoration: underline;
-}
-
-footer {
-    background: #fff;
-    border-top: 2px solid #c62828;
-    text-align: center;
-    padding: 20px 0;
-    color: #000;
-    font-size: 0.95rem;
-}
-
-footer span {
-    color: #000000;
-    font-weight: 700;
-}
-
-
-/*responsivo*/
-
-@media (max-width: 700px) {
-    header {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    .usuario {
-        justify-content: center;
-    }
-    .seccion {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .perfil-info {
-        align-items: center;
-    }
->>>>>>> Stashed changes
-=======
-body {
-    font-family: "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    background: #fff;
-    color: #111;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-header {
-    background: #fff;
-    border-bottom: 2px solid #c62828;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 40px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo img {
-    height: 60px;
-    width: auto;
-}
-
-.logo p {
-    color: #9C2007;
-    font-size: 1.6rem;
-}
-
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.usuario a {
-    text-decoration: none;
-    font-weight: 600;
-    color: #000;
-    border: 1px solid #c62828;
-    padding: 8px 14px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.usuario a:hover {
-    background: #c62828;
-    color: #fff;
-}
-
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 15px;
-    width: 100%;
-}
-
-
-/*modal*/
-
-.mensaje {
-    background: #c62828;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: center;
-    width: fit-content;
-}
-
-
-/*seccion*/
-
-.seccion {
-    background: rgba(198, 40, 40, 0.05);
-    padding: 20px 25px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.seccion img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 2px solid #c62828;
-}
-
-.perfil-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 0;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-.perfil-info h3 {
-    color: #c62828;
-    margin: 0 0 10px 0;
-}
-
-.perfil-info p {
-    margin: 2px 0;
-    color: #111;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-
-
-/* Verificado */
-
-.verificado {
-    color: #00ff00;
-    font-weight: 700;
-}
-
-.no-verificado {
-    color: #ff4444;
-    font-weight: 700;
-}
-
-
-/*inputs y botones*/
-
-.perfil-info input[type="text"],
-.perfil-info input[type="email"],
-.perfil-info input[type="password"],
-.perfil-info input[type="tel"],
-.perfil-info input[type="file"] {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #c62828;
-    background: #fff;
-    color: #111;
-    margin-bottom: 10px;
-}
-
-.perfil-info button {
-    background: #c62828;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
-    margin-top: 5px;
-}
-
-.perfil-info button:hover {
-    background: #a51f1f;
-}
-
-.perfil-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.perfil-links a {
-    color: #c62828;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.perfil-links a:hover {
-    text-decoration: underline;
-}
-
-footer {
-    background: #fff;
-    border-top: 2px solid #c62828;
-    text-align: center;
-    padding: 20px 0;
-    color: #000;
-    font-size: 0.95rem;
-}
-
-footer span {
-    color: #000000;
-    font-weight: 700;
-}
-
-
-/*responsivo*/
-
-@media (max-width: 700px) {
-    header {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    .usuario {
-        justify-content: center;
-    }
-    .seccion {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .perfil-info {
-        align-items: center;
-    }
->>>>>>> Stashed changes
 }

@@ -1,187 +1,293 @@
+/* 1: Configuración básica universal */
 * {
     margin: 0;
+    /* 2: Eliminamos márgenes por defecto */
     padding: 0;
+    /* 3: Eliminamos relleno por defecto */
     box-sizing: border-box;
+    /* 4: El borde y relleno se incluyen en el tamaño total */
     font-family: 'Poppins', sans-serif;
+    /* 5: Fuente tipográfica principal */
 }
 
+/* 6: Configuración del cuerpo */
 body {
     background-color: #fff;
+    /* 7: Fondo blanco */
     color: #111;
+    /* 8: Texto casi negro */
     display: flex;
+    /* 9: Flexbox para centrar contenido */
     justify-content: center;
+    /* 10: Centrado horizontal */
     align-items: center;
+    /* 11: Centrado vertical */
     min-height: 100vh;
+    /* 12: Altura mínima igual a la pantalla */
 }
 
 
-/*formularios*/
+/* 13: Estilos de formularios */
 
 .formulario {
     background: #f8f8f8;
+    /* 14: Fondo gris muy claro */
     border: 2px solid #c00;
+    /* 15: Borde rojo sólido */
     border-radius: 14px;
+    /* 16: Bordes redondeados */
     padding: 40px 50px;
+    /* 17: Relleno interno amplio */
     width: 90%;
+    /* 18: Ancho adaptable */
     max-width: 420px;
+    /* 19: Ancho máximo fijo */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* 20: Sombra suave */
     transition: all 0.3s ease;
+    /* 21: Transición suave */
     text-align: center;
+    /* 22: Texto centrado */
 }
 
 .formulario:hover {
     transform: translateY(-5px);
+    /* 23: Mover arriba al pasar mouse */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    /* 24: Sombra más intensa */
 }
 
 .logo-taller img {
     width: 120px;
+    /* 25: Ancho logo fijo */
     height: auto;
+    /* 26: Altura automática */
     margin-bottom: 10px;
+    /* 27: Espacio abajo */
 }
 
 .logo-taller h1 {
     font-weight: 700;
+    /* 28: Texto negrita */
     color: #111;
+    /* 29: Color oscuro */
     font-size: 24px;
+    /* 30: Tamaño grande */
 }
 
 .subtitulo {
     font-size: 14px;
+    /* 31: Tamaño pequeño */
     color: #444;
+    /* 32: Gris oscuro */
     margin-bottom: 20px;
+    /* 33: Espacio abajo */
 }
 
 
-/*inputs*/
+/* 34: Estilos de inputs */
 
 label {
     display: block;
+    /* 35: Bloque para salto de línea */
     text-align: left;
+    /* 36: Alinear texto a izquierda */
     margin-bottom: 6px;
+    /* 37: Espacio con el input */
     font-weight: 500;
+    /* 38: Peso medio */
     color: #222;
+    /* 39: Color texto */
 }
 
 input {
     width: 100%;
+    /* 40: Ancho total */
     padding: 10px 14px;
+    /* 41: Relleno cómodo */
     margin-bottom: 20px;
+    /* 42: Espacio separador abajo */
     border: 1.8px solid #ccc;
+    /* 43: Borde gris claro */
     border-radius: 6px;
+    /* 44: Bordes redondeados */
     background: #fff;
+    /* 45: Fondo blanco */
     transition: border 0.3s, box-shadow 0.3s;
+    /* 46: Animación */
 }
 
 input:focus {
     border-color: #c00;
+    /* 47: Borde rojo al seleccionar */
     box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
+    /* 48: Resplandor rojo */
     outline: none;
+    /* 49: Quitar borde defecto navegador */
 }
 
 button {
     width: 100%;
+    /* 50: Ancho total */
     background: #c00;
+    /* 51: Fondo rojo */
     color: #fff;
+    /* 52: Texto blanco */
     border: none;
+    /* 53: Sin borde */
     padding: 12px;
+    /* 54: Relleno */
     border-radius: 8px;
+    /* 55: Bordes redondeados */
     font-size: 16px;
+    /* 56: Tamaño letra */
     font-weight: 600;
+    /* 57: Negrita */
     cursor: pointer;
+    /* 58: Cursor mano */
     transition: 0.3s;
+    /* 59: Animación */
 }
 
 button:hover {
     background: #a30000;
+    /* 60: Rojo oscuro al pasar mouse */
 }
 
 
-/*links*/
+/* 61: Estilos de enlaces */
 
 a {
     color: #c00;
+    /* 62: Color rojo */
     text-decoration: none;
+    /* 63: Sin subrayado */
     font-weight: 500;
+    /* 64: Peso medio */
     display: inline-block;
+    /* 65: Comportamiento bloque en línea */
     margin-right: 20px;
+    /* 66: Margen derecho */
 }
 
 a:hover {
     text-decoration: underline;
+    /* 67: Subrayar al pasar mouse */
 }
 
 
-/*modal*/
+/* 68: Estilos de Modal */
 
 .modal-mensaje {
     position: fixed;
+    /* 69: Posición fija pantalla */
     top: 0;
+    /* 70: Arriba alineado */
     left: 0;
+    /* 71: Izquierda alineado */
     right: 0;
+    /* 72: Derecha alineado */
     bottom: 0;
+    /* 73: Abajo alineado */
     display: flex;
+    /* 74: Flexbox */
     align-items: center;
+    /* 75: Centrar vertical */
     justify-content: center;
+    /* 76: Centrar horizontal */
     background: rgba(0, 0, 0, 0.4);
+    /* 77: Fondo oscuro transparente */
     z-index: 10;
+    /* 78: Capa superior */
 }
 
 .modal-contenido {
     background: #fff;
+    /* 79: Fondo blanco */
     border-radius: 12px;
+    /* 80: Bordes redondeados */
     padding: 30px;
+    /* 81: Relleno interno */
     text-align: center;
+    /* 82: Texto centrado */
     width: 90%;
+    /* 83: Ancho adaptable */
     max-width: 350px;
+    /* 84: Ancho máximo */
     border-top: 5px solid #c00;
+    /* 85: Borde superior rojo */
     color: #111;
+    /* 86: Texto oscuro */
 }
 
 .modal-contenido a {
     color: blue;
+    /* 87: Color azul en modal */
     cursor: pointer;
+    /* 88: Cursor mano */
     margin-top: 15px;
+    /* 89: Margen arriba */
     font-weight: 600;
+    /* 90: Negrita */
     border: none;
+    /* 91: Sin borde */
     padding: 10px 20px;
+    /* 92: Relleno */
     border-radius: 6px;
+    /* 93: Bordes redondeados */
 }
 
 .modal-contenido h2 {
     margin-bottom: 10px;
+    /* 94: Espacio abajo */
     color: #c00;
+    /* 95: Color rojo */
     font-weight: 700;
+    /* 96: Negrita */
 }
 
 .modal-contenido p {
     color: #333;
+    /* 97: Color gris oscuro */
     margin-bottom: 10px;
+    /* 98: Espacio abajo */
 }
 
 .modal-contenido button {
     background: #c00;
+    /* 99: Fondo rojo */
     border: none;
+    /* 100: Sin borde */
     padding: 10px 20px;
+    /* 101: Relleno */
     border-radius: 6px;
+    /* 102: Bordes redondeados */
     color: #fff;
+    /* 103: Texto blanco */
     cursor: pointer;
+    /* 104: Cursor mano */
     margin-top: 15px;
+    /* 105: Margen arriba */
     font-weight: 600;
+    /* 106: Negrita */
 }
 
 .modal-contenido button:hover {
     background: #a30000;
+    /* 107: Rojo oscuro hover */
 }
 
 
-/* Responsivo */
+/* 108: Diseño Responsivo móvil */
 
 @media (max-width: 480px) {
     .formulario {
         padding: 25px 30px;
+        /* 109: Menos relleno en móvil */
     }
+
     h1 {
         font-size: 22px;
+        /* 110: Letra más pequeña */
     }
 }

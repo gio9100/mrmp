@@ -1,146 +1,220 @@
+/* 1: Configuración básica universal */
 * {
     margin: 0;
+    /* 2: Eliminamos márgenes por defecto */
     padding: 0;
+    /* 3: Eliminamos relleno por defecto */
     box-sizing: border-box;
+    /* 4: El borde y relleno se incluyen en el tamaño total */
     font-family: 'Poppins', sans-serif;
+    /* 5: Fuente tipográfica principal */
 }
 
+/* 6: Configuración del cuerpo */
 body {
     background-color: #fff;
+    /* 7: Fondo blanco */
     color: #111;
+    /* 8: Texto casi negro */
     display: flex;
+    /* 9: Flexbox para centrar contenido */
     justify-content: center;
+    /* 10: Centrado horizontal */
     align-items: center;
+    /* 11: Centrado vertical */
     min-height: 100vh;
+    /* 12: Altura mínima igual a la pantalla */
 }
 
 
-/*Formularios recuperar contraseña*/
+/* 13: Estilos de Formularios de Recuperación */
 
 .formulario {
     background: #f8f8f8;
+    /* 14: Fondo gris muy claro */
     border: 2px solid #c00;
+    /* 15: Borde rojo sólido */
     border-radius: 14px;
+    /* 16: Bordes redondeados */
     padding: 40px 50px;
+    /* 17: Relleno interno amplio */
     width: 90%;
+    /* 18: Ancho adaptable */
     max-width: 420px;
+    /* 19: Ancho máximo fijo */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    /* 20: Sombra suave */
     transition: all 0.3s ease;
+    /* 21: Transición suave */
     text-align: center;
+    /* 22: Texto centrado */
 }
 
 .formulario:hover {
     transform: translateY(-5px);
+    /* 23: Mover arriba al pasar mouse */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    /* 24: Sombra más intensa */
 }
 
 
-/* acomodar logo del taller*/
+/* 25: Acomodo del logo del taller */
 
 .logo-taller img {
     width: 120px;
+    /* 26: Ancho logo fijo */
     height: auto;
+    /* 27: Altura automática */
     margin-bottom: 10px;
+    /* 28: Espacio abajo */
 }
 
 .logo-taller h1 {
     font-weight: 700;
+    /* 29: Texto negrita */
     color: #111;
+    /* 30: Color oscuro */
     font-size: 24px;
+    /* 31: Tamaño grande */
 }
 
 .subtitulo {
     font-size: 20px;
+    /* 32: Tamaño mediano-grande */
     color: #f80a0a;
+    /* 33: Rojo brillante */
     margin-bottom: 20px;
+    /* 34: Espacio abajo */
 }
 
 
-/*inputs recuperar contraseña*/
+/* 35: Inputs para recuperar contraseña */
 
 label {
     display: block;
+    /* 36: Bloque para salto de línea */
     text-align: left;
+    /* 37: Alinear texto a izquierda */
     margin-bottom: 6px;
+    /* 38: Espacio con el input */
     font-weight: 500;
+    /* 39: Peso medio */
     color: #222;
+    /* 40: Color texto */
 }
 
 input {
     width: 100%;
+    /* 41: Ancho total */
     padding: 10px 14px;
+    /* 42: Relleno cómodo */
     margin-bottom: 20px;
+    /* 43: Espacio separador abajo */
     border: 1.8px solid #ccc;
+    /* 44: Borde gris claro */
     border-radius: 6px;
+    /* 45: Bordes redondeados */
     background: #fff;
+    /* 46: Fondo blanco */
     transition: border 0.3s box-shadow 0.3s;
+    /* 47: Animaciones */
 }
 
 input:focus {
     border-color: #c00;
+    /* 48: Borde rojo al seleccionar */
     box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
+    /* 49: Resplandor rojo */
     outline: none;
+    /* 50: Quitar borde defecto */
 }
 
 button {
     width: 100%;
+    /* 51: Ancho total */
     background: #c00;
+    /* 52: Fondo rojo */
     color: #fff;
+    /* 53: Texto blanco */
     border: none;
+    /* 54: Sin borde */
     padding: 12px;
+    /* 55: Relleno */
     border-radius: 8px;
+    /* 56: Bordes redondeados */
     font-size: 16px;
+    /* 57: Tamaño letra */
     font-weight: 600;
+    /* 58: Negrita */
     cursor: pointer;
+    /* 59: Cursor mano */
     transition: 0.3s;
+    /* 60: Animación */
 }
 
 button:hover {
     background: #a30000;
+    /* 61: Rojo oscuro al pasar mouse */
 }
 
 
-/*link inicio de sesion*/
+/* 62: Link a Inicio de Sesión */
 
 a {
     color: #c00;
+    /* 63: Color rojo */
     text-decoration: none;
+    /* 64: Sin subrayado */
     font-weight: 500;
+    /* 65: Peso medio */
 }
 
 a:hover {
     text-decoration: underline;
+    /* 66: Subrayar al pasar mouse */
 }
 
 
-/*responsivo*/
+/* 67: Diseño Responsivo Móvil */
 
 @media (max-width: 480px) {
     .formulario {
         padding: 25px 30px;
+        /* 68: Menos relleno */
     }
+
     h1 {
         font-size: 22px;
+        /* 69: Título ajustado */
     }
 }
 
 
-/*mensajes succes o error de envio de email o cambio de contraseña*/
+/* 70: Mensajes de éxito o error (envío email / cambio pass) */
 
 .message {
     padding: 10px;
+    /* 71: Relleno interno */
     margin-bottom: 15px;
+    /* 72: Espacio abajo */
     border-radius: 6px;
+    /* 73: Bordes redondeados */
     font-weight: bold;
+    /* 74: Texto negrita */
     text-align: center;
+    /* 75: Texto centrado */
 }
 
 .message.success {
     color: green;
+    /* 76: Texto verde */
     background: #e6ffe6;
+    /* 77: Fondo verde claro */
 }
 
 .message.error {
     color: red;
+    /* 78: Texto rojo */
     background: #ffe6e6;
+    /* 79: Fondo rojo claro */
 }

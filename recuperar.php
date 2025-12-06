@@ -1,4 +1,5 @@
 <?php
+// Inicia sesión
 session_start();
 
 /* ---------------------------------------------------------
@@ -12,8 +13,10 @@ $password = '';
 try {
     // Conectamos a MySQL con PDO
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    // Configura errores
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
+    // Si falla, detener y mostrar error
     die("Error al conectar a la base de datos: " . $e->getMessage());
 }
 
@@ -33,16 +36,18 @@ $tipo_mensaje = "";
 /* ---------------------------------------------------------
    1) SOLICITUD DE RECUPERACIÓN (USUARIO ESCRIBE SU CORREO)
 --------------------------------------------------------- */
+// Si envía correo y no nueva password...
 if (isset($_POST['correo']) && !isset($_POST['nueva_password'])) {
 
     // Limpiamos el correo
     $correo = trim($_POST['correo']);
 
-    // Buscamos si ese correo existe en la tabla
+    // Buscamos si ese correo existe en la tabla usuarios
     $stmt = $pdo->prepare("SELECT id, nombre FROM usuarios WHERE correo = ?");
     $stmt->execute([$correo]);
     $usuario = $stmt->fetch();
 
+    // Si el usuario existe...
     if ($usuario) {
 
         // Generamos un token aleatorio único
@@ -51,7 +56,7 @@ if (isset($_POST['correo']) && !isset($_POST['nueva_password'])) {
         // El token expira en 1 hora
         $expiracion = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-        // Guardamos el token en la tabla --> OJO: tu tabla usa reset_token
+        // Guardamos el token en la tabla usuarios
         $stmt = $pdo->prepare("UPDATE usuarios SET reset_token = ?, token_expira = ? WHERE correo = ?");
         if ($stmt->execute([$token, $expiracion, $correo])) {
 
@@ -62,49 +67,49 @@ if (isset($_POST['correo']) && !isset($_POST['nueva_password'])) {
             $mail = new PHPMailer(true);
 
             try {
-
                 // Configuración SMTP de Gmail
                 $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'mexicanracermp@gmail.com'; 
+                $mail->Host = 'smtp.gmail.com'; // Servidor SMTP
+                $mail->SMTPAuth = true; // Activar autenticación
+                $mail->Username = 'mexicanracermp@gmail.com'; // Correo emisor
                 $mail->Password = 'ynxm gxio tuku ssba';  // Contraseña de aplicación
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Encriptación TLS
+                $mail->Port = 587; // Puerto
 
                 // Destinatarios
-                $mail->setFrom('giovannidossantos929@gmail.com', 'Restablecer password');
+                $mail->setFrom('mexicanracermp@gmail.com', 'Restablecer password');
                 $mail->addAddress($correo, $usuario['nombre']);
 
-                // Contenido del correo
+                // Contenido del correo en HTML
                 $mail->isHTML(true);
                 $mail->Subject = "Restablecer password MRMP";
-$mail->addEmbeddedImage('img/mrmp-logo.png', 'logoLab');
+                // Imagen embebida en el correo
+                $mail->addEmbeddedImage('img/mrmp-logo.png', 'logoLab');
 
-$mail->Body = "
-    <center>
-        <img src='cid:logoLab' width='150' style='margin-bottom:20px;'>
-    </center>
+                $mail->Body = "
+                    <center>
+                        <img src='cid:logoLab' width='150' style='margin-bottom:20px;'>
+                    </center>
 
-    <h2>Recuperación de contraseña</h2>
-    Hola <strong>{$usuario['nombre']}</strong>,<br><br>
+                    <h2>Recuperación de contraseña</h2>
+                    Hola <strong>{$usuario['nombre']}</strong>,<br><br>
 
-    Has solicitado recuperar tu contraseña.<br><br>
+                    Has solicitado recuperar tu contraseña.<br><br>
 
-    <a href='$enlace' 
-       style='background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;'>
-       Restablecer contraseña
-    </a>
+                    <a href='$enlace' 
+                       style='background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;font-weight:bold;'>
+                       Restablecer contraseña
+                    </a>
 
-    <br><br>
-    Si el botón no funciona abre este enlace:<br>
-    $enlace
-    <br><br>
-    Este enlace expira en 1 hora.<br>
-    <strong>Si tú no solicitaste el cambio de contraseña, ignora este correo.</strong>
-";
+                    <br><br>
+                    Si el botón no funciona abre este enlace:<br>
+                    $enlace
+                    <br><br>
+                    Este enlace expira en 1 hora.<br>
+                    <strong>Si tú no solicitaste el cambio de contraseña, ignora este correo.</strong>
+                ";
 
-                // Alternativa en texto plano
+                // Texto plano alternativo no-HTML
                 $mail->AltBody = "Hola {$usuario['nombre']}, usa este enlace para recuperar tu contraseña: $enlace";
 
                 // Enviamos el correo
@@ -117,10 +122,9 @@ $mail->Body = "
                 $mensaje = "No se pudo enviar el correo: " . $mail->ErrorInfo;
                 $tipo_mensaje = "error";
             }
-
         }
-
     } else {
+        // Si correo no existe
         $mensaje = "Ese correo no está registrado.";
         $tipo_mensaje = "error";
     }
@@ -131,19 +135,20 @@ $mail->Body = "
 --------------------------------------------------------- */
 $token_valido = false;
 
+// Si viene token en URL
 if (isset($_GET['token'])) {
-
     $token = $_GET['token'];
 
     // Buscamos token válido que no haya expirado
     $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE reset_token = ? AND token_expira > NOW()");
     $stmt->execute([$token]);
-    $token_valido = $stmt->fetch();
+    $token_valido = $stmt->fetch(); // Si encuentra, es true
 }
 
 /* ---------------------------------------------------------
    3) USUARIO YA ESCRIBE SU NUEVA CONTRASEÑA
 --------------------------------------------------------- */
+// Si envía nueva contraseña y token
 if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
 
     $nueva_password = $_POST['nueva_password'];
@@ -154,20 +159,17 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
     if ($nueva_password !== $confirmar_password) {
         $mensaje = "Las contraseñas no coinciden.";
         $tipo_mensaje = "error";
-
     } else {
-
         // Buscamos el token válido
         $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE reset_token = ? AND token_expira > NOW()");
         $stmt->execute([$token]);
         $usuario = $stmt->fetch();
 
         if ($usuario) {
-
             // Encriptamos la nueva contraseña
             $password_hash = password_hash($nueva_password, PASSWORD_DEFAULT);
 
-            // Guardamos la nueva contraseña y borramos el token
+            // Guardamos la nueva contraseña y borramos el token (limpieza)
             $stmt = $pdo->prepare("UPDATE usuarios 
                                    SET contrasena_hash = ?, reset_token = NULL, token_expira = NULL 
                                    WHERE id = ?");
@@ -175,39 +177,39 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
 
             $mensaje = "Tu contraseña fue cambiada correctamente. Ya puedes iniciar sesión.";
             $tipo_mensaje = "success";
-
         } else {
             $mensaje = "El enlace ya expiró o no es válido.";
             $tipo_mensaje = "error";
         }
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8"> <!-- Codificación -->
     <title>Recuperar contraseña MRMP</title>
-    <link rel="stylesheet" href="recuperar.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="recuperar.css"> <!-- Estilos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Móvil -->
     </head>
 <body>
 
 <div class="box">
 <div class="formulario">
 
-
+<!-- Mostrar mensaje si existe -->
 <?php if ($mensaje): ?>
     <div class="message <?= $tipo_mensaje ?>"><?= $mensaje ?></div>
 <?php endif; ?>
 
+<!-- Si no hay token válido ni está enviando token (Paso 1: Pedir correo) -->
 <?php if (!$token_valido && !isset($_POST['token'])): ?>
     <div class="logo-taller">
      <img src="img/mrmp-logo.png" alt="logo mrmp">
      <p class="subtitulo">Recuperar Tu contraseña</p>
     <p>Ingresa tu correo para enviarte un enlace de recuperación.</p>
      </div>
+    <!-- Formulario para pedir correo -->
     <form method="POST">
         <input type="email" name="correo" placeholder="Tu correo" required>
         <button type="submit">Enviar enlace</button>
@@ -215,13 +217,15 @@ if (isset($_POST['nueva_password']) && isset($_POST['token'])) {
     </form>
 </div>
 <?php else: ?>
-
+    <!-- Paso 2: Cambiar contraseña (si token es válido o se intentó cambiar) -->
     
     <form method="POST">
         <div class="logo-taller">
             <img src="img/mrmp-logo.png" alt="logo mrmp">
             <p class="subtitulo">Escribe tu nueva contraseña (minimo 6 caracteres)</p>
+        <!-- Token oculto para enviarlo -->
         <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? $_POST['token']) ?>">
+        <!-- Inputs password -->
         <input type="password" name="nueva_password" placeholder="Nueva contraseña" minlength="6" required>
         <input type="password" name="confirmar_password" placeholder="Confirmar contraseña" minlength="6" required>
         <button type="submit">Cambiar contraseña</button>
