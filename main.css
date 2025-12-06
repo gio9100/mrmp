@@ -1,388 +1,147 @@
+/* :root: Define variables globales CSS. 
+   Sirve para mantener consistencia en colores y facilitar cambios de tema en toda la web. */
 :root {
-    --primary-red: #dc2626;
-    /* Color rojo principal */
-    --primary-dark: #000000;
-    /* Color negro fondo */
-    --primary-light: #ffffff;
-    /* Color blanco texto */
-    --gray-dark: #1a1a1a;
-    /* Color gris oscuro tarjetas */
-    --gray-medium: #404040;
-    /* Color gris medio bordes */
-    --gray-light: #737373;
-    /* Color gris claro textos suaves */
+    --primary-color: #d32f2f;
+    /* Rojo MRMP: Color corporativo principal. */
+    --secondary-color: #1a1a1a;
+    /* Negro suave: Color secundario para fondos oscuros. */
+    --text-color: #333;
+    /* Gris oscuro: Color base para texto legible. */
+    --light-bg: #f8f9fa;
+    /* Blanco humo: Color para fondos claros y limpios. */
 }
 
-* {
-    margin: 0;
-    /* Quitar márgenes por defecto */
-    padding: 0;
-    /* Quitar relleno por defecto */
-    box-sizing: border-box;
-    /* Medidas incluyen borde y relleno */
-}
-
+/* body: Selector de etiqueta para el cuerpo del documento. */
 body {
-    font-family: 'Roboto', sans-serif;
-    /* Tipografía base */
-    line-height: 1.6;
-    /* Altura de línea */
-    color: var(--primary-light);
-    /* Texto blanco */
-    background-color: var(--primary-dark);
-    /* Fondo negro */
+    /* font-family: Define la tipografía. 
+       Sirve para usar 'Poppins' como principal y 'sans-serif' como respaldo si no carga. */
+    font-family: 'Poppins', sans-serif;
+
+    /* background-color: Establece el color de fondo. 
+       Sirve para dar un tono base suave a toda la página. */
+    background-color: var(--light-bg);
+
+    /* color: Define el color del texto. */
+    color: var(--text-color);
 }
 
-.btn {
-    border-radius: 4px;
-    /* Bordes redondeados */
-    padding: 12px 30px;
-    /* Tamaño del botón */
-    font-weight: 500;
-    /* Grosor de letra */
-    text-transform: uppercase;
-    /* Mayúsculas */
-    letter-spacing: 1px;
-    /* Espacio entre letras */
-    font-size: 0.9rem;
-    /* Tamaño de letra */
-    transition: all 0.3s ease;
-    /* Animación suave */
-    border: none;
-    /* Sin borde */
-}
-
-.btn-primary {
-    background-color: var(--primary-red);
-    /* Fondo rojo */
-    color: var(--primary-light);
-    /* Texto blanco */
-}
-
-.btn-primary:hover {
-    background-color: #b91c1c;
-    /* Rojo oscuro al pasar mouse */
-    transform: translateY(-2px);
-    /* Mover arriba un poco */
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-    /* Sombra roja */
-}
-
-.btn-outline-light {
-    border: 2px solid var(--primary-light);
-    /* Borde blanco */
-    color: var(--primary-light);
-    /* Texto blanco */
-    background: transparent;
-    /* Fondo transparente */
-}
-
-.btn-outline-light:hover {
-    background-color: var(--primary-light);
-    /* Fondo blanco al pasar mouse */
-    color: var(--primary-dark);
-    /* Texto negro */
-}
-
-.btn-outline-primary {
-    border: 2px solid var(--primary-red);
-    /* Borde rojo */
-    color: var(--primary-red);
-    /* Texto rojo */
-    background: transparent;
-    /* Fondo transparente */
-}
-
-.btn-outline-primary:hover {
-    background-color: var(--primary-red);
-    /* Fondo rojo al pasar mouse */
-    color: var(--primary-light);
-    /* Texto blanco */
-}
-
-.card {
-    border: none;
-    /* Sin borde */
-    border-radius: 8px;
-    /* Bordes redondeados */
-    background: var(--gray-dark);
-    /* Fondo gris oscuro */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* Sombra suave */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Animación */
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    /* Subir al pasar mouse */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
-    /* Sombra más fuerte */
-}
-
-.form-control {
-    border-radius: 4px;
-    /* Bordes redondeados */
-    border: 2px solid var(--gray-medium);
-    /* Borde gris */
-    background: var(--gray-dark);
-    /* Fondo oscuro */
-    color: var(--primary-light);
-    /* Texto claro */
-    padding: 12px 15px;
-    /* Relleno interno */
-    transition: all 0.3s ease;
-    /* Animación */
-}
-
-.form-control:focus {
-    border-color: var(--primary-red);
-    /* Borde rojo al escribir */
-    background: var(--gray-dark);
-    /* Mantener fondo oscuro */
-    color: var(--primary-light);
-    /* Mantener texto claro */
-    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
-    /* Resplandor rojo */
-}
-
-.form-control::placeholder {
-    color: var(--gray-light);
-    /* Color del texto de ayuda */
-}
-
-.text-primary {
-    color: var(--primary-red) !important;
-    /* Texto rojo forzado */
-}
-
-.bg-primary {
-    background-color: var(--primary-red) !important;
-    /* Fondo rojo forzado */
-}
-
-.bg-dark {
-    background-color: var(--primary-dark) !important;
-    /* Fondo negro forzado */
-}
-
-.bg-light {
-    background-color: var(--gray-dark) !important;
-    /* Fondo gris oscuro (reemplaza light) */
-}
-
-.navbar-dark {
-    background-color: var(--primary-dark) !important;
-    /* Fondo navbar negro */
-    border-bottom: 2px solid var(--primary-red);
-    /* Línea inferior roja */
-}
-
-.navbar-dark .navbar-nav .nav-link {
-    color: var(--primary-light);
-    /* Enlaces blancos */
-    font-weight: 500;
-    /* Grosor medio */
-    transition: color 0.3s ease;
-    /* Animación color */
-}
-
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
-    color: var(--primary-red);
-    /* Rojo activo o hover */
-}
-
-.navbar-brand .brand-text {
-    font-weight: 700;
-    /* Texto marca negrita */
-    color: var(--primary-light);
-    /* Texto marca blanco */
-}
-
-.dropdown-menu {
-    background-color: var(--gray-dark);
-    /* Fondo menú gris */
-    border: 1px solid var(--gray-medium);
-    /* Borde gris medio */
-    border-radius: 4px;
-    /* Bordes redondeados */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    /* Sombra */
-}
-
-.dropdown-item {
-    color: var(--primary-light);
-    /* Items blancos */
-    transition: all 0.3s ease;
-    /* Animación */
-}
-
-.dropdown-item:hover {
-    background-color: var(--primary-red);
-    /* Fondo rojo al pasar mouse */
-    color: var(--primary-light);
-    /* Texto blanco */
-}
-
-.badge {
-    border-radius: 4px;
-    /* Bordes rectos */
-    font-weight: 500;
-    /* Letra media */
-    padding: 6px 12px;
-    /* Relleno */
-}
-
-.bg-success {
-    background-color: #16a34a !important;
-    /* Verde éxito */
-}
-
-.bg-danger {
-    background-color: var(--primary-red) !important;
-    /* Rojo peligro */
-}
-
-.alert {
-    border-radius: 4px;
-    /* Bordes alert */
-    border: none;
-    /* Sin borde */
-    font-weight: 500;
-    /* Texto medio */
-}
-
-.alert-success {
-    background-color: #16a34a;
-    /* Fondo verde */
-    color: var(--primary-light);
-    /* Texto blanco */
-}
-
-.alert-danger {
-    background-color: var(--primary-red);
-    /* Fondo rojo */
-    color: var(--primary-light);
-    /* Texto blanco */
-}
-
-.section {
-    padding: 80px 0;
-    /* Espaciado vertical grande */
-}
-
-.img-fluid {
-    border-radius: 4px;
-    /* Bordes imagen responsiva */
-}
-
-.back-to-top {
-    position: fixed;
-    /* Fijo en pantalla */
-    bottom: 20px;
-    /* Abajo */
-    right: 20px;
-    /* Derecha */
-    background: var(--primary-red);
-    /* Fondo rojo */
-    color: white;
-    /* Texto blanco */
-    width: 50px;
-    /* Ancho */
-    height: 50px;
-    /* Alto */
-    border-radius: 4px;
-    /* Cuadrado redondeado */
-    display: flex;
-    /* Flex para centrar */
-    align-items: center;
-    /* Centrar vertical */
-    justify-content: center;
-    /* Centrar horizontal */
-    text-decoration: none;
-    /* Sin subrayado */
-    opacity: 0;
-    /* Invisible inicio */
-    transition: all 0.3s ease;
-    /* Animación */
-    z-index: 1000;
-    /* Encima de todo */
-    border: none;
-    /* Sin borde */
-}
-
-.back-to-top.show {
-    opacity: 1;
-    /* Hacer visible */
-}
-
-.back-to-top:hover {
-    background: #b91c1c;
-    /* Fondo más oscuro */
-    color: white;
-    /* Texto blanco */
-    transform: translateY(-3px);
-    /* Mover arriba */
-}
-
-.profile-card {
-    background: white;
-    /* Fondo blanco */
-    border-radius: 15px;
-    /* Borde muy redondeado */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    /* Sombra suave */
-    border: none;
-    /* Sin borde */
-}
-
-.profile-image {
-    width: 150px;
-    /* Ancho imagen */
-    height: 150px;
-    /* Alto imagen */
-    border-radius: 50%;
-    /* Círculo */
-    object-fit: cover;
-    /* Ajustar imagen */
-    border: 4px solid #737373;
-    /* Borde gris imagen */
-}
-
-.text-dark-custom {
-    color: #2c3e50 !important;
-    /* Texto oscuro custom */
-}
-
-.text-muted-custom {
-    color: #6c757d !important;
-    /* Texto gris custom */
-}
-
-.card-header-custom {
-    background: linear-gradient(135deg, #737373 0%, #737373 100%) !important;
-    /* Fondo degradado */
-    color: white !important;
-    /* Texto blanco */
-    border: none;
-    /* Sin borde */
-}
-
-.info-label {
-    color: #495057;
-    /* Color etiqueta */
-    font-weight: 500;
-    /* Grosor etiqueta */
-    font-size: 0.9rem;
-    /* Tamaño etiqueta */
-}
-
-.info-value {
-    color: #2c3e50;
-    /* Color valor */
+/* h1, h2, h3, h4, h5, h6: Encabezados HTML. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    /* font-weight: Grosor de la fuente. 
+       Sirve para que los títulos se vean más robustos y destaquen. */
     font-weight: 600;
-    /* Grosor valor */
-    font-size: 1rem;
-    /* Tamaño valor */
+}
+
+/* .btn-primary: Clase para botones primarios. */
+.btn-primary {
+    /* background-color: Fondo del botón. Usa la variable roja. */
+    background-color: var(--primary-color);
+
+    /* border-color: Color del borde. */
+    border-color: var(--primary-color);
+
+    /* transition: Define la animación de cambio de estado. 
+       Sirve para suavizar el efecto hover durante 0.3 segundos. */
+    transition: all 0.3s ease;
+}
+
+/* .btn-primary:hover: Estado del botón al pasar el mouse por encima. */
+.btn-primary:hover {
+    /* darken(): No existe en CSS puro, aquí lo simulamos con un color fijo. 
+       Sirve para dar feedback visual oscureciendo el botón. */
+    background-color: #b71c1c;
+    border-color: #b71c1c;
+
+    /* transform: Modifica la geometría del elemento. 
+       translateY(-2px) sirve para mover el botón ligeramente hacia arriba, simulando elevación. */
+    transform: translateY(-2px);
+}
+
+/* .card: Contenedor tipo tarjeta. */
+.card {
+    /* border: Define el borde. 'none' lo quita. 
+       Sirve para un diseño más limpio sin líneas duras. */
+    border: none;
+
+    /* box-shadow: Sombra de la caja. 
+       Sirve para dar profundidad y separación del fondo. */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* transition: Suaviza la animación de hover. */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* .card:hover: Estado tarjeta al pasar mouse. */
+.card:hover {
+    /* transform: translateY(-5px); Mueve la tarjeta hacia arriba. 
+       Sirve para indicar interactividad. */
+    transform: translateY(-5px);
+
+    /* Aumenta la sombra para simular mayor elevación. */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* .form-control: Inputs de formularios (texto, email, password). */
+.form-control {
+    /* border-radius: Redondeo de las esquinas. 
+       0.5rem (8px) sirve para un look moderno pero no excesivo. */
+    border-radius: 0.5rem;
+
+    /* padding: Espaciado interno. 0.75rem (12px). 
+       Sirve para que el texto no esté pegado a los bordes. */
+    padding: 0.75rem 1rem;
+}
+
+/* .form-control:focus: Estado del input cuando se escribe en él. */
+.form-control:focus {
+    /* box-shadow: Resplandor alrededor del input. 
+       Sirve para indicar claramente qué campo está activo (foco). */
+    box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
+
+    /* border-color: Cambia el color del borde al primario. */
+    border-color: var(--primary-color);
+}
+
+/* .navbar-dark .navbar-nav .nav-link: Enlaces de navegación en barra oscura. */
+.navbar-dark .navbar-nav .nav-link {
+    /* font-weight: Grosor medio (500). */
+    font-weight: 500;
+
+    /* transition: Suaviza el cambio de color. */
+    transition: color 0.3s ease;
+}
+
+/* .navbar-dark .navbar-nav .nav-link:hover: Hover en enlaces nav. */
+.navbar-dark .navbar-nav .nav-link:hover {
+    /* color: Cambia el texto al color primario (rojo). 
+       Sirve para resaltar la opción bajo el cursor. */
+    color: var(--primary-color);
+}
+
+/* .badge: Etiquetas pequeñas (ej. 'Nuevo', Stock). */
+.badge {
+    /* padding: Relleno interno. 
+       0.5em 0.8em sirve para dar aire alrededor del texto del badge. */
+    padding: 0.5em 0.8em;
+
+    /* font-weight: Grosor de fuente. */
+    font-weight: 500;
+}
+
+/* Utilidad rápida para objetos centrados. */
+.center-xy {
+    /* display: flex; Activa Flexbox. 
+       Sirve para controlar alienación de hijos. */
+    display: flex;
+
+    /* align-items: center; Alineación vertical al centro. */
+    align-items: center;
+
+    /* justify-content: center; Alineación horizontal al centro. */
+    justify-content: center;
 }

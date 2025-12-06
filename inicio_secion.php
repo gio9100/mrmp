@@ -1,56 +1,72 @@
 <?php
-// session_start: Inicia sesión para poder usar variables de sesión (como $_SESSION['usuario_id'])
+// session_start(): Inicia una sesión. 
+// Sirve para persistir datos del usuario (como ID, Nombre) a través de las distintas páginas del sitio.
 session_start();
 
-// require_once: Incluye el archivo de conexión a la base de datos de forma obligatoria
+// require_once: Incluye el archivo de conexión.
+// Sirve para cargar la configuración de la base de datos necesaria para ejecutar consultas.
 require_once "conexion.php";
 
-$mensaje = ""; // Inicializa variable para mensajes de error o éxito
-$exito = false; // Bandera booleana para controlar el estado del login (true si es exitoso)
+$mensaje = ""; // Variable para almacenar mensajes de error o éxito.
+$exito = false; // Bandera para indicar si el inicio de sesión fue correcto.
 
-// Verificar Request Method: Comprueba si el formulario fue enviado vía POST
+// $_SERVER["REQUEST_METHOD"]: Contiene el método de solicitud (GET, POST, etc.).
+// Sirve para verificar si el usuario envió el formularo (POST).
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Obtener datos del form: Usa el operador null coalesce (??) para evitar errores si no existen
-    $correo = trim($_POST["correo"] ?? ""); // trim elimina espacios al inicio y final
+    
+    // trim(): Elimina espacios en blanco al inicio y final.
+    // Sirve para limpiar la entrada del usuario y evitar errores por espacios accidentales.
+    // ?? "": Operador de fusión de null. Si $_POST["correo"] no existe, asigna una cadena vacía.
+    $correo = trim($_POST["correo"] ?? ""); 
     $contrasena = $_POST["contrasena"] ?? "";
 
-    // Validación Básica: Verifica que los campos no estén vacíos
+    // Validación: Verificar si los campos están vacíos.
     if ($correo === "" || $contrasena === "") {
         $mensaje = "Ingresa tu correo y contraseña.";
     } 
-    // Validación de Formato: filter_var comprueba si el string es un email válido
+    // filter_var(..., FILTER_VALIDATE_EMAIL): Valida si un string es un email correcto.
+    // Sirve para asegurar que el formato del correo sea válido antes de consultar la BD.
     elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         $mensaje = "Correo inválido.";
     } else {
-        // Consulta SQL: Busca el usuario por su correo electrónico
+        // Consulta SQL para obtener los datos del usuario.
+        // Se seleccionan ID, nombre, correo y el HASH de la contraseña.
         $sql = "SELECT id, nombre, correo, contrasena_hash FROM usuarios WHERE correo = ?";
         
-        // prepare: Prepara la sentencia SQL para evitar inyección SQL
+        // $conexion->prepare(): Prepara la consulta SQL en el servidor.
+        // Sirve para mejorar la seguridad y eficiencia (Previene Inyección SQL).
         $stmt = $conexion->prepare($sql);
-        // bind_param: Vincula la variable $correo al parámetro ? (s = string)
+        
+        // bind_param("s", ...): Vincula la variable $correo al marcador "?" de la consulta.
+        // "s" indica que el dato es un string.
         $stmt->bind_param("s", $correo);
-        // execute: Ejecuta la consulta preparada
+        
+        // execute(): Ejecuta la consulta preparada.
         $stmt->execute();
-        // get_result: Obtiene el conjunto de resultados de la base de datos
+        
+        // get_result(): Obtiene el conjunto de resultados.
         $resultado = $stmt->get_result();
 
-        // Verificación de existencia: Si num_rows es 1, el usuario existe
+        // Validar si se encontró un usuario.
+        // num_rows: Cuenta cuántas filas devolvió la consulta. Sirve para saber si el correo existe.
         if ($resultado && $resultado->num_rows === 1) {
-            // fetch_assoc: Obtiene la fila de datos como un array asociativo
+            // fetch_assoc(): Obtiene la fila actual como un array asociativo.
             $usuario = $resultado->fetch_assoc();
             
-            // password_verify: Compara la contraseña ingresada con el hash almacenado
+            // password_verify(): Compara la contraseña ingresada con el hash almacenado.
+            // Sirve para verificar la contraseña de forma segura (sin guardarla en texto plano).
             if (password_verify($contrasena, $usuario["contrasena_hash"])) {
-                // Login Exitoso: Guarda los datos críticos del usuario en la sesión
+                // Login Correcto: Guardar datos en variables de sesión.
                 $_SESSION["usuario_id"] = $usuario["id"];
                 $_SESSION["usuario_nombre"] = $usuario["nombre"];
                 $_SESSION["usuario_correo"] = $usuario["correo"];
                 
-                // Configura mensaje de bienvenida y bandera de éxito
                 $mensaje = "¡Bienvenido a MRMP, " . $usuario["nombre"] . "!";
                 $exito = true;
                 
-                // Redirección JS: Usa JavaScript para redirigir tras 2 segundos (para leer el mensaje)
+                // JS para redireccionar.
+                // setTimeout(): Ejecuta una función después de un tiempo (2000ms = 2s).
+                // Sirve para que el usuario pueda leer el mensaje de bienvenida antes de ir a la home.
                 echo "
                 <script>
                     setTimeout(function() {
@@ -59,14 +75,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </script>
                 ";
             } else {
-                // Contraseña incorrecta
                 $mensaje = " ⚠️Correo o contraseña incorrectos.";
             }
         } else {
-            // Correo no encontrado en la base de datos
             $mensaje = " ⚠️Correo no encontrado.";
         }
-        // Cerrar statement: Libera recursos del statement
+        // $stmt->close(): Cierra la sentencia preparada.
+        // Sirve para liberar los recursos asociados a la consulta.
         $stmt->close();
     }
 }
@@ -74,51 +89,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Metadatos básicos -->
     <meta charset="UTF-8">
     <title>Login MRMP</title>
-    <!-- Google Fonts: Carga la fuente Poppins -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- CSS: Enlace a la hoja de estilos específica para inicio de sesión -->
     <link rel="stylesheet" href="inicio_secion.css">
-    <!-- Viewport: Ajuste necesario para la responsividad en móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
-<!-- Formulario de Inicio de Sesión -->
-<!-- method="post": Envía los datos de forma segura en el cuerpo de la petición -->
+<!-- <form>: Elemento para capturar datos. -->
+<!-- method="post": Método HTTP para enviar datos sensibles (no se ven en la URL). -->
+<!-- novalidate: Desactiva la validación por defecto del navegador para usar la nuestra. -->
 <form method="post" class="formulario" novalidate>
-    <!-- Encabezado del formulario con Logo -->
     <div class="logo-taller">
         <img src="img/mrmp-logo.png" alt="Logo MRMP">
         <h1>Inicio de sesión MRMP</h1>
         <p class="subtitulo">Motor Racing Mexican Parts</p>
     </div>
 
-    <!-- Sección de Campos de Entrada -->
     <section class="seccion-informacion">
         <label>Correo</label>
-        <!-- value preservado: Mantiene el correo escrito si hay un error -->
+        <!-- value="<?= ... ?>": Mantiene el valor ingresado si hay error. -->
+        <!-- htmlspecialchars(): Previene inyección de código HTML/JS (XSS) al mostrar el valor. -->
         <input type="email" name="correo" value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
 
         <label>Contraseña</label>
         <input type="password" name="contrasena" required minlength="6">
     </section>
 
-    <!-- Botones y Enlaces -->
     <section class="seccion-botones">
-        <!-- Botón de envío -->
         <button type="submit">Iniciar sesión</button>
         
-        <!-- Enlace a Registro -->
         <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
         
-        <!-- Enlace a Recuperación de Contraseña -->
         <p>¿Olvidaste tu contraseña?</p>
         <a href="recuperar.php">Recuperar Tu Contraseña</a>
         
-        <!-- Acceso al Panel de Administración -->
         <div class="panel-admin">
             <p>Solo personal Autorizado</p>
             <a href="admin_panel.php">Admin Panel</a>
@@ -126,29 +133,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </section>
 </form>
 
-<!-- Modal de Mensaje: Se muestra solo si $mensaje no está vacío -->
 <?php if($mensaje): ?>
-<!-- Clase condicional: Añade 'exito' o 'error' según el estado de $exito -->
+<!-- Operador ternario para clase CSS (exito/error) -->
 <div class="modal-mensaje <?= $exito ? 'exito' : 'error' ?>">
     <div class="modal-contenido">
-        <!-- Título dinámico del modal -->
         <h2><?= $exito ? "🔧 Bienvenido al Taller MRMP! " : "❌ Error" ?></h2>
         <p><?= htmlspecialchars($mensaje) ?></p>
         
-        <!-- Contenido condicional del pie del modal -->
         <?php if($exito): ?>
             <p style="font-style: italic; margin-top: 15px;">
                 Serás redirigido automáticamente en 2 segundos...
             </p>
         <?php else: ?>
-            <!-- Botón para cerrar el modal manualmente si es un error -->
+            <!-- onclick="cerrarmodal()": Ejecuta la función JS al hacer clic. -->
             <button onclick="cerrarmodal()">Cerrar Modal</button>
         <?php endif; ?>
     </div>
 </div>
 
 <script>
-    // Función JS para ocultar el modal al hacer click en Cerrar
+    // Función para ocultar el modal cambiando su estilo CSS display.
     function cerrarmodal() {
         document.querySelector('.modal-mensaje').style.display='none';
     }

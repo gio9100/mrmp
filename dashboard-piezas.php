@@ -1,203 +1,225 @@
 <?php
-// session_start: Inicia o reanuda la sesión del usuario para mantener datos entre páginas
+// session_start(): Esta función inicia una nueva sesión o reanuda la existente.
+// Sirve para mantener información del usuario (como ID o carrito) disponible entre diferentes páginas.
 session_start();
 
-// require_once: Incluye el archivo de conexión a la base de datos (obligatorio)
+// require_once: Esta sentencia incluye y evalúa el archivo especificado.
+// Sirve para conectar a la base de datos. Si el archivo no se encuentra, detiene el script (fatal error).
 require_once "conexion.php";
 
-// Lógica de Logout: Si la URL tiene el parámetro ?logout
+// isset(): Esta función determina si una variable está definida y no es NULL.
+// Aquí sirve para detectar si el usuario hizo clic en "Cerrar Sesión" (parámetro ?logout en la URL).
 if(isset($_GET['logout'])){
-    // session_destroy: Destruye toda la información de la sesión actual (cierra sesión)
+    // session_destroy(): Esta función destruye toda la información registrada de una sesión.
+    // Sirve para cerrar la sesión del usuario efectivamente.
     session_destroy();
-    // header: Redirige al usuario nuevamente a esta página (dashboard-piezas.php) fresca
+    
+    // header(): Esta función envía un encabezado HTTP sin formato.
+    // Sirve para redirigir al navegador del usuario a una página limpia (sin parámetros).
     header("Location: dashboard-piezas.php");
-    // exit: Detiene la ejecución del script inmediatamente
+    
+    // exit: Esta construcción del lenguaje termina la ejecución del script.
+    // Sirve para asegurarse de que no se ejecute más código después de la redirección.
     exit;
 }
 
-// Inicialización del Carrito: Si el usuario está logueado pero no tiene carrito, se crea uno vacío
+// Lógica para inicializar el carrito de compras.
+// Sirve para asegurar que $_SESSION['carrito'] exista como un array vacío si el usuario está logueado pero aún no tiene carrito.
 if(isset($_SESSION['usuario_id']) && !isset($_SESSION['carrito'])) $_SESSION['carrito'] = [];
 
 // --- LÓGICA: AGREGAR PRODUCTO AL CARRITO ---
-// Verifica si viene 'agregar' en la URL y si es un número
+// Verifica si existe el parámetro 'agregar' y si es un número válido.
+// is_numeric(): Esta función encuentra si una variable es un número o un string numérico.
 if(isset($_GET['agregar']) && is_numeric($_GET['agregar'])){
-    // Verificación de seguridad: ¿Está el usuario logueado?
+    
+    // Verifica si el usuario NO está logueado.
     if(!isset($_SESSION['usuario_id'])){
-        // Si no está logueado, guarda un mensaje de error en la sesión
+        // Guarda un mensaje en la sesión para mostrarlo después.
         $_SESSION['mensaje'] = "⚠️ Debes iniciar sesión para agregar al carrito.";
     } else {
-        // intval: Convierte el ID recibido a un número entero seguro
+        // intval(): Esta función obtiene el valor entero de una variable.
+        // Sirve para limpiar el input del usuario y asegurar que trabajamos con un número entero seguro.
         $id_pieza = intval($_GET['agregar']);
         
-        // Consulta SQL Preparada: Obtener el stock actual de la pieza
+        // $conexion->prepare(): Esta función prepara una sentencia SQL para su ejecución.
+        // Sirve para prevenir inyecciones SQL separando la consulta de los datos.
         $stmt = $conexion->prepare("SELECT cantidad FROM piezas WHERE id=?");
-        // bind_param: Vincula el ID al parámetro de la consulta (previene inyección SQL)
-        $stmt->bind_param("i",$id_pieza);
-        // execute: Ejecuta la consulta
+        
+        // bind_param(): Esta función vincula variables a una sentencia preparada como parámetros.
+        // "i" indica que el parámetro es un entero (integer).
+        $stmt->bind_param("i", $id_pieza);
+        
+        // execute(): Esta función ejecuta la consulta preparada.
         $stmt->execute();
-        // get_result: Obtiene el resultado de la consulta
+        
+        // get_result(): Esta función obtiene un conjunto de resultados de una sentencia preparada.
         $res = $stmt->get_result();
         
-        // Si se encontró la pieza (1 fila retornada)
+        // num_rows: Esta propiedad obtiene el número de filas en un conjunto de resultados.
+        // Sirve para verificar si encontramos el producto.
         if($res && $res->num_rows==1){
-            // fetch_assoc: Convierte fila en array asociativo
+            // fetch_assoc(): Esta función obtiene una fila de resultados como un array asociativo.
             $pieza = $res->fetch_assoc();
             
-            // Verificación de Stock: (Stock Real - Cantidad ya en Carrito) > 0
+            // Lógica para verificar stock disponible (Stock Real - Cantidad En Carrito).
+            // Sirve para no permitir agregar más productos de los que existen.
             if(($pieza['cantidad'] - ($_SESSION['carrito'][$id_pieza] ?? 0)) > 0){
-                // Incrementa la cantidad de esa pieza en el carrito de la sesión
+                // Incrementa la cantidad del producto en el array de sesión.
                 $_SESSION['carrito'][$id_pieza] = ($_SESSION['carrito'][$id_pieza] ?? 0) + 1;
-                // Mensaje de éxito
                 $_SESSION['mensaje'] = "✅ Pieza agregada al carrito.";
             } else {
-                // Mensaje de error si no hay suficiente stock
                 $_SESSION['mensaje'] = "⚠️ No hay stock suficiente.";
             }
         }
     }
-    // Redirige para limpiar la URL y evitar reenvíos
+    // Redirección para limpiar la URL (Patrón Post-Redirect-Get).
     header("Location: dashboard-piezas.php");
     exit;
 }
 
 // --- LÓGICA: FILTROS Y BÚSQUEDA ---
-// Obtiene el término de búsqueda, limpiando espacios (trim)
+// trim(): Esta función elimina espacios en blanco al inicio y al final de un string.
+// Sirve para limpiar la búsqueda del usuario.
 $busqueda = trim($_GET['buscar'] ?? '');
-// Obtiene el ID de la marca seleccionada, convertido a entero
+
+// intval(): Asegura que el ID de la marca sea un número entero.
 $marca_id = intval($_GET['marca'] ?? 0);
 
-// Consulta para obtener todas las marcas y mostrar en los filtros
-// ORDER BY nombre: Ordena alfabéticamente
+// $conexion->query(): Realiza una consulta a la base de datos.
+// Sirve para obtener la lista de marcas para el filtro.
 $marcas_res = $conexion->query("SELECT * FROM marcas ORDER BY nombre");
 $marcas = [];
-// Llena el array $marcas con id => nombre
 while($m = $marcas_res->fetch_assoc()){
     $marcas[$m['id']] = $m['nombre'];
 }
 
-// Construcción de la consulta principal de piezas (SQL Dinámico)
-// LEFT JOIN: Une piezas con marcas para obtener el nombre de la marca
+// Construcción de consulta dinámica.
+// LEFT JOIN: Esta cláusula SQL une dos tablas devolviendo todas las filas de la tabla izquierda (piezas).
+// Sirve para obtener el nombre de la marca asociado a cada pieza.
 $sql = "SELECT p.*, m.nombre as marca_nombre FROM piezas p LEFT JOIN marcas m ON p.marca_id = m.id";
 
-$condiciones = []; // Array para guardar cláusulas WHERE
-$params = [];      // Array para guardar valores de parámetros
-$tipos = "";       // String para guardar tipos de datos (s, i, d)
+$condiciones = [];
+$params = [];
+$tipos = "";
 
-// Filtro por Texto (Nombre o Descripción)
+// Filtro por texto
 if($busqueda !== ''){
-    // Busca coincidencias parciales (%) en nombre O descripción
+    // LIKE: Operador SQL para buscar un patrón específico.
+    // %: Comodín que representa cero, uno o varios caracteres.
     $condiciones[] = "(p.nombre LIKE ? OR p.descripcion LIKE ?)";
-    $params[] = "%$busqueda%"; // Valor para nombre
-    $params[] = "%$busqueda%"; // Valor para descripción
-    $tipos .= "ss"; // Dos strings
+    $params[] = "%$busqueda%"; 
+    $params[] = "%$busqueda%";
+    // "ss": Indica que hay dos parámetros de tipo string.
+    $tipos .= "ss"; 
 }
 
-// Filtro por Marca
+// Filtro por marca
 if($marca_id > 0){
-    // Busca coincidencia exacta en ID de marca
     $condiciones[] = "p.marca_id=?";
     $params[] = $marca_id;
-    $tipos .= "i"; // Un entero
+    // "i": Indica que hay un parámetro de tipo entero.
+    $tipos .= "i";
 }
 
-// Si existen condiciones, se añaden al SQL con WHERE
+// count(): Esta función cuenta todos los elementos de un array.
+// Sirve para saber si se aplicaron filtros.
 if(count($condiciones) > 0){
-    // implode: Une las condiciones con " AND "
+    // implode(): Esta función une elementos de un array con un string.
+    // Sirve para construir la cláusula WHERE correctamente con "AND".
     $sql .= " WHERE ".implode(" AND ", $condiciones);
 }
 
-// Ordenamiento final: Productos más recientes primero
 $sql .= " ORDER BY p.id DESC";
 
-// Prepara la consulta dinámica
 $stmt = $conexion->prepare($sql);
-// Si hay parámetros, se vinculan dinámicamente
 if(count($params) > 0) $stmt->bind_param($tipos,...$params);
-// Ejecuta la consulta
 $stmt->execute();
-// Obtiene todas las piezas como un array asociativo
-$piezas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close(); // Cierra el statement
 
-// Gestión del mensaje flash: Se obtiene y se elimina de la sesión
+// fetch_all(MYSQLI_ASSOC): Obtiene todas las filas de resultados como un array asociativo.
+// Sirve para tener todos los productos listos para recorrer en el HTML.
+$piezas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
+// Gestión de mensaje flash (una sola vez).
+// Null Coalescing (??): Operador que devuelve el primer operando si existe y no es NULL.
 $mensaje = $_SESSION['mensaje'] ?? '';
+// unset(): Esta función destruye una variable especificada.
+// Sirve para borrar el mensaje de la sesión para que no aparezca de nuevo al recargar.
 unset($_SESSION['mensaje']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- meta charset: Define la codificación de caracteres a UTF-8 -->
+    <!-- <meta charset="UTF-8">: Esta etiqueta especifica la codificación de caracteres del documento. -->
+    <!-- Sirve para mostrar correctamente caracteres como tildes y ñ. -->
     <meta charset="UTF-8">
-    <!-- viewport: Configuración para que el sitio sea responsive en móviles -->
+    
+    <!-- <meta name="viewport">: Controla las dimensiones y escala de la ventana gráfica. -->
+    <!-- content="width=device-width, initial-scale=1.0": Sirve para que el sitio sea responsivo en móviles. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Piezas - MRMP</title>
     
-    <!-- Bootstrap CSS: Carga el framework de estilos -->
+    <!-- Enlace a Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome: Carga la librería de iconos -->
+    <!-- Enlace a Font Awesome (Iconos) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- CSS Personalizado -->
     <link href="pagina-principal.css" rel="stylesheet">
     <link rel="stylesheet" href="main.css">
     
     <style>
-        /* Estilos específicos para el carrusel en esta página */
+        /* object-fit: cover; Este estilo sirve para que la imagen llene el contenedor sin deformarse, recortando si es necesario. */
         .carousel-item img {
-            height: 200px; /* Altura fija para uniformidad */
-            object-fit: cover; /* Recorta la imagen para llenar el contenedor */
-            width: 100%; /* Ancho total */
+            height: 200px;
+            object-fit: cover; 
+            width: 100%;
         }
-        /* Botones de navegación del carrusel mejorados */
+        /* border-radius: 50%; Este estilo sirve para hacer elementos perfectamente circulares. */
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
-            background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
-            border-radius: 50%; /* Redondeados */
-            padding: 10px; /* Relleno */
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar: Barra de navegación fija arriba, color oscuro -->
+    <!-- <nav>: Etiqueta semántica para navegación. -->
+    <!-- .navbar-expand-lg: Clase de Bootstrap que hace que el menú se expanda en pantallas grandes. -->
+    <!-- .sticky-top: Clase que pega el elemento al tope de la ventana al hacer scroll. -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <!-- Container: Centra el contenido horizontalmente -->
         <div class="container">
-            <!-- Brand: Logotipo de la marca -->
             <a class="navbar-brand" href="pagina-principal.php">
                 <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
             </a>
             
-            <!-- Navbar Toggler: Botón hamburguesa para móviles -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <!-- Collapse: Contenido que se colapsa en móviles -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Nav List: Lista de enlaces alineada a la izquierda (me-auto) -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="pagina-principal.php"><i class="fas fa-home me-1"></i>Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <!-- active: Indica que esta es la página actual -->
                         <a class="nav-link active" href="dashboard-piezas.php"><i class="fas fa-cogs me-1"></i>Piezas</a>
                     </li>
                 </ul>
                 
-                <!-- Navbar Nav Derecha: Login/Registro o Menú Usuario -->
                 <div class="navbar-nav">
                     <?php if(isset($_SESSION['usuario_id'])): ?>
-                        <!-- Dropdown de Usuario Logueado -->
                         <div class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <!-- htmlspecialchars(): Convierte caracteres especiales en entidades HTML. -->
+                                <!-- Sirve para prevenir ataques XSS (Cross-Site Scripting) al mostrar datos del usuario. -->
                                 <i class="fas fa-user me-1"></i><?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="perfil.php"><i class="fas fa-user-circle me-2"></i>Perfil</a></li>
                                 <li><a class="dropdown-item" href="carrito.php">
                                     <i class="fas fa-shopping-cart me-2"></i>Carrito 
-                                    <!-- Badge: Contador de items en carrito -->
+                                    <!-- array_sum(): Calcula la suma de los valores de un array. Sirve para contar total items. -->
                                     <span class="badge bg-primary"><?= array_sum($_SESSION['carrito'] ?? []) ?></span>
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -205,7 +227,6 @@ unset($_SESSION['mensaje']);
                             </ul>
                         </div>
                     <?php else: ?>
-                        <!-- Enlaces para visitantes (Login/Registro) -->
                         <a class="nav-link" href="inicio_secion.php"><i class="fas fa-sign-in-alt me-1"></i>Iniciar Sesión</a>
                         <a class="nav-link" href="register.php"><i class="fas fa-user-plus me-1"></i>Registrarse</a>
                     <?php endif; ?>
@@ -214,16 +235,17 @@ unset($_SESSION['mensaje']);
         </div>
     </nav>
 
-    <!-- Hero Section: Cabecera visual de la página -->
+    <!-- Header Section -->
     <section class="hero-catalog">
         <div class="container">
+            <!-- .row: Contenedor de filas en Bootstrap (sistema Grid). -->
+            <!-- .align-items-center: Centra verticalmente las columnas dentro de la fila. -->
             <div class="row align-items-center">
-                <!-- Columna Texto: 8/12 -->
+                <!-- .col-lg-8: Ocupa 8 de 12 columnas en pantallas grandes. -->
                 <div class="col-lg-8">
                     <h1 class="display-5 fw-bold">Catálogo de Piezas</h1>
                     <p class="lead">Encuentra las mejores piezas automotrices de alto desempeño</p>
                 </div>
-                <!-- Columna Contador: 4/12 -->
                 <div class="col-lg-4 text-lg-end">
                     <div class="d-flex align-items-center justify-content-lg-end">
                         <i class="fas fa-cogs fa-3x me-3 opacity-75"></i>
@@ -237,11 +259,11 @@ unset($_SESSION['mensaje']);
         </div>
     </section>
 
-    <!-- Main Content: Contenido principal -->
+    <!-- Main Content -->
     <main class="container my-4">
         
-        <!-- Alertas: Muestra mensajes de éxito/error si existen -->
         <?php if($mensaje): ?>
+        <!-- .alert: Clase base para alertas. .alert-dismissible: Permite cerrarla. .fade .show: Animación. -->
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             <?= htmlspecialchars($mensaje) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -251,28 +273,26 @@ unset($_SESSION['mensaje']);
         <!-- Sección de Filtros -->
         <div class="filter-section">
             <div class="row">
-                <!-- Buscador de Texto -->
                 <div class="col-md-6">
                     <form class="buscar-form" method="get">
+                        <!-- .input-group: Agrupa inputs y botones en una sola línea visual. -->
                         <div class="input-group">
                             <input type="text" name="buscar" class="form-control" placeholder="Buscar..." value="<?= htmlspecialchars($busqueda) ?>">
                             <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </form>
                 </div>
-                <!-- Filtro de Marcas -->
                 <div class="col-md-6">
                     <div class="brand-filter">
                         <strong class="d-block mb-2">Filtrar por marca:</strong>
+                        <!-- .d-flex: Activa Flexbox. .flex-wrap: Permite que los elementos bajen de línea si no caben. -->
                         <div class="d-flex flex-wrap">
-                            <!-- Loop Marcas -->
                             <?php foreach($marcas as $id=>$nombre): ?>
-                                <!-- Botón marca: Relleno si está activo, Borde si no -->
+                                <!-- Operador Ternario (Condición ? True : False). Sirve para cambiar la clase si está activo. -->
                                 <a href="?marca=<?= $id ?>" class="btn btn-sm <?= $marca_id == $id ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                                     <?= htmlspecialchars($nombre) ?>
                                 </a>
                             <?php endforeach; ?>
-                            <!-- Botón Limpiar: Solo aparece si hay filtro activo -->
                             <?php if($marca_id > 0): ?>
                                 <a href="?" class="btn btn-sm btn-outline-secondary me-2 mb-2"><i class="fas fa-times me-1"></i>Limpiar</a>
                             <?php endif; ?>
@@ -284,7 +304,6 @@ unset($_SESSION['mensaje']);
 
         <!-- Grid de Productos -->
         <div class="row g-4">
-            <!-- Caso: No se encontraron piezas -->
             <?php if(count($piezas) === 0): ?>
                 <div class="col-12 text-center py-5">
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
@@ -292,35 +311,31 @@ unset($_SESSION['mensaje']);
                     <a href="?" class="btn btn-primary">Ver todas las piezas</a>
                 </div>
             <?php else: ?>
-                <!-- Loop: Itera sobre cada pieza encontrada -->
                 <?php foreach($piezas as $p): 
-                    // Obtención de imágenes (Principal + Galería)
                     $imagenes = [];
                     if(!empty($p['imagen'])) $imagenes[] = $p['imagen'];
                     $res_gal = $conexion->query("SELECT imagen FROM piezas_imagenes WHERE pieza_id=".$p['id']);
                     while($row_gal = $res_gal->fetch_assoc()){ $imagenes[] = $row_gal['imagen']; }
                 ?>
                 
-                <!-- Card Producto: Grid responsive (1 col en móvil, 2 en tablet, 3 en laptop, 4 en PC grande) -->
+                <!-- .col-xl-3: Ocupa 3/12 columnas (4 por fila) en pantallas extra grandes. -->
                 <div class="col-md-6 col-lg-4 col-xl-3">
                     <div class="product-card">
                         
-                        <!-- Imagen/Carrusel del Producto -->
                         <div class="product-image">
                             <?php if(count($imagenes) > 0): ?>
-                                <!-- Carrusel Bootstrap -->
+                                <!-- .carousel .slide: Componente de Bootstrap para carruseles de imágenes. -->
+                                <!-- data-bs-ride="carousel": Sirve para iniciar la animación automáticamente. -->
                                 <div id="carouselPieza<?= $p['id'] ?>" class="carousel slide" data-bs-ride="carousel">
                                     <div class="carousel-inner">
                                         <?php foreach($imagenes as $index => $img): ?>
-                                            <!-- Item Carrusel: Activo solo el primero -->
                                             <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                                                <!-- Click abre Modal Lightbox -->
+                                                <!-- data-bs-toggle="modal": Atributo que sirve para abrir un modal al hacer clic. -->
                                                 <img src="uploads/<?= htmlspecialchars($img) ?>" class="d-block w-100" style="cursor: pointer;" 
                                                      data-bs-toggle="modal" data-bs-target="#lightboxModal<?= $p['id'] ?>">
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                    <!-- Controles Carrusel (Solo si hay >1 imagen) -->
                                     <?php if(count($imagenes) > 1): ?>
                                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselPieza<?= $p['id'] ?>" data-bs-slide="prev">
                                             <span class="carousel-control-prev-icon"></span>
@@ -331,29 +346,24 @@ unset($_SESSION['mensaje']);
                                     <?php endif; ?>
                                 </div>
                             <?php else: ?>
-                                <!-- Placeholder si no hay imagen -->
                                 <div class="bg-light d-flex align-items-center justify-content-center h-100">
                                     <i class="fas fa-cog fa-3x text-muted"></i>
                                 </div>
                             <?php endif; ?>
                         </div>
                         
-                        <!-- Contenido Texto del Producto -->
                         <div class="product-content">
                             <h3 class="product-title"><?= htmlspecialchars($p['nombre']) ?></h3>
                             <div class="product-stock mb-3">
-                                <!-- Badge Stock: Verde si positivo, Rojo si cero -->
+                                <!-- .badge: Clase Bootstrap para etiquetas pequeñas. -->
                                 <span class="badge bg-<?= $p['cantidad'] > 0 ? 'success' : 'danger' ?>">
                                     Stock: <?= intval($p['cantidad']) ?>
                                 </span>
                             </div>
-                            <!-- Botones Acción -->
                             <div class="product-actions">
-                                <!-- Ver Detalles (Abre Modal) -->
                                 <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modalDesc<?= $p['id'] ?>">
                                     <i class="fas fa-eye me-1"></i>Ver Detalles
                                 </button>
-                                <!-- Agregar Carrito (Valida Login) -->
                                 <?php if(isset($_SESSION['usuario_id'])): ?>
                                     <a href="?agregar=<?= intval($p['id']) ?>" class="btn btn-primary btn-sm w-100"><i class="fas fa-cart-plus me-1"></i>Agregar</a>
                                 <?php else: ?>
@@ -364,19 +374,18 @@ unset($_SESSION['mensaje']);
                     </div>
                 </div>
 
-                <!-- Modal Detalles del Producto -->
+                <!-- Modal Detalles -->
+                <!-- .modal .fade: Contenedor del modal con efecto de desvanecimiento. -->
                 <div class="modal fade" id="modalDesc<?= $p['id'] ?>" tabindex="-1">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <!-- Encabezado Modal -->
                             <div class="modal-header">
                                 <h5 class="modal-title"><?= htmlspecialchars($p['nombre']) ?></h5>
+                                <!-- .btn-close: Botón X estándar para cerrar modales/alertas. -->
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
-                            <!-- Cuerpo Modal -->
                             <div class="modal-body">
                                 <div class="row">
-                                    <!-- Columna Izquierda: Galería -->
                                     <div class="col-md-5">
                                         <?php if(count($imagenes) > 0): ?>
                                             <div id="carouselModal<?= $p['id'] ?>" class="carousel slide" data-bs-ride="carousel">
@@ -398,14 +407,16 @@ unset($_SESSION['mensaje']);
                                             </div>
                                         <?php endif; ?>
                                     </div>
-                                    <!-- Columna Derecha: Info -->
                                     <div class="col-md-7">
+                                        <!-- number_format(): Formatea un número con los miles agrupados. -->
+                                        <!-- Sirve para mostrar precios legibles (ej. 1,200.00). -->
                                         <p><strong>Precio:</strong> $<?= number_format($p['precio'],2) ?></p>
+                                        <!-- nl2br(): Inserta saltos de línea HTML antes de cada salto de línea en el string. -->
+                                        <!-- Sirve para respetar los párrafos de la descripción. -->
                                         <p><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Pie Modal -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                             </div>
@@ -413,9 +424,10 @@ unset($_SESSION['mensaje']);
                     </div>
                 </div>
 
-                <!-- Modal Lightbox (Foto Pantalla Completa) -->
+                <!-- Modal Lightbox -->
                 <?php if(count($imagenes) > 0): ?>
                 <div class="modal fade" id="lightboxModal<?= $p['id'] ?>" tabindex="-1">
+                    <!-- .modal-dialog-centered: Centra el modal verticalmente en la pantalla. -->
                     <div class="modal-dialog modal-dialog-centered modal-xl">
                         <div class="modal-content bg-dark">
                             <div class="modal-header border-0"><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
@@ -432,22 +444,23 @@ unset($_SESSION['mensaje']);
         </div>
     </main>
 
-    <!-- Footer: Pie de página -->
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center">
+            <!-- date('Y'): Obtiene el año actual. Sirve para mantener el copyright actualizado. -->
             <small>&copy; <?= date('Y') ?> Mexican Racing Motor Parts.</small>
         </div>
     </footer>
 
-    <!-- Bootstrap Bundle JS: Scripts necesarios para funcionamiento interactivo -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Script JS: Auto-cierra alertas después de 5 segundos
+        // DOMContentLoaded: Evento que se dispara cuando el HTML ha sido completamente cargado y parseado.
+        // Sirve para asegurar que el JS no intente manipular elementos que aún no existen.
         document.addEventListener('DOMContentLoaded', function() {
-            // Selecciona todas las alertas
+            // querySelectorAll: Selecciona todos los elementos que coincidan con el selector CSS.
             document.querySelectorAll('.alert').forEach(alert => {
-                // Programa cierre
+                // setTimeout: Ejecuta una función después de un tiempo especificado (5000ms = 5s).
+                // Sirve para auto-cerrar las notificaciones.
                 setTimeout(() => new bootstrap.Alert(alert).close(), 5000);
             });
         });

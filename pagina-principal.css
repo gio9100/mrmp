@@ -1,630 +1,162 @@
-/* 1: Estilos Globales de la Home */
-
-.mrmp-home {
-    font-family: 'Roboto', sans-serif;
-    /* 2: Fuente tipográfica Roboto */
-    background-color: var(--primary-dark);
-    /* 3: Fondo principal oscuro */
-    color: var(--primary-light);
-    /* 4: Texto claro */
-}
-
-
-/* 5: Sección Hero (Cabecera Principal) */
-
+/* .hero-section: Sección principal con imagen grande (Hero). */
 .hero-section {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--gray-dark) 100%);
-    /* 6: Degradado oscuro elegante */
-    color: var(--primary-light);
-    /* 7: Texto blanco */
-    padding-top: 100px;
-    /* 8: Espacio superior para navbar fijo */
-    min-height: 100vh;
-    /* 9: Ocupa toda la pantalla vertical */
-    display: flex;
-    /* 10: Flexbox */
-    align-items: center;
-    /* 11: Centrado vertical */
-    position: relative;
-    /* 12: Posicionamiento relativo para hijos absolutos */
-    overflow: hidden;
-    /* 13: Ocultar desbordamiento */
+    /* background: Propiedad abreviada para fondo. */
+    /* linear-gradient(...): Crea una capa oscura semitransparente sobre la imagen. 
+       Sirve para mejorar la legibilidad del texto blanco sobre la foto. */
+    /* url(...): Carga la imagen de fondo. */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/img/hero-bg.jpg');
+
+    /* background-size: cover; Escala la imagen para cubrir todo el contenedor. 
+       Sirve para que no queden espacios vacíos sin importar el tamaño de pantalla. */
+    background-size: cover;
+
+    /* background-position: center; Centra la imagen de fondo. */
+    background-position: center;
+
+    /* color: white; Texto blanco. */
+    color: white;
+
+    /* padding: Relleno vertical grande (100px). 
+       Sirve para dar altura y presencia a la sección. */
+    padding: 100px 0;
 }
 
-.hero-section::before {
-    content: '';
-    /* 14: Elemento decorativo */
-    position: absolute;
-    /* 15: Posición absoluta */
-    top: 0;
-    right: 0;
-    width: 50%;
-    /* 16: Mitad derecha */
-    height: 100%;
-    /* 17: Altura completa */
-    background: linear-gradient(90deg, transparent 0%, var(--primary-dark) 100%);
-    /* 18: Degradado lateral */
-    z-index: 1;
-    /* 19: Capa inferior */
-}
-
+/* .hero-title: Título principal del Hero. */
 .hero-title {
+    /* font-size: Tamaño de fuente grande (3.5rem). 
+       Sirve para captar la atención inmediata. */
     font-size: 3.5rem;
-    /* 20: Título muy grande */
-    font-weight: 900;
-    /* 21: Letra extra gruesa */
-    margin-bottom: 1rem;
-    /* 22: Margen inferior */
-    color: var(--primary-light);
-    /* 23: Color blanco */
-    text-transform: uppercase;
-    /* 24: Mayúsculas */
-    letter-spacing: 2px;
-    /* 25: Espaciado letras */
-    position: relative;
-    /* 26: Relativo para subrayado */
-    z-index: 2;
-    /* 27: Capa superior */
-}
 
-.hero-title::after {
-    content: '';
-    /* 28: Subrayado decorativo */
-    position: absolute;
-    /* 29: Absoluto */
-    bottom: -10px;
-    /* 30: Debajo del texto */
-    left: 0;
-    width: 100px;
-    /* 31: Ancho fijo */
-    height: 4px;
-    /* 32: Grosor línea */
-    background-color: var(--primary-red);
-    /* 33: Color rojo */
-}
-
-.hero-subtitle {
-    font-size: 1.3rem;
-    /* 34: Subtítulo mediano */
-    font-weight: 300;
-    /* 35: Letra fina */
-    margin-bottom: 1.5rem;
-    /* 36: Espacio abajo */
-    color: var(--gray-light);
-    /* 37: Gris claro */
-    position: relative;
-    /* 38: Relativo */
-    z-index: 2;
-    /* 39: Capa superior */
-}
-
-.hero-description {
-    font-size: 1.1rem;
-    /* 40: Tamaño lectura */
-    line-height: 1.7;
-    /* 41: Altura línea cómoda */
-    margin-bottom: 2rem;
-    /* 42: Margen abajo */
-    color: var(--gray-light);
-    /* 43: Texto gris claro */
-    position: relative;
-    /* 44: Relativo */
-    z-index: 2;
-    /* 45: Capa superior */
-}
-
-.hero-buttons .btn {
-    padding: 14px 35px;
-    /* 46: Botones grandes */
-    border-radius: 4px;
-    /* 47: Bordes suavemente redondeados */
-    font-weight: 600;
-    /* 48: Texto negrita */
-    text-transform: uppercase;
-    /* 49: Mayúsculas */
-    letter-spacing: 1px;
-    /* 50: Espaciado letras */
-    position: relative;
-    /* 51: Relativo */
-    z-index: 2;
-    /* 52: Capa superior */
-}
-
-.hero-image {
-    position: relative;
-    /* 53: Relativo */
-    z-index: 2;
-    /* 54: Capa superior */
-}
-
-.hero-image img {
-    border-radius: 8px;
-    /* 55: Bordes imagen */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    /* 56: Sombra profunda */
-    transition: transform 0.3s ease;
-    /* 57: Animación */
-    border: 2px solid var(--gray-medium);
-    /* 58: Borde fino */
-}
-
-.hero-image:hover img {
-    transform: scale(1.02);
-    /* 59: Zoom suave al hover */
-    border-color: var(--primary-red);
-    /* 60: Borde rojo al hover */
-}
-
-
-/* 61: Encabezados de Sección */
-
-.section-title {
-    font-size: 2.5rem;
-    /* 62: Título grande */
+    /* font-weight: Negrita fuerte (700). */
     font-weight: 700;
-    /* 63: Negrita */
+
+    /* margin-bottom: Espacio debajo del título. */
     margin-bottom: 1rem;
-    /* 64: Margen */
-    color: var(--primary-light);
-    /* 65: Blanco */
-    text-transform: uppercase;
-    /* 66: Mayúsculas */
-    letter-spacing: 1px;
-    /* 67: Espaciado */
-    position: relative;
-    /* 68: Relativo */
 }
 
-.section-title::after {
-    content: '';
-    /* 69: Subrayado */
-    position: absolute;
-    /* 70: Absoluto */
-    bottom: -10px;
-    /* 71: Abajo */
-    left: 0;
-    width: 60px;
-    /* 72: Ancho corto */
-    height: 3px;
-    /* 73: Altura */
-    background-color: var(--primary-red);
-    /* 74: Rojo */
-}
-
-.section-subtitle {
-    font-size: 1.1rem;
-    /* 75: Tamaño */
-    color: var(--gray-light);
-    /* 76: Gris claro */
-    margin-bottom: 0;
-    /* 77: Sin margen extra */
-}
-
-.section-header.text-center .section-title::after {
-    left: 50%;
-    /* 78: Centrar línea */
-    transform: translateX(-50%);
-    /* 79: Ajuste centro exacto */
-}
-
-
-/* 80: Sección de Productos Destacados */
-
-.featured-section {
-    background-color: var(--primary-dark);
-    /* 81: Fondo oscuro */
-    border-top: 1px solid var(--gray-medium);
-    /* 82: Borde arriba */
-    border-bottom: 1px solid var(--gray-medium);
-    /* 83: Borde abajo */
-}
-
+/* .product-card: Tarjetas de productos en el grid. */
 .product-card {
-    background: var(--gray-dark);
-    /* 84: Fondo tarjeta gris */
-    border-radius: 8px;
-    /* 85: Bordes redondeados */
+    /* background: Fondo blanco. */
+    background: #fff;
+
+    /* border-radius: Bordes redondeados (15px). */
+    border-radius: 15px;
+
+    /* overflow: hidden; Oculta el contenido que se sale de los bordes. 
+       Sirve para recortar la imagen superior según las esquinas redondeadas. */
     overflow: hidden;
-    /* 86: Recortar contenido */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* 87: Sombra */
-    transition: all 0.3s ease;
-    /* 88: Animación */
-    border: 1px solid var(--gray-medium);
-    /* 89: Borde sutil */
-    height: 100%;
-    /* 90: Altura completa columna */
-}
 
-.product-card:hover {
-    transform: translateY(-8px);
-    /* 91: Levantar tarjeta */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-    /* 92: Sombra fuerte */
-    border-color: var(--primary-red);
-    /* 93: Borde rojo activo */
-}
-
-.product-image {
+    /* position: relative; Posicionamiento relativo. 
+       Sirve como referencia para posicionar elementos hijos absolutos (como badges). */
     position: relative;
-    /* 94: Relativo */
-    overflow: hidden;
-    /* 95: Recortar zoom imagen */
-    background: var(--primary-dark);
-    /* 96: Fondo negro */
+
+    /* transition: Transición suave para efectos hover. */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.product-image img {
+/* .product-image: Contenedor de la imagen del producto. */
+.product-image {
+    /* height: Altura fija (250px). 
+       Sirve para uniformizar el tamaño de todas las imágenes en el grid. */
+    height: 250px;
+
+    /* width: 100%; Ancho total del padre. */
     width: 100%;
-    /* 97: Ancho total */
-    height: 200px;
-    /* 98: Altura fija */
-    object-fit: cover;
-    /* 99: Ajuste imagen */
-    transition: transform 0.3s ease;
-    /* 100: Animación zoom */
+
+    /* position: relative; Necesario para el badge interno. */
+    position: relative;
+
+    /* overflow: hidden; Para el efecto de zoom en la imagen. */
+    overflow: hidden;
 }
 
-.product-card:hover .product-image img {
-    transform: scale(1.05);
-    /* 101: Zoom in imagen */
-}
-
-.product-badge {
-    position: absolute;
-    /* 102: Flotante sobre imagen */
-    top: 15px;
-    right: 15px;
-    background: var(--primary-red);
-    /* 103: Fondo rojo */
-    color: var(--primary-light);
-    /* 104: Texto blanco */
-    padding: 6px 12px;
-    /* 105: Relleno */
-    border-radius: 4px;
-    /* 106: Bordes */
-    font-size: 0.8rem;
-    /* 107: Letra pequeña */
-    font-weight: 600;
-    /* 108: Negrita */
-    text-transform: uppercase;
-    /* 109: Mayúsculas */
-    letter-spacing: 1px;
-    /* 110: Espaciado */
-}
-
-.product-content {
-    padding: 1.5rem;
-    /* 111: Relleno contenido */
-}
-
-.product-title {
-    font-size: 1.3rem;
-    /* 112: Título producto */
-    font-weight: 600;
-    /* 113: Negrita */
-    margin-bottom: 0.5rem;
-    /* 114: Margen */
-    color: var(--primary-light);
-    /* 115: Blanco */
-}
-
-.product-brand {
-    font-size: 0.9rem;
-    /* 116: Texto marca pequeño */
-    color: var(--gray-light);
-    /* 117: Gris claro */
-    margin-bottom: 1rem;
-    /* 118: Margen */
-}
-
-.product-price {
-    font-size: 1.5rem;
-    /* 119: Precio grande */
-    font-weight: 700;
-    /* 120: Muy negrita */
-    color: var(--primary-red);
-    /* 121: Rojo */
-    margin-bottom: 1rem;
-    /* 122: Margen */
-}
-
-.product-stock {
-    margin-bottom: 1rem;
-    /* 123: Margen stock */
-}
-
-.product-actions {
-    display: flex;
-    /* 124: Flexbox acciones */
-    gap: 10px;
-    /* 125: Separación botones */
-    flex-wrap: wrap;
-    /* 126: Envolver si no caben */
-}
-
-.product-actions .btn {
-    padding: 8px 16px;
-    /* 127: Botones compactos */
-    font-size: 0.8rem;
-    /* 128: Letra pequeña */
-}
-
-
-/* 129: Sección Acerca De */
-
-.about-section {
-    background: var(--gray-dark);
-    /* 130: Fondo gris oscuro */
-    border-top: 1px solid var(--gray-medium);
-    /* 131: Bordes */
-    border-bottom: 1px solid var(--gray-medium);
-}
-
-.about-section img {
-    border: 2px solid var(--gray-medium);
-    /* 132: Marco imagen */
-}
-
-.features-list {
-    margin-top: 2rem;
-    /* 133: Margen lista */
-}
-
-.feature-item {
-    display: flex;
-    /* 134: Flex ítem */
-    align-items: center;
-    /* 135: Centrar vertical */
-    margin-bottom: 1rem;
-    /* 136: Margen */
-    font-size: 1.1rem;
-    /* 137: Tamaño letra */
-    color: var(--primary-light);
-    /* 138: Blanco */
-}
-
-.feature-item i {
-    margin-right: 12px;
-    /* 139: Espacio icono */
-    font-size: 1.2rem;
-    /* 140: Tamaño icono */
-    color: var(--primary-red);
-    /* 141: Color icono rojo */
-}
-
-
-/* 142: Sección de Categorías */
-
-.categories-section {
-    background: var(--primary-dark);
-    /* 143: Fondo oscuro */
-}
-
-.category-card {
-    background: var(--gray-dark);
-    /* 144: Fondo tarjeta */
-    padding: 2rem;
-    /* 145: Relleno grande */
-    border-radius: 8px;
-    /* 146: Borde redondo */
-    text-align: center;
-    /* 147: Centrado */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* 148: Sombra */
-    transition: all 0.3s ease;
-    /* 149: Animación */
+/* .product-image img: La etiqueta <img> dentro del contenedor. */
+.product-image img {
+    /* width: 100%; height: 100%; Llenar el contenedor. */
+    width: 100%;
     height: 100%;
-    /* 150: Altura completa */
-    border: 1px solid var(--gray-medium);
-    /* 151: Borde gris */
+
+    /* object-fit: cover; Recorta la imagen para llenar el espacio sin deformarla. 
+       Sirve para mantener la relación de aspecto correcta. */
+    object-fit: cover;
+
+    /* transition: Transición para el zoom. */
+    transition: transform 0.5s ease;
 }
 
-.category-card:hover {
-    transform: translateY(-8px);
-    /* 152: Levantar */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-    /* 153: Sombra mayor */
-    border-color: var(--primary-red);
-    /* 154: Borde rojo */
+/* .product-card:hover .product-image img: Efecto al pasar mouse sobre la tarjeta. */
+.product-card:hover .product-image img {
+    /* transform: scale(1.1); Aumenta el tamaño de la imagen al 110%. 
+       Sirve para un efecto de zoom visualmente atractivo. */
+    transform: scale(1.1);
 }
 
-.category-icon {
-    width: 80px;
-    /* 155: Tamaño contenedor icono */
-    height: 80px;
-    background: var(--primary-red);
-    /* 156: Fondo rojo */
-    border-radius: 8px;
-    /* 157: Borde cuadrado-redondo */
-    display: flex;
-    /* 158: Flex centrado */
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    /* 159: Margen auto lat */
-    color: var(--primary-light);
-    /* 160: Icono blanco */
-    font-size: 2rem;
-    /* 161: Tamaño icono */
-}
+/* .product-badge: Etiqueta "Nuevo" sobre la imagen. */
+.product-badge {
+    /* position: absolute; Posicionamiento absoluto respecto a .product-image. */
+    position: absolute;
 
-.category-card h3 {
-    font-size: 1.3rem;
-    /* 162: Título cat */
+    /* top, left: Coordenadas de ubicación (esquina superior izquierda). */
+    top: 15px;
+    left: 15px;
+
+    /* background: Fondo rojo primario. */
+    background: var(--primary-color);
+    color: white;
+
+    /* padding: Relleno interno. */
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--primary-light);
+
+    /* z-index: Orden de apilamiento. 
+       Sirve para asegurar que el badge esté encima de la imagen. */
+    z-index: 2;
 }
 
-.category-card p {
-    color: var(--gray-light);
-    /* 163: Texto descriptivo gris */
-    margin-bottom: 1.5rem;
+/* .product-content: Área de texto de la tarjeta. */
+.product-content {
+    padding: 20px;
 }
 
+/* .product-title: Título del producto. */
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
 
-/* 164: Sección de Marcas */
+    /* white-space: nowrap; Texto en una sola línea. */
+    white-space: nowrap;
 
-.brands-section {
-    background: var(--primary-dark);
-    /* 165: Fondo oscuro */
-    border-top: 1px solid var(--gray-medium);
-    border-bottom: 1px solid var(--gray-medium);
+    /* overflow: hidden; Oculta exceso. */
+    overflow: hidden;
+
+    /* text-overflow: ellipsis; Añade puntos suspensivos (...) si el texto es muy largo. 
+       Sirve para mantener el diseño limpio si el nombre es largo. */
+    text-overflow: ellipsis;
 }
 
-.brand-card {
-    padding: 1rem;
-    /* 166: Padding interno */
-}
-
-.brand-logo-container {
-    background: var(--gray-dark);
-    /* 167: Fondo contenedor logo */
-    padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid var(--gray-medium);
-    transition: all 0.3s ease;
-}
-
-.brand-card:hover .brand-logo-container {
-    border-color: var(--primary-red);
-    /* 168: Hover rojo */
-    transform: translateY(-5px);
-    /* 169: Levantar */
-}
-
-.brand-logo {
-    max-width: 120px;
-    /* 170: Ancho máx logo */
-    height: auto;
-    filter: brightness(0) invert(1);
-    /* 171: Logo blanco puro */
-    transition: filter 0.3s ease;
-}
-
-.brand-card:hover .brand-logo {
-    filter: brightness(0) invert(0.8);
-    /* 172: Oscurecer levemente al hover */
-}
-
-.brand-name {
-    color: var(--gray-light);
-    font-weight: 500;
-    margin-bottom: 0;
-}
-
-
-/* 173: Sección Call To Action (CTA) */
-
-.cta-section {
-    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
-    /* 174: Degradado rojo intenso */
-    border-top: 1px solid var(--gray-medium);
-}
-
-.cta-title {
-    font-size: 2.5rem;
-    /* 175: Título grande */
+/* .product-price: Precio del producto. */
+.product-price {
+    font-size: 1.25rem;
+    color: var(--primary-color);
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
 }
 
-.cta-subtitle {
+/* .feature-item: Ítems de la sección "Sobre Nosotros". */
+.feature-item {
+    /* display: flex; Flexbox para alinear icono y texto. */
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+/* .feature-item i: El icono dentro del ítem. */
+.feature-item i {
+    /* margin-right: Espacio a la derecha del icono. */
+    margin-right: 15px;
     font-size: 1.2rem;
-    /* 176: Subtítulo */
-    opacity: 0.9;
-    /* 177: Transparencia leve */
-}
-
-
-/* 178: Footer */
-
-footer {
-    background: var(--primary-dark);
-    /* 179: Fondo oscuro */
-    border-top: 2px solid var(--primary-red);
-    /* 180: Línea superior roja */
-}
-
-footer h5 {
-    color: var(--primary-light);
-    /* 181: Títulos footer blancos */
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-footer p {
-    color: var(--gray-light);
-    /* 182: Textos gris claro */
-    margin-bottom: 0;
-}
-
-.social-links a {
-    color: var(--gray-light) !important;
-    /* 183: Links sociales gris */
-    transition: color 0.3s ease;
-    text-decoration: none;
-}
-
-.social-links a:hover {
-    color: var(--primary-red) !important;
-    /* 184: Links sociales rojo al hover */
-}
-
-
-/* 185: Diseño Responsivo Generales */
-
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-        /* 186: Título más pequeño en móvil */
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-        /* 187: Subtítulo ajustado */
-    }
-
-    .section-title {
-        font-size: 2rem;
-        /* 188: Sección título ajustado */
-    }
-
-    .hero-buttons .btn {
-        display: block;
-        width: 100%;
-        /* 189: Botones ancho completo */
-        margin-bottom: 1rem;
-    }
-
-    .hero-buttons .btn:last-child {
-        margin-bottom: 0;
-        /* 190: Quitar margen último */
-    }
-
-    .product-actions {
-        flex-direction: column;
-        /* 191: Acciones en columna */
-    }
-
-    .product-actions .btn {
-        width: 100%;
-        /* 192: Botones producto anchos */
-    }
-}
-
-
-/* 193: Selección de Texto */
-
-::selection {
-    background: var(--primary-red);
-    /* 194: Fondo selección rojo */
-    color: var(--primary-light);
-    /* 195: Texto selección blanco */
-}
-
-::-moz-selection {
-    background: var(--primary-red);
-    color: var(--primary-light);
 }

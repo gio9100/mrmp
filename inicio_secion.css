@@ -1,293 +1,211 @@
-/* 1: Configuración básica universal */
-* {
-    margin: 0;
-    /* 2: Eliminamos márgenes por defecto */
-    padding: 0;
-    /* 3: Eliminamos relleno por defecto */
-    box-sizing: border-box;
-    /* 4: El borde y relleno se incluyen en el tamaño total */
-    font-family: 'Poppins', sans-serif;
-    /* 5: Fuente tipográfica principal */
-}
-
-/* 6: Configuración del cuerpo */
+/* body: Configuración principal del cuerpo para la página de login. */
 body {
-    background-color: #fff;
-    /* 7: Fondo blanco */
-    color: #111;
-    /* 8: Texto casi negro */
-    display: flex;
-    /* 9: Flexbox para centrar contenido */
-    justify-content: center;
-    /* 10: Centrado horizontal */
-    align-items: center;
-    /* 11: Centrado vertical */
-    min-height: 100vh;
-    /* 12: Altura mínima igual a la pantalla */
+    /* margin: 0; Elimina los márgenes por defecto del navegador. */
+    margin: 0;
+
+    /* padding: 0; Elimina el espaciado interior por defecto. */
+    padding: 0;
+
+    /* background-image: Imagen de fondo para el login. */
+    /* linear-gradient(...): Superpone una capa negra semitransparente (0.6 = 60% opacidad). 
+       Sirve para oscurecer la imagen y hacer legible el formulario blanco. */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("img/fondo login.jpg");
+
+    /* background-size: cover; Asegura que la imagen cubra toda la pantalla. */
+    background-size: cover;
+
+    /* background-position: center; Centra la imagen. */
+    background-position: center;
+
+    /* background-attachment: fixed; Fija el fondo al hacer scroll. 
+       Sirve para un efecto visual de "parallax" simple. */
+    background-attachment: fixed;
+
+    /* font-family: Tipografía global. */
+    font-family: 'Poppins', sans-serif;
+
+    /* height: 100vh; Altura del 100% de la ventana visual (Viewport Height). 
+       Sirve para centrar verticalmente el contenido si usamos flexbox en el body (aunque aquí no se usa directo). */
+    height: 100vh;
 }
 
-
-/* 13: Estilos de formularios */
-
+/* .formulario: Contenedor del formulario de login. */
 .formulario {
-    background: #f8f8f8;
-    /* 14: Fondo gris muy claro */
-    border: 2px solid #c00;
-    /* 15: Borde rojo sólido */
-    border-radius: 14px;
-    /* 16: Bordes redondeados */
-    padding: 40px 50px;
-    /* 17: Relleno interno amplio */
-    width: 90%;
-    /* 18: Ancho adaptable */
-    max-width: 420px;
-    /* 19: Ancho máximo fijo */
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* 20: Sombra suave */
-    transition: all 0.3s ease;
-    /* 21: Transición suave */
-    text-align: center;
-    /* 22: Texto centrado */
+    /* width: 400px; Ancho fijo base. */
+    width: 400px;
+
+    /* background: Fondo negro muy oscuro y muy transparente (0.95 = 95% opacidad). 
+       Sirve para contrastar con el fondo pero dejar ver un poco la imagen detrás. */
+    background: rgba(10, 10, 10, 0.95);
+
+    /* padding: 40px; Espaciado interno generoso. */
+    padding: 40px;
+
+    /* margin: auto; Centrado horizontal automático. */
+    margin: auto;
+
+    /* margin-top: 50px; Separación superior. */
+    margin-top: 50px;
+
+    /* border-radius: 10px; Bordes redondeados. */
+    border-radius: 10px;
+
+    /* box-shadow: Sombra negra suave. 
+       Sirve para resaltar el formulario sobre el fondo. */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+
+    /* color: white; Texto blanco por defecto. */
+    color: white;
 }
 
-.formulario:hover {
-    transform: translateY(-5px);
-    /* 23: Mover arriba al pasar mouse */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    /* 24: Sombra más intensa */
-}
-
+/* .logo-taller img: Estilo para el logo dentro del formulario. */
 .logo-taller img {
-    width: 120px;
-    /* 25: Ancho logo fijo */
-    height: auto;
-    /* 26: Altura automática */
-    margin-bottom: 10px;
-    /* 27: Espacio abajo */
-}
+    /* width: 100px; Ancho fijo. */
+    width: 100px;
 
-.logo-taller h1 {
-    font-weight: 700;
-    /* 28: Texto negrita */
-    color: #111;
-    /* 29: Color oscuro */
-    font-size: 24px;
-    /* 30: Tamaño grande */
-}
-
-.subtitulo {
-    font-size: 14px;
-    /* 31: Tamaño pequeño */
-    color: #444;
-    /* 32: Gris oscuro */
-    margin-bottom: 20px;
-    /* 33: Espacio abajo */
-}
-
-
-/* 34: Estilos de inputs */
-
-label {
+    /* display: block; Se comporta como bloque. */
     display: block;
-    /* 35: Bloque para salto de línea */
-    text-align: left;
-    /* 36: Alinear texto a izquierda */
-    margin-bottom: 6px;
-    /* 37: Espacio con el input */
-    font-weight: 500;
-    /* 38: Peso medio */
-    color: #222;
-    /* 39: Color texto */
+
+    /* margin: 0 auto; Centrado horizontal. */
+    margin: 0 auto;
+
+    /* margin-bottom: 15px; Espacio debajo del logo. */
+    margin-bottom: 15px;
 }
 
-input {
+/* .seccion-informacion label: Etiquetas de los campos. */
+.seccion-informacion label {
+    /* display: block; Ocupa toda la línea. 
+       Sirve para que el label quede arriba del input. */
+    display: block;
+
+    /* margin-bottom: 5px; Espacio pequeño debajo del label. */
+    margin-bottom: 5px;
+
+    /* font-weight: bold; Negrita. */
+    font-weight: bold;
+}
+
+/* .seccion-informacion input: Campos de texto y contraseña. */
+.seccion-informacion input {
+    /* width: 100%; Ocupa todo el ancho disponible del formulario. */
     width: 100%;
-    /* 40: Ancho total */
-    padding: 10px 14px;
-    /* 41: Relleno cómodo */
+
+    /* padding: 10px; Relleno interno cómodo. */
+    padding: 10px;
+
+    /* margin-bottom: 20px; Espacio entre inputs. */
     margin-bottom: 20px;
-    /* 42: Espacio separador abajo */
-    border: 1.8px solid #ccc;
-    /* 43: Borde gris claro */
-    border-radius: 6px;
-    /* 44: Bordes redondeados */
-    background: #fff;
-    /* 45: Fondo blanco */
-    transition: border 0.3s, box-shadow 0.3s;
-    /* 46: Animación */
-}
 
-input:focus {
-    border-color: #c00;
-    /* 47: Borde rojo al seleccionar */
-    box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
-    /* 48: Resplandor rojo */
-    outline: none;
-    /* 49: Quitar borde defecto navegador */
-}
-
-button {
-    width: 100%;
-    /* 50: Ancho total */
-    background: #c00;
-    /* 51: Fondo rojo */
-    color: #fff;
-    /* 52: Texto blanco */
+    /* border: none; Sin borde inicial. */
     border: none;
-    /* 53: Sin borde */
-    padding: 12px;
-    /* 54: Relleno */
-    border-radius: 8px;
-    /* 55: Bordes redondeados */
+
+    /* border-bottom: 2px solid white; Solo borde inferior blanco. 
+       Sirve para un estilo minimalista. */
+    border-bottom: 2px solid white;
+
+    /* background: transparent; Fondo transparente. */
+    background: transparent;
+
+    /* color: white; Texto blanco al escribir. */
+    color: white;
+
+    /* outline: none; Quita el borde azul de selección por defecto de los navegadores. */
+    outline: none;
+}
+
+/* input:focus: Estado al hacer clic en el input. */
+input:focus {
+    /* border-bottom-color: var(--primary-color); Cambia color borde inferior. 
+       Sirve para indicar que el campo está activo. */
+    border-bottom-color: #d32f2f;
+}
+
+/* button: Botón de envío. */
+button {
+    /* width: 100%; Ancho total. */
+    width: 100%;
+    padding: 10px;
+    border: none;
+
+    /* background: Rojo corporativo. */
+    background: #d32f2f;
+    color: white;
     font-size: 16px;
-    /* 56: Tamaño letra */
-    font-weight: 600;
-    /* 57: Negrita */
+
+    /* cursor: pointer; Cambia el cursor a manita. 
+       Sirve para indicar que es clickeable. */
     cursor: pointer;
-    /* 58: Cursor mano */
-    transition: 0.3s;
-    /* 59: Animación */
+    border-radius: 5px;
+    transition: background 0.3s;
 }
 
 button:hover {
-    background: #a30000;
-    /* 60: Rojo oscuro al pasar mouse */
+    background: #b71c1c;
+    /* Rojo más oscuro al pasar mouse. */
 }
 
-
-/* 61: Estilos de enlaces */
-
+/* a: Enlaces. */
 a {
-    color: #c00;
-    /* 62: Color rojo */
+    /* text-decoration: none; Quita el subrayado. */
     text-decoration: none;
-    /* 63: Sin subrayado */
-    font-weight: 500;
-    /* 64: Peso medio */
-    display: inline-block;
-    /* 65: Comportamiento bloque en línea */
-    margin-right: 20px;
-    /* 66: Margen derecho */
+    color: #d32f2f;
+    font-weight: bold;
 }
 
 a:hover {
+    /* text-decoration: underline; Subraya al pasar mouse. */
     text-decoration: underline;
-    /* 67: Subrayar al pasar mouse */
 }
 
-
-/* 68: Estilos de Modal */
-
+/* .modal-mensaje: Contenedor del modal de alertas. */
 .modal-mensaje {
+    /* position: fixed; Fijo en la pantalla, no se mueve con el scroll. */
     position: fixed;
-    /* 69: Posición fija pantalla */
     top: 0;
-    /* 70: Arriba alineado */
     left: 0;
-    /* 71: Izquierda alineado */
-    right: 0;
-    /* 72: Derecha alineado */
-    bottom: 0;
-    /* 73: Abajo alineado */
+    width: 100%;
+    height: 100%;
+
+    /* background: Fondo semitransparente oscuro. 
+       Sirve para enfocar la atención en el mensaje. */
+    background: rgba(0, 0, 0, 0.8);
+
+    /* display: flex; Flexbox para centrar contenido. */
     display: flex;
-    /* 74: Flexbox */
-    align-items: center;
-    /* 75: Centrar vertical */
     justify-content: center;
-    /* 76: Centrar horizontal */
-    background: rgba(0, 0, 0, 0.4);
-    /* 77: Fondo oscuro transparente */
-    z-index: 10;
-    /* 78: Capa superior */
+    align-items: center;
+
+    /* z-index: 1000; Orden muy alto para estar encima de todo. */
+    z-index: 1000;
 }
 
+/* .modal-contenido: Caja blanca del mensaje. */
 .modal-contenido {
-    background: #fff;
-    /* 79: Fondo blanco */
-    border-radius: 12px;
-    /* 80: Bordes redondeados */
+    background: #222;
+    /* Fondo gris oscuro */
+    color: white;
     padding: 30px;
-    /* 81: Relleno interno */
+    border-radius: 10px;
     text-align: center;
-    /* 82: Texto centrado */
-    width: 90%;
-    /* 83: Ancho adaptable */
-    max-width: 350px;
-    /* 84: Ancho máximo */
-    border-top: 5px solid #c00;
-    /* 85: Borde superior rojo */
-    color: #111;
-    /* 86: Texto oscuro */
+    width: 300px;
+
+    /* animation: Animación de entrada. */
+    animation: slideDown 0.4s ease;
 }
 
-.modal-contenido a {
-    color: blue;
-    /* 87: Color azul en modal */
-    cursor: pointer;
-    /* 88: Cursor mano */
-    margin-top: 15px;
-    /* 89: Margen arriba */
-    font-weight: 600;
-    /* 90: Negrita */
-    border: none;
-    /* 91: Sin borde */
-    padding: 10px 20px;
-    /* 92: Relleno */
-    border-radius: 6px;
-    /* 93: Bordes redondeados */
-}
+/* @keyframes slideDown: Define la animación. */
+@keyframes slideDown {
 
-.modal-contenido h2 {
-    margin-bottom: 10px;
-    /* 94: Espacio abajo */
-    color: #c00;
-    /* 95: Color rojo */
-    font-weight: 700;
-    /* 96: Negrita */
-}
-
-.modal-contenido p {
-    color: #333;
-    /* 97: Color gris oscuro */
-    margin-bottom: 10px;
-    /* 98: Espacio abajo */
-}
-
-.modal-contenido button {
-    background: #c00;
-    /* 99: Fondo rojo */
-    border: none;
-    /* 100: Sin borde */
-    padding: 10px 20px;
-    /* 101: Relleno */
-    border-radius: 6px;
-    /* 102: Bordes redondeados */
-    color: #fff;
-    /* 103: Texto blanco */
-    cursor: pointer;
-    /* 104: Cursor mano */
-    margin-top: 15px;
-    /* 105: Margen arriba */
-    font-weight: 600;
-    /* 106: Negrita */
-}
-
-.modal-contenido button:hover {
-    background: #a30000;
-    /* 107: Rojo oscuro hover */
-}
-
-
-/* 108: Diseño Responsivo móvil */
-
-@media (max-width: 480px) {
-    .formulario {
-        padding: 25px 30px;
-        /* 109: Menos relleno en móvil */
+    /* from: Estado inicial (arriba y transparente). */
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
     }
 
-    h1 {
-        font-size: 22px;
-        /* 110: Letra más pequeña */
+    /* to: Estado final (posición original y visible). */
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

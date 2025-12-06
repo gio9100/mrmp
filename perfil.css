@@ -1,493 +1,101 @@
-/* =============================================================================
-   1: VARIABLES GLOBALES Y CONFIGURACIÓN BASE - PERFIL
-   ============================================================================= */
-
-/* 2: DEFINIMOS LAS VARIABLES DE COLOR PRINCIPALES (Coinciden con main.css) */
-:root {
-    --primary-red: #dc2626;
-    /* 3: Rojo principal */
-    --primary-dark: #000000;
-    /* 4: Negro fondo */
-    --primary-light: #ffffff;
-    /* 5: Blanco texto */
-    --gray-dark: #1a1a1a;
-    /* 6: Gris oscuro tarjetas */
-    --gray-medium: #404040;
-    /* 7: Gris medio bordes */
-    --gray-light: #737373;
-    /* 8: Gris claro textos */
-}
-
-
-/* =============================================================================
-   9: ESTILOS ESPECÍFICOS PARA LA PÁGINA DE PERFIL
-   ============================================================================= */
-
-/* 10: Contenedor principal con margen superior para el header fijo */
-.contenedor-perfil {
-    margin-top: 100px;
-    /* 11: Espacio para navbar fixed */
-    margin-bottom: 50px;
-    /* 12: Margen inferior */
-    min-height: calc(100vh - 200px);
-    /* 13: Altura mínima calculada */
-}
-
-
-/* 14: Tarjeta de perfil con estilos oscuros */
+/* .tarjeta-perfil: Estilo para la tarjeta lateral de información del usuario. */
 .tarjeta-perfil {
+    /* background: Fondo degradado. */
+    /* linear-gradient(135deg, ...): Crea un degradado diagonal desde negro (#2c2c2c) a gris oscuro (#1a1a1a). 
+       Sirve para dar un aspecto premium y moderno al sidebar. */
+    background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+
+    /* border: none; Sin bordes. */
     border: none;
-    /* 15: Sin borde */
-    border-radius: 8px;
-    /* 16: Bordes redondeados */
-    background: var(--gray-dark);
-    /* 17: Fondo gris oscuro */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* 18: Sombra */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* 19: Animación */
-    overflow: hidden;
-    /* 20: Contenido contenido */
+
+    /* border-radius: Esquinas redondeadas (15px). */
+    border-radius: 15px;
+
+    /* color: Texto blanco. */
+    color: white;
 }
 
-
-/* 21: Efecto Hover para la tarjeta de perfil */
-.tarjeta-perfil:hover {
-    transform: translateY(-5px);
-    /* 22: Levantar */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
-    /* 23: Sombra profunda */
-}
-
-
-/* 24: Encabezado de la tarjeta con gradiente rojo */
-.encabezado-perfil {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, #b91c1c 100%);
-    /* 25: Degradado negro a rojo */
-    color: var(--primary-dark);
-    /* 26: Texto oscuro (aunque suele ser blanco sobre rojo, ver contraste) */
-    padding: 40px 30px;
-    /* 27: Relleno */
-    text-align: center;
-    /* 28: Centrado */
-    border-bottom: 2px solid var(--primary-red);
-    /* 29: Borde inferior */
-}
-
-
-/* 30: Foto de perfil con bordes redondeados y estilo */
-.foto-perfil {
-    width: 150px;
-    /* 31: Tamaño fijo */
-    height: 150px;
-    border-radius: 50%;
-    /* 32: Circular */
-    object-fit: cover;
-    /* 33: Ajuste imagen */
-    border: 4px solid var(--primary-light);
-    /* 34: Borde blanco foto */
-    margin-bottom: 15px;
-    /* 35: Margen */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    /* 36: Sombra foto */
-}
-
-
-/* 37: Avatar cuando no hay foto de perfil */
-.avatar-sin-foto {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: var(--gray-medium);
-    /* 38: Fondo gris */
-    border: 4px solid var(--primary-light);
-    /* 39: Borde blanco */
-    display: flex;
-    /* 40: Flex */
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 15px;
-    /* 41: Centrado */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-
-/* 42: Ícono del avatar sin foto */
-.avatar-sin-foto i {
-    font-size: 3rem;
-    /* 43: Icono grande */
-    color: var(--primary-light);
-    /* 44: Blanco */
-    opacity: 0.8;
-    /* 45: Transparencia */
-}
-
-
-/* 46: Nombre del usuario en el encabezado */
-.nombre-usuario {
-    font-weight: 700;
-    /* 47: Negrita */
-    margin-bottom: 5px;
-    font-size: 1.5rem;
-    color: var(--primary-light);
-    /* 48: Texto blanco */
-}
-
-
-/* 49: Texto "Miembro desde" */
-.texto-miembro-desde {
-    opacity: 0.9;
-    font-size: 0.9rem;
-    color: var(--primary-light);
-}
-
-
-/* 50: Contenedor de la información del perfil */
+/* .informacion-perfil: Tarjeta principal de datos personales. */
 .informacion-perfil {
-    padding: 30px;
-    background: var(--gray-dark);
-    /* 51: Fondo gris oscuro */
+    /* background: Mismo degradado para consistencia. */
+    background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+    border: none;
+    border-radius: 15px;
+
+    /* box-shadow: Sombra para elevar la tarjeta. */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* .nav-tabs .nav-link: Estilo base de las pestañas de navegación inactivos. */
+.nav-tabs .nav-link {
+    /* color: Color gris oscuro. */
+    color: #495057;
 
-/* 52: Cada item de información (Nombre, Email, etc) */
-.item-informacion {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-medium);
-    /* 53: Separador */
+    /* font-weight: 500; Peso de fuente medio. */
+    font-weight: 500;
+
+    /* border: none; Sin bordes por defecto. */
+    border: none;
+
+    /* border-bottom: 3px solid transparent; Borde inferior transparente. 
+       Sirve para reservar el espacio de la línea indicadora de "activo" y evitar saltos visuales. */
+    border-bottom: 3px solid transparent;
 }
 
+/* .nav-tabs .nav-link:hover: Hover en pestañas. */
+.nav-tabs .nav-link:hover {
+    /* border-color: transparente. 
+       Sirve para evitar el comportamiento por defecto de Bootstrap. */
+    border-color: transparent;
 
-/* 54: Último item sin borde inferior */
-.item-informacion:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+    /* color: Cambia a color primario (Rojo). */
+    color: var(--primary-color);
 }
 
+/* .nav-tabs .nav-link.active: Estado activo de la pestaña. */
+.nav-tabs .nav-link.active {
+    /* color: Color primario (Rojo). Indica selección. */
+    color: var(--primary-color);
 
-/* 55: Etiqueta de la información (Ej: "Nombre Completo") */
-.etiqueta-informacion {
+    /* background-color: transparente. Sin fondo. */
+    background-color: transparent;
+
+    /* border-bottom: 3px solid ...; Muestra la línea roja inferior. 
+       Sirve como indicador visual claro de la pestaña actual. */
+    border-bottom: 3px solid var(--primary-color);
+}
+
+/* .accordion-button: Botón de colapso para los pedidos. */
+.accordion-button {
+    /* font-weight: Negrita. */
     font-weight: 600;
-    color: var(--primary-light);
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    /* 56: Mayúsculas */
-    letter-spacing: 0.5px;
 }
 
+/* .accordion-button:not(.collapsed): Estado cuando el acordeón está abierto. */
+.accordion-button:not(.collapsed) {
+    /* color: Texto rojo. */
+    color: var(--primary-color);
 
-/* 57: Valor de la información (Ej: "Juan Pérez") */
-.valor-informacion {
-    font-size: 1.1rem;
-    color: var(--primary-light);
-    font-weight: 500;
+    /* background-color: Fondo rojo muy claro. 
+       Sirve para resaltar el pedido que se está viendo. */
+    background-color: rgba(211, 47, 47, 0.05);
+    /* Rojo con 5% de opacidad */
 }
 
-
-/* 58: Texto muted para valores vacíos o no especificados */
-.valor-informacion .text-muted {
-    color: var(--gray-light) !important;
-    /* 59: Gris claro forzado */
+/* .wishlist-card: Tarjeta de lista de deseos. */
+.wishlist-card {
+    /* transition: Animación suave. */
+    transition: transform 0.2s ease;
 }
 
-
-/* 60: Botón para subir foto con estilo especial */
-.btn-subir-foto {
-    background: linear-gradient(135deg, var(--primary-red) 0%, #b91c1c 100%);
-    /* 61: Gradiente botón */
-    border: none;
-    color: var(--primary-light);
-    padding: 12px 30px;
-    border-radius: 4px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+/* .wishlist-card:hover: Efecto hover. */
+.wishlist-card:hover {
+    /* transform: translateY(-3px); Pequeña elevación. */
+    transform: translateY(-3px);
 }
 
-
-/* 62: Efecto al pasar el mouse sobre el botón de subir */
-.btn-subir-foto:hover {
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-    /* 63: Oscurecer gradiente */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-    color: var(--primary-light);
-}
-
-
-/* 64: Contenedor de acciones de foto (eliminar) */
-.acciones-foto {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid var(--gray-medium);
-}
-
-
-/* 65: Botón para eliminar foto */
-.acciones-foto .btn {
-    border-radius: 4px;
-    padding: 8px 20px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-}
-
-
-/* 66: Form Control personalizado para inputs perfil */
-.informacion-perfil .form-control {
-    border-radius: 4px;
-    border: 2px solid var(--gray-medium);
-    background: var(--gray-dark);
-    /* 67: Inputs oscuros */
-    color: var(--primary-light);
-    padding: 12px 15px;
-    transition: all 0.3s ease;
-}
-
-
-/* 68: Efecto Focus para inputs */
-.informacion-perfil .form-control:focus {
-    border-color: var(--primary-red);
-    background: var(--gray-dark);
-    color: var(--primary-light);
-    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
-}
-
-
-/* 69: Texto de ayuda en formularios */
-.informacion-perfil .form-text {
-    color: var(--gray-light);
-    font-size: 0.8rem;
-    margin-top: 5px;
-}
-
-
-/* 70: Alertas personalizadas */
-.alert {
-    border-radius: 4px;
-    border: none;
-    margin-bottom: 20px;
-    font-weight: 500;
-    padding: 15px 20px;
-}
-
-
-/* 71: Alerta de Éxito */
-.alert-success {
-    background-color: #16a34a;
-    /* 72: Verde */
-    color: var(--primary-light);
-}
-
-
-/* 73: Alerta de Error */
-.alert-danger {
-    background-color: var(--primary-red);
-    /* 74: Rojo */
-    color: var(--primary-light);
-}
-
-
-/* 75: Botones de acción en el perfil */
-.informacion-perfil .btn {
-    border-radius: 4px;
-    padding: 12px 30px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-
-/* 76: Botón Outline Primary */
-.informacion-perfil .btn-outline-primary {
-    border: 2px solid var(--primary-red);
-    color: var(--primary-red);
-    background: transparent;
-}
-
-
-/* 77: Hover para Botón Outline Primary */
-.informacion-perfil .btn-outline-primary:hover {
-    background-color: var(--primary-red);
-    color: var(--primary-light);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-}
-
-
-/* 78: Botón Primary Sólido */
-.informacion-perfil .btn-primary {
-    background-color: var(--primary-red);
-    color: var(--primary-light);
-}
-
-
-/* 79: Hover para Botón Primary */
-.informacion-perfil .btn-primary:hover {
-    background-color: #b91c1c;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-}
-
-
-/* 80: Botón Outline Danger */
-.informacion-perfil .btn-outline-danger {
-    border: 2px solid var(--primary-red);
-    /* 81: Usamos rojo primario */
-    color: var(--primary-red);
-    background: transparent;
-}
-
-
-/* 82: Hover para Botón Outline Danger */
-.informacion-perfil .btn-outline-danger:hover {
-    background-color: var(--primary-red);
-    color: var(--primary-light);
-    transform: translateY(-2px);
-}
-
-
-/* =============================================================================
-   83: RESPONSIVE: AJUSTES PARA DISPOSITIVOS MÓVILES
-   ============================================================================= */
-
-@media (max-width: 768px) {
-
-    /* 84: Contenedor Principal */
-    .contenedor-perfil {
-        margin-top: 80px;
-        padding: 0 15px;
-    }
-
-    /* 85: Encabezado del Perfil */
-    .encabezado-perfil {
-        padding: 30px 20px;
-    }
-
-    /* 86: Foto de perfil en móvil */
-    .foto-perfil,
-    .avatar-sin-foto {
-        width: 120px;
-        height: 120px;
-    }
-
-    /* 87: Información del Perfil */
-    .informacion-perfil {
-        padding: 20px;
-    }
-
-    /* 88: Nombre del usuario */
-    .nombre-usuario {
-        font-size: 1.3rem;
-    }
-
-    /* 89: Formulario en columna en móvil */
-    .informacion-perfil form.d-flex {
-        flex-direction: column;
-        gap: 15px !important;
-    }
-
-    /* 90: Botones en columna en móvil */
-    .informacion-perfil .d-flex.gap-2 {
-        flex-direction: column;
-        gap: 10px !important;
-    }
-
-    /* 91: Botones a ancho completo en móvil */
-    .informacion-perfil .btn {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-
-/* =============================================================================
-   92: ANIMACIONES Y EFECTOS ESPECIALES
-   ============================================================================= */
-
-/* 93: Animación de entrada para la tarjeta */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* 94: Aplicar animación a la tarjeta */
-.tarjeta-perfil {
-    animation: fadeInUp 0.6s ease-out;
-}
-
-
-/* 95: Animación para la foto de perfil */
-.foto-perfil,
-.avatar-sin-foto {
-    transition: all 0.3s ease;
-}
-
-
-/* 96: Efecto Hover para la foto */
-.foto-perfil:hover,
-.avatar-sin-foto:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
-}
-
-
-/* =============================================================================
-   97: ESTADOS DE CARGA Y DESHABILITADO
-   ============================================================================= */
-
-/* 98: Estado de carga para botones */
-.btn-subir-foto:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-
-/* 99: Estado de carga para inputs */
-.form-control:disabled {
-    background-color: var(--gray-medium);
-    color: var(--gray-light);
-    cursor: not-allowed;
-}
-
-
-/* =============================================================================
-   100: UTILIDADES ADICIONALES
-   ============================================================================= */
-
-/* 101: Texto centrado */
-.text-center {
-    text-align: center;
-}
-
-
-/* 102: Margin automático */
-.mx-auto {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-/* 103: Sombra de texto para mejor legibilidad */
-.sombra-texto {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+/* .btn-remove-wishlist: Botón de eliminar de lista de deseos. */
+.btn-remove-wishlist {
+    /* border-radius: Redondeo completo a la izquierda en grupos de botones (si aplicara). 
+       Aquí es un botón individual por lo que solo se ve redondeado normal por Bootstrap. */
 }
