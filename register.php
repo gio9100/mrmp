@@ -1,79 +1,86 @@
 <?php
-// session_start(): Inicia la sesión.
-// Sirve para persistir datos como mensajes de error o datos de usuario entre páginas.
+// Iniciamos o continuamos la sesión.
+// Esto permite guardar datos temporales como mensajes o información del usuario.
 session_start();
 
-// require_once: Se asegura de que el archivo 'conexion.php' se incluya una sola vez.
-// Sirve para establecer la conexión con la base de datos MySQL.
+// Importamos el archivo donde está la conexión a la base de datos.
+// require_once evita cargarlo dos veces.
 require_once "conexion.php";
 
+// Variables para mostrar mensajes al usuario.
 $mensaje = "";
 $exito = false;
 
-// Array de dominios permitidos.
-// Sirve para restringir el registro solo a correos con estos dominios específicos.
+// Lista de dominios permitidos para correos.
+// Es una forma de evitar registros con correos sospechosos o poco confiables.
 $dominios_validos = [
-    'gmail.com', 'outlook.com', 'outlook.es', 
-    'hotmail.com', 'hotmail.es', 'yahoo.com', 
+    'gmail.com', 'outlook.com', 'outlook.es',
+    'hotmail.com', 'hotmail.es', 'yahoo.com',
     'yahoo.es', 'icloud.com'
 ];
 
+// Si el usuario envió el formulario (POST), procesamos la información.
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // trim(): Elimina espacios en blanco.
-    // Sirve para limpiar los inputs.
+
+    // trim elimina espacios innecesarios al inicio o al final.
     $nombre = trim($_POST["nombre"] ?? "");
     $correo = trim($_POST["correo"] ?? "");
-    
-    // mb_strtolower(): Convierte el string a minúsculas usando codificación multibyte.
-    // Sirve para normalizar el correo (GMAIL.COM es igual a gmail.com).
-    $correo = mb_strtolower($correo, 'UTF-8'); 
+
+    // mb_strtolower convierte el texto a minúsculas respetando acentos y caracteres especiales.
+    // Esto sirve para asegurar que el correo se compare correctamente sin importar cómo lo escribió el usuario.
+    $correo = mb_strtolower($correo, 'UTF-8');
+
+    // La contraseña se toma como viene; no se usa trim para no eliminar espacios que el usuario pueda querer.
     $contrasena = $_POST["contrasena"] ?? "";
 
-    // Validaciones básicas.
+    // Comprobamos que no haya campos vacíos.
     if ($nombre === "" || $correo === "" || $contrasena === "") {
         $mensaje = "⚠️ Completa todos los campos.";
-    } 
-    // filter_var(): Valida el email.
+    }
+    // Validamos que el correo tenga un formato correcto.
     elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         $mensaje = "⚠️ El correo no tiene un formato válido.";
-    } 
+    }
     else {
-        // explode('@', $correo): Divide el string en un array usando '@' como delimitador.
-        // Sirve para separar usuario y dominio (ej. ['usuario', 'gmail.com']).
+
+        // Separamos el correo en: nombre_usuario y dominio.
+        // Si el correo es "juan@gmail.com", queda ["juan", "gmail.com"].
         $partes_correo = explode('@', $correo);
-        $dominio = isset($partes_correo[1]) ? $partes_correo[1] : '';
-        
-        // in_array(): Verifica si un valor existe en un array.
-        // Sirve para comprobar si el dominio extraído está en la lista blanca $dominios_validos.
+        $dominio = $partes_correo[1] ?? "";
+
+        // Revisamos si el dominio del correo está en nuestra lista de permitidos.
         if (!in_array($dominio, $dominios_validos)) {
-            // implode(): Une elementos de un array en un string.
-            // Sirve para mostrar una lista legible de dominios permitidos al usuario.
+
+            // Tomamos algunos dominios para mostrarlos como ejemplo.
             $dominios_lista = implode(', ', array_slice($dominios_validos, 0, 5));
-            $mensaje = "⚠️ Solo se permiten correos de dominios verificados como: " . $dominios_lista . ", etc.";
-        } 
-        // strlen(): Obtiene la longitud de un string.
-        // Sirve para imponer una longitud mínima de seguridad a la contraseña.
+
+            $mensaje = "⚠️ Solo se permiten correos de dominios como: $dominios_lista, etc.";
+        }
+        // Requisito mínimo de longitud para la contraseña.
         elseif (strlen($contrasena) < 6) {
             $mensaje = "⚠️ La contraseña debe tener al menos 6 caracteres.";
-        } 
+        }
         else {
-            // password_hash(): Crea un hash seguro de la contraseña.
-            // Sirve para no guardar contraseñas en texto plano en la BD (Seguridad Fundamental).
-            // PASSWORD_DEFAULT usa el algoritmo bcrypt actual.
+
+            // Encriptamos la contraseña antes de guardarla.
+            // password_hash genera un hash seguro usando bcrypt (por defecto).
+            // Esto es fundamental para no guardar contraseñas reales en la BD.
             $contrasena_hash = password_hash($contrasena, PASSWORD_DEFAULT);
 
-            // Inserción en Base de Datos.
+            // Preparamos la consulta SQL para evitar inyecciones.
             $sql = "INSERT INTO usuarios (nombre, correo, contrasena_hash) VALUES (?, ?, ?)";
             $stmt = $conexion->prepare($sql);
-            // "sss" indica que pasamos 3 strings como parámetros.
+
+            // bind_param enlaza los valores a los ? de la consulta.
+            // "sss" significa que los tres valores son strings.
             $stmt->bind_param("sss", $nombre, $correo, $contrasena_hash);
 
-            // Si execute devuelve true, la inserción fue exitosa.
+            // Intentamos ejecutar la consulta.
             if ($stmt->execute()) {
                 $mensaje = "✅ Registro exitoso. Ahora inicia sesión.";
                 $exito = true;
-                
-                // Redirigir al usuario al login tras 2 segundos.
+
+                // Redirección automática después de 2 segundos.
                 echo "
                 <script>
                     setTimeout(function() {
@@ -82,41 +89,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </script>
                 ";
             } else {
-                $mensaje = " ⚠️ Error al registrar (posiblemente el correo ya existe).";
+                // Si falla, puede que el correo ya exista porque es único.
+                $mensaje = "⚠️ Error al registrar (posiblemente el correo ya existe).";
             }
-        $stmt->close();
+
+            // Cerramos la consulta preparada.
+            $stmt->close();
+        }
     }
 }
-}
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+
+    <!-- Título de la pestaña del navegador -->
     <title>Registro MRMP</title>
+
+    <!-- Tipografía moderna desde Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Usamos CSS de registro con Tema Claro. -->
+
+    <!-- Archivo CSS externo con el diseño -->
     <link rel="stylesheet" href="registro.css">
+
+    <!-- Para que la web sea responsive en móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
+<!-- Formulario principal -->
 <form method="post" class="formulario" novalidate>
+    
+    <!-- Logo y título -->
     <div class="logo-taller">
         <img src="img/mrmp-logo.png" alt="Logo MRMP">
         <h1>Registro MRMP</h1>
         <p class="subtitulo">Motor Racing Mexican Parts</p>
     </div>
 
+    <!-- Inputs -->
     <section class="seccion-informacion">
+
         <label>Nombre Completo</label>
-        <input type="text" name="nombre" placeholder="Ej: Jesus Mendez" value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>" required>
+        <!-- htmlspecialchars: evita ataques XSS al imprimir datos -->
+        <input type="text" name="nombre"
+               placeholder="Ej: Jesus Mendez"
+               value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>"
+               required>
 
         <label>Correo Electrónico</label>
-        <input type="email" name="correo" placeholder="ejemplo@gmail.com" value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
+        <input type="email" name="correo"
+               placeholder="ejemplo@gmail.com"
+               value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>"
+               required>
 
         <label>Contraseña</label>
-        <input type="password" name="contrasena" placeholder="Mínimo 6 caracteres" required minlength="6">
+        <input type="password" name="contrasena"
+               placeholder="Mínimo 6 caracteres"
+               required minlength="6">
     </section>
 
     <section class="seccion-botones">
@@ -125,27 +158,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </section>
 </form>
 
+<!-- MENSAJE MODAL DE ÉXITO O ERROR -->
 <?php if($mensaje): ?>
 <div class="modal-mensaje <?= $exito ? 'exito' : 'error' ?>">
     <div class="modal-contenido">
+
+        <!-- Título del modal -->
         <h2><?= $exito ? "🔧 Registro Completado" : "❌ Error" ?></h2>
+
+        <!-- Mensaje dinámico -->
         <p><?= htmlspecialchars($mensaje) ?></p>
-        
+
+        <!-- Si hubo éxito muestra aviso de redirección -->
         <?php if($exito): ?>
             <p style="font-style: italic; margin-top: 15px;">
                 Serás redirigido automáticamente en 2 segundos...
             </p>
+
+        <!-- Si hubo error, botón para cerrar modal -->
         <?php else: ?>
             <button onclick="cerrarModal()">Cerrar</button>
         <?php endif; ?>
     </div>
 </div>
+
+<!-- SCRIPT PARA CERRAR MODAL -->
 <script>
-// Función para cerrar el modal ocultando su contenedor.
+// Esta función oculta el modal cuando se hace clic en "Cerrar"
 function cerrarModal() { 
     document.querySelector('.modal-mensaje').style.display='none'; 
 }
 </script>
+
 <?php endif; ?>
 
 </body>
