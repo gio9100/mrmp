@@ -1,289 +1,296 @@
-/* body: Configuración principal - Define el fondo y la alineación central */
+/* =========================================
+   HOJA DE ESTILOS: INICIO DE SESIÓN
+   =========================================
+   Archivo: inicio_secion.css
+   Descripción: Estilos específicos para la página de login.
+   Estrategia: Diseño centrado vertical/horizontal con fondo de imagen y efecto "Glassmorphism" (vidrio esmerilado).
+*/
+
+/* -----------------------------------------------------------
+   1. CONFIGURACIÓN DEL CUERPO (BODY)
+   ----------------------------------------------------------- */
 body {
-    /* Sin margen externo */
+    /* margin y padding a 0 para eliminar bordes blancos del navegador. */
     margin: 0;
-    /* Sin relleno interno */
     padding: 0;
-    /* Imagen de fondo con superposicion oscura para resaltar texto */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/inicio.png");
-    /* La imagen cubre todo el fondo */
+
+    /* Configuración del Fondo:
+       1. linear-gradient(...): Capa oscura semitransparente (overlay) sobre la imagen.
+          Permite que el texto blanco sea legible sobre cualquier imagen.
+       2. url(...): La imagen de fondo. */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/performance.jpeg");
+
+    /* background-size: cover;
+       Escala la imagen para cubrir todo el fondo sin deformarse, recortando si es necesario. */
     background-size: cover;
-    /* La imagen se centra */
+
+    /* background-position: center;
+       Asegura que el centro de la imagen sea el punto focal. */
     background-position: center;
-    /* El fondo queda fijo al hacer scroll */
+
+    /* background-attachment: fixed;
+       Efecto Parallax: El fondo se queda quieto si hubiera scroll. */
     background-attachment: fixed;
-    /* Tipografia principal */
+
+    /* Tipografía moderna y limpia. */
     font-family: 'Poppins', sans-serif;
-    /* Altura completa de la pantalla */
+
+    /* height: 100vh;
+       Fuerza al body a tener EXACTAMENTE el alto de la ventana (Viewport Height).
+       Esencial para el centrado vertical. */
     height: 100vh;
-    /* Color de texto blanco general */
+
+    /* Color de texto base blanco. */
     color: #fff;
-    /* Usar Flexbox para centrar */
+
+    /* TÉCNICA DE CENTRADO ABSOLUTO CON FLEXBOX */
     display: flex;
-    /* Centrar verticalmente */
+    /* Convierte el body en contenedor Flex. */
     align-items: center;
-    /* Centrar horizontalmente */
+    /* Centra verticalmente los hijos (el formulario). */
     justify-content: center;
+    /* Centra horizontalmente los hijos. */
 }
 
-/* .formulario: Contenedor principal del login con estilo transparente */
+/* -----------------------------------------------------------
+   2. TARJETA DE FORMULARIO (GLASSMORPHISM)
+   ----------------------------------------------------------- */
 .formulario {
-    /* Fondo totalmente transparente */
+    /* Fondo transparente base */
     background: rgba(255, 255, 255, 0.0);
-    /* Desenfoque del fondo (efecto vidrio) */
+
+    /* backdrop-filter: blur(5px);
+       La magia del Glassmorphism: Aplica desenfoque a lo que está DETRÁS del elemento.
+       Crea el efecto de vidrio esmerilado. */
     backdrop-filter: blur(5px);
-    /* Soporte para Safari */
     -webkit-backdrop-filter: blur(5px);
-    /* Borde blanco sutil */
+    /* Compatibilidad Safari */
+
+    /* Borde sutil blanco semitransparente para definir los límites del vidrio. */
     border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Borde azul grisaceo solicitado */
+    /* Sobrescritura específica del diseño: Borde azul sólido. */
     border: 2px solid #7390A0;
-    /* Bordes redondeados */
+
+    /* Bordes redondeados modernos. */
     border-radius: 14px;
-    /* Relleno interno generoso */
+
+    /* Espaciado interno amplio. */
     padding: 40px 50px;
-    /* Ancho relativo */
+
+    /* Ancho Responsive:
+       Ocupa el 90% del ancho en móviles, pero nunca más de 420px en escritorio. */
     width: 90%;
-    /* Ancho maximo */
     max-width: 420px;
-    /* Sombra suave inferior */
+
+    /* Sombra difusa para separar la tarjeta del fondo. */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* Transicion suave para todos los cambios */
+
+    /* Transición suave para cualquier cambio de estado. */
     transition: all 0.3s ease;
-    /* Texto centrado */
+
+    /* Alineación de texto central. */
     text-align: center;
-    /* Color de texto blanco */
     color: #fff;
 }
 
-/* .logo-taller img: Imagen del logo inside del formulario */
+/* -----------------------------------------------------------
+   3. LOGOTIPO Y TÍTULOS
+   ----------------------------------------------------------- */
+
+/* Imagen del logo */
 .logo-taller img {
-    /* Ancho del logo */
     width: 100px;
-    /* Comportamiento de bloque */
+    /* Tamaño controlado */
     display: block;
-    /* Centrado horizontal con margen inferior */
+    /* Comportamiento de bloque para permitir márgenes */
     margin: 0 auto 15px auto;
-    /* Sombra blanca para resaltar sobre oscuro */
+    /* Centrado horizontal (auto) y margen inferior */
+
+    /* drop-shadow: Sombra que respeta la transparencia del PNG del logo.
+       Mejor que box-shadow para imágenes irregulares. */
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
-/* .logo-taller h1: Titulo principal (Nombre del taller) */
+/* Título Principal (H1) */
 .logo-taller h1 {
-    /* Alineacion centrada */
     text-align: center;
-    /* Color blanco */
     color: #fff;
-    /* Tamaño de fuente grande */
     font-size: 1.6rem;
-    /* Margen inferior pequeño */
     margin: 0 0 5px 0;
-    /* Negrita */
     font-weight: 700;
-    /* Sombra de texto para legibilidad */
+    /* Negrita fuerte */
+
+    /* Sombra de texto para garantizar lectura sobre cualquier fondo. */
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* .subtitulo: Texto debajo del titulo principal */
+/* Subtítulo */
 .logo-taller .subtitulo {
-    /* Alineacion centrada */
     text-align: center;
-    /* Color gris claro */
     color: #ddd;
-    /* Tamaño de fuente mediano */
+    /* Gris claro para jerarquía visual menor. */
     font-size: 0.9rem;
-    /* Sin margen superior */
     margin-top: 0;
-    /* Margen inferior para separar de inputs */
     margin-bottom: 30px;
-    /* Peso de fuente medio */
+    /* Espacio antes de los inputs */
     font-weight: 500;
 }
 
-/* label: Etiquetas de texto encima de los inputs */
+/* -----------------------------------------------------------
+   4. CAMPOS DE FORMULARIO (INPUTS)
+   ----------------------------------------------------------- */
+
+/* Etiquetas (Labels) */
 .seccion-informacion label {
-    /* Ocupar todo el ancho */
     display: block;
-    /* Margen inferior */
+    /* Cada label en su propia línea */
     margin-bottom: 8px;
-    /* Color blanco */
     color: #fff;
-    /* Negrita */
     font-weight: 600;
-    /* Tamaño de letra */
     font-size: 0.9rem;
-    /* Sombra sutil */
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* input: Campos de texto para usuario y contraseña */
+/* Entradas de Texto (Inputs) */
 .seccion-informacion input {
-    /* Ancho total */
     width: 100%;
-    /* Relleno interno */
+    /* Llenar ancho del contenedor padre */
     padding: 12px 15px;
-    /* Espacio debajo de cada input */
+    /* Comodidad visual */
     margin-bottom: 20px;
-    /* Sin borde predeterminado */
+    /* Separación entre campos */
     border: none;
-    /* Fondo blanco solido */
+    /* Sin borde por defecto */
     background: #ffffff;
-    /* Color de texto oscuro */
+    /* Fondo blanco sólido */
     color: #333;
-    /* Bordes redondeados */
+    /* Texto oscuro */
     border-radius: 8px;
-    /* Sombra interna suave */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Tamaño de letra */
     font-size: 14px;
-    /* Incluir padding en el ancho total */
+
+    /* box-sizing: border-box; Asegura que el padding no rompa el ancho del 100%. */
     box-sizing: border-box;
-    /* Animacion suave */
+
     transition: transform 0.2s;
+    /* Animación para el efecto focus */
 }
 
-/* input:focus -> Cuando el usuario selecciona el campo */
+/* Estado Focus (Al escribir) */
 .seccion-informacion input:focus {
-    /* Quitar linea azul por defecto */
     outline: none;
-    /* Borde azul al activar */
+    /* Quitar borde azul navegador */
     border: 2px solid #0d6efd;
-    /* Efecto de lupa/zoom ligero */
+    /* Borde azul de marca */
+
+    /* Escala ligera (Zoom in) para indicar foco activo. */
     transform: scale(1.02);
 }
 
-/* button: Boton de "Iniciar Sesion" */
+/* -----------------------------------------------------------
+   5. BOTONES Y ACCIONES
+   ----------------------------------------------------------- */
+
+/* Botón Principal */
 button {
-    /* Ancho total */
     width: 100%;
-    /* Relleno */
     padding: 12px;
-    /* Fondo rojo */
     background: #d32f2f;
-    /* Texto blanco */
+    /* Rojo intenso */
     color: white;
-    /* Sin borde */
     border: none;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Tamaño de letra */
     font-size: 16px;
-    /* Negrita */
     font-weight: 700;
-    /* Cursor de mano */
     cursor: pointer;
-    /* Espacio superior */
     margin-top: 10px;
-    /* Sombra inferior */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* Transicion de fondo */
     transition: background 0.3s;
 }
 
-/* button:hover -> Al pasar el mouse por el boton */
 button:hover {
-    /* Oscurecer el rojo */
     background: #b71c1c;
+    /* Rojo más oscuro al pasar el mouse */
 }
 
-/* p: Texto "No tienes cuenta?" */
+/* Texto auxiliar "¿No tienes cuenta?" */
 .seccion-botones p {
-    /* Centrado */
     text-align: center;
-    /* Espacio superior */
     margin-top: 25px;
-    /* Tamaño de letra grande */
     font-size: 1.1rem;
-    /* Color gris claro */
     color: #eee;
-    /* Peso medio */
     font-weight: 500;
 }
 
-/* a: Enlaces "Registrate" y "Olvidaste contraseña" */
+/* Enlaces de texto */
 .seccion-botones a {
-    /* Color azul original */
     color: #0d6efd;
-    /* Negrita */
+    /* Azul Bootstrap */
     font-weight: 700;
-    /* Sin subrayado */
     text-decoration: none;
-    /* Tamaño grande */
     font-size: 1.15rem;
 }
 
-/* a:hover -> Al pasar el mouse por enlace */
 .seccion-botones a:hover {
-    /* Azul mas oscuro */
     color: #0a58ca;
-    /* Subrayado */
+    /* Azul oscuro */
     text-decoration: underline;
 }
 
-/* .panel-admin: Enlace especial para ir al panel de admin */
+/* Enlace a Panel Admin */
 .panel-admin {
-    /* Margen superior */
     margin-top: 25px;
-    /* Centrado */
     text-align: center;
-    /* Linea divisoria superior */
+
+    /* Línea separadora sutil superior */
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    /* Espacio superior interno */
+
     padding-top: 20px;
-    /* Tamaño de letra */
     font-size: 1.1rem;
 }
 
-/* .modal-mensaje: Contenedor oscuro full-screen para alertas */
+/* -----------------------------------------------------------
+   6. MODAL DE ALERTAS (Errores/Éxito)
+   ----------------------------------------------------------- */
+
+/* Fondo oscuro pantalla completa */
 .modal-mensaje {
-    /* Posicion fija */
     position: fixed;
-    /* Pegado arriba */
+    /* Posición fija respecto al viewport */
     top: 0;
-    /* Pegado izquierda */
     left: 0;
-    /* Ancho total */
     width: 100%;
-    /* Alto total */
     height: 100%;
-    /* Fondo negro semitransparente */
     background: rgba(0, 0, 0, 0.8);
-    /* Flexbox centrado */
+    /* Fondo muy oscuro para bloquear interacción */
+
+    /* Centrado total */
     display: flex;
-    /* Centrar horizontal */
     justify-content: center;
-    /* Centrar vertical */
     align-items: center;
-    /* Capa superior absoluta */
+
     z-index: 1000;
+    /* Siempre arriba */
 }
 
-/* .modal-contenido: La cajita de alerta */
+/* Caja del mensaje */
 .modal-contenido {
-    /* Fondo oscuro gris */
     background: #222;
-    /* Texto blanco */
+    /* Fondo oscuro */
     color: #fff;
-    /* Relleno */
     padding: 30px;
-    /* Bordes redondeados */
     border-radius: 15px;
-    /* Ancho fijo */
     width: 300px;
-    /* Texto centrado */
     text-align: center;
-    /* Sombra fuerte */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    /* Borde gris */
     border: 1px solid #444;
 }
 
-/* Button dentro del modal */
+/* Botón de cierre en modal */
 .modal-contenido button {
-    /* Ancho automatico al contenido */
     width: auto;
-    /* Fondo gris */
+    /* Ancho automático según contenido */
     background: #666;
-    /* Margen superior */
+    /* Gris neutro */
     margin-top: 15px;
 }

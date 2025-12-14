@@ -1,118 +1,177 @@
-/* Configuracion principal del cuerpo */
-/* Body: Define la base visual de toda la pagina */
+/* =========================================
+   HOJA DE ESTILOS PRINCIPAL - PANEL DE ADMINISTRACIÓN
+   =========================================
+   Archivo: admin.css
+   Descripción: Controla la apariencia visual de todo el panel administrativo (Login, Dashboard, Gestión de Pedidos).
+   Estrategia: Diseño limpio, profesional y responsivo usando Flexbox y Grid Layout.
+*/
+
+/* -----------------------------------------------------------
+   1. RESET Y ESTILOS GLOBALES DEL CUERPO (BODY)
+   ----------------------------------------------------------- */
+
+/* Selector de etiqueta (body): Aplica a toda la página. */
 body {
-    /* Color de fondo gris suave */
+    /* background-color: Fondo gris muy suave (#f4f6f9) para reducir la fatiga visual
+       en interfaces administrativas donde se pasa mucho tiempo. */
     background-color: #f4f6f9;
-    /* Tipografia principal */
+
+    /* font-family: Pila de fuentes moderna.
+       'Poppins' para títulos y frescura, 'Roboto' para legibilidad en textos largos.
+       sans-serif como respaldo seguro. */
     font-family: 'Poppins', 'Roboto', sans-serif;
-    /* Color de texto gris oscuro */
+
+    /* color: Texto gris oscuro (#333) en lugar de negro puro (#000)
+       para un contraste alto pero no agresivo. */
     color: #333;
-    /* Sin margen */
+
+    /* margin: 0; padding: 0;
+       Eliminamos los márgenes por defecto del navegador para tener control total. */
     margin: 0;
-    /* Sin relleno */
     padding: 0;
 }
 
-/* Header: La barra superior donde va el menu */
+/* -----------------------------------------------------------
+   2. ENCABEZADO (HEADER)
+   ----------------------------------------------------------- */
+
+/* header: Barra superior de navegación y título. */
 header {
-    /* Fondo blanco */
+    /* background-color: Blanco puro para diferenciarlo del fondo gris del body. */
     background-color: #ffffff;
-    /* Texto oscuro */
+
+    /* color: Texto oscuro. */
     color: #333;
-    /* Espaciado interno */
+
+    /* padding: Espaciado interno (15px arriba/abajo, 30px izquierda/derecha). */
     padding: 15px 30px;
-    /* Sombra sutil inferior */
+
+    /* box-shadow: Sombra sutil en el borde inferior para dar efecto de elevación.
+       Eje X: 0, Eje Y: 2px, Difuminado: 10px, Color: negro al 5% de opacidad. */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    /* Flexbox para alinear elementos */
+
+    /* display: flex; Activa el modelo Flexbox.
+       Permite alinear el título a la izquierda y el menú a la derecha fácilmente. */
     display: flex;
-    /* Espacio entre logo y menu */
+
+    /* justify-content: space-between;
+       Empuja los elementos hijos a los extremos opuestos del contenedor. */
     justify-content: space-between;
-    /* Alineacion vertical centrada */
+
+    /* align-items: center;
+       Centra verticalmente los elementos dentro de la barra. */
     align-items: center;
-    /* Borde inferior gris claro */
+
+    /* border-bottom: Línea divisoria sutil para definición extra. */
     border-bottom: 1px solid #eee;
 }
 
-/* h1: Titulo principal dentro del header */
+/* h1 dentro del header: Título del sistema. */
 header h1 {
-    /* Tamaño de fuente grande */
+    /* font-size: Tamaño de letra 1.5rem (aprox 24px). */
     font-size: 1.5rem;
-    /* Sin margen externo */
+
+    /* margin: 0; Eliminamos margen del navegador para alineación perfecta. */
     margin: 0;
-    /* Peso de fuente seminegrita */
+
+    /* font-weight: 600; Seminegrita para destacar sin ser demasiado pesado. */
     font-weight: 600;
 }
 
-/* Enlaces de navegacion: Los botones del menu */
+/* Enlaces (a) dentro del header: Navegación. */
 header a {
-    /* Color gris medio */
+    /* color: Gris medio (#555) para elementos no seleccionados. */
     color: #555;
-    /* Sin subrayado */
+
+    /* text-decoration: none; Elimina el subrayado clásico de los enlaces. */
     text-decoration: none;
-    /* Peso medio */
+
+    /* font-weight: 500; Peso medio para legibilidad. */
     font-weight: 500;
-    /* Margen izquierdo */
+
+    /* margin-left: Espacio entre enlaces (separación horizontal). */
     margin-left: 15px;
-    /* Relleno interno */
+
+    /* padding: Área clickeable aumentada para mejor UX. */
     padding: 5px 10px;
-    /* Bordes redondeados */
+
+    /* border-radius: Bordes redondeados para un look moderno tipo botón. */
     border-radius: 5px;
-    /* Transicion suave */
+
+    /* transition: Suaviza los cambios de color (hover) durante 0.2 segundos. */
     transition: all 0.2s;
 }
 
-/* a:hover -> Se activa cuando pasas el mouse por encima del enlace */
+/* Pseudo-clase :hover (Cuando el mouse pasa por encima). */
 header a:hover {
-    /* Fondo gris claro al pasar mouse */
+    /* background-color: Gris muy claro para feedback visual. */
     background-color: #f0f0f0;
-    /* Texto rojo al pasar mouse */
+
+    /* color: Cambia a rojo (#d32f2f) para indicar interactividad/marca. */
     color: #d32f2f;
 }
 
-/* Main: El contenedor central donde va todo el contenido */
+/* -----------------------------------------------------------
+   3. CONTENEDOR PRINCIPAL (MAIN)
+   ----------------------------------------------------------- */
+
+/* main: Área de contenido centralizada. */
 main {
-    /* Ancho maximo centrado */
+    /* max-width: Evita que el contenido se estire demasiado en pantallas 4K.
+       1200px es un estándar ancho pero legible. */
     max-width: 1200px;
-    /* Margen vertical 30px, automatico horizontal */
+
+    /* margin: 30px auto; 
+       30px arriba/abajo. 'auto' a los lados centra el bloque horizontalmente. */
     margin: 30px auto;
-    /* Relleno lateral */
+
+    /* padding: Espaciado lateral para que el texto no toque los bordes en móviles. */
     padding: 0 20px;
 }
 
-/* .formulario: Clase para las tarjetas blancas del dashboard */
+/* -----------------------------------------------------------
+   4. COMPONENTES DE TARJETA (FORMULARIO / SECCIONES)
+   ----------------------------------------------------------- */
+
+/* .formulario: Clase reutilizable para paneles o tarjetas blancas. */
 .formulario {
-    /* Fondo blanco */
+    /* background: Fondo blanco para destacar sobre el gris del body. */
     background: #ffffff;
-    /* Bordes redondeados */
+
+    /* border-radius: Bordes suavemente redondeados (12px). */
     border-radius: 12px;
-    /* Sombra suave */
+
+    /* box-shadow: Sombra difusa para efecto de "tarjeta flotante". */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    /* Relleno interno */
+
+    /* padding: Espacio interno generoso (30px) para "airear" el contenido. */
     padding: 30px;
-    /* Margen inferior */
+
+    /* margin-bottom: Separación vertical entre tarjetas sucesivas. */
     margin-bottom: 30px;
-    /* Borde gris claro */
+
+    /* border: Borde muy sutil para definición en pantallas de bajo contraste. */
     border: 1px solid #f0f0f0;
 }
 
-/* Titulos h2 y h3 dentro de los formularios */
+/* Títulos dentro de formulario/tarjeta */
 .formulario h2,
 h3 {
-    /* Sin margen superior */
     margin-top: 0;
-    /* Color texto oscuro */
     color: #222;
-    /* Peso negrita */
     font-weight: 600;
-    /* Linea divisoria inferior */
+
+    /* border-bottom: Línea decorativa debajo del título. */
     border-bottom: 2px solid #f4f4f4;
-    /* Espacio inferior interno */
     padding-bottom: 15px;
-    /* Espacio inferior externo */
     margin-bottom: 25px;
 }
 
-/* Inputs: Estilos generales para todos los campos de texto */
+/* -----------------------------------------------------------
+   5. FORMULARIOS E INPUTS
+   ----------------------------------------------------------- */
+
+/* Selector múltiple para todos los tipos de entrada de datos */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -120,488 +179,419 @@ input[type="number"],
 select,
 textarea,
 input[type="file"] {
-    /* Ancho completo */
+    /* width: 100%; Ocupa todo el ancho disponible del contenedor padre. */
     width: 100%;
-    /* Relleno interno */
+
+    /* padding: Espaciado interno para que el texto no pegue al borde. */
     padding: 12px 15px;
-    /* Margen inferior */
+
+    /* margin-bottom: Separación automática con el siguiente campo. */
     margin-bottom: 15px;
-    /* Borde gris */
+
+    /* border: Borde gris suave por defecto. */
     border: 1px solid #e1e1e1;
-    /* Bordes redondeados */
+
+    /* border-radius: Redondeo moderno (8px). */
     border-radius: 8px;
-    /* Fondo gris muy claro */
+
+    /* background-color: Gris muy claro para indicar área de escritura. */
     background-color: #f9f9f9;
-    /* Heredar tipografia */
+
+    /* font-family: inherit; Hereda la fuente Poppins/Roboto del body. */
     font-family: inherit;
-    /* Tamaño de letra */
     font-size: 14px;
-    /* Color de texto */
     color: #444;
-    /* Transicion suave */
+
+    /* transition: Animación suave al enfocar. */
     transition: all 0.3s ease;
-    /* Modelo de caja borde */
+
+    /* box-sizing: border-box; 
+       Fundamental: incluye el padding y el border dentro del ancho total.
+       Evita que el input se desborde del contenedor al tener width: 100%. */
     box-sizing: border-box;
 }
 
-/* :focus -> Se activa cuando haces clic dentro del campo para escribir */
+/* Estado :focus (Cuando el usuario hace clic para escribir) */
 input:focus,
 select:focus,
 textarea:focus {
-    /* Borde azul al enfocar */
+    /* border-color: Cambia a azul (#0d6efd) para indicar actividad. */
     border-color: #0d6efd;
-    /* Fondo blanco al enfocar */
+
+    /* background-color: Se vuelve blanco puro para máximo contraste al leer. */
     background-color: #ffffff;
-    /* Quitar contorno por defecto */
+
+    /* outline: none; Quita el borde azul feo por defecto del navegador. */
     outline: none;
-    /* Sombra de foco azul */
+
+    /* box-shadow: "Resplandor" azul exterior para reforzar el foco. */
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
 }
 
-/* Button: Estilo base para todos los botones */
+/* -----------------------------------------------------------
+   6. BOTONES (BUTTONS)
+   ----------------------------------------------------------- */
+
+/* Estilo base de botones */
 button {
-    /* Relleno del boton */
     padding: 12px 25px;
-    /* Sin borde */
+
+    /* border: none; Quitamos borde tipo Windows 95. */
     border: none;
-    /* Bordes muy redondeados (pildora) */
+
+    /* border-radius: 50px; Estilo "Píldora" (completamente redondo). */
     border-radius: 50px;
-    /* Tamaño de letra */
+
     font-size: 15px;
-    /* Peso negrita */
     font-weight: 600;
-    /* Cursor de mano */
+
+    /* cursor: pointer; Cambia el cursor a manita para indicar clic. */
     cursor: pointer;
-    /* Transicion de efectos */
+
+    /* transition: Animación de transformación y color. */
     transition: transform 0.2s, background-color 0.2s;
-    /* Color de fondo rojo */
+
+    /* background-color: Rojo marca (#d32f2f) por defecto. */
     background-color: #d32f2f;
-    /* Texto blanco */
     color: white;
 }
 
-/* button:hover -> Efecto al pasar el mouse por encima del boton */
+/* Efecto Hover en botones */
 button:hover {
-    /* Oscurecer ligeramente */
+    /* filter: brightness(90%); Oscurece el botón un 10%. */
     filter: brightness(90%);
-    /* Mover un poco hacia arriba */
+
+    /* transform: translateY(-2px);
+       Efecto de "levitación": mueve el botón 2 píxeles hacia arriba. */
     transform: translateY(-2px);
 }
 
-/* .btn-danger: Botones rojos para acciones de borrar/peligro */
+/* Clases específicas para botones de peligro/borrar */
 .eliminar,
 .btn-danger {
-    /* Fondo rojo peligro */
     background-color: #dc3545;
-    /* Texto blanco */
+    /* Rojo Bootstrap estándar */
     color: white;
-    /* Bordes redondeados */
     border-radius: 5px;
-    /* Relleno pequeño */
+    /* Menos redondeado que el botón principal */
     padding: 6px 12px;
+    /* Más compacto */
 }
 
-/* Table: Estructura general de las tablas de datos */
+/* -----------------------------------------------------------
+   7. TABLAS DE DATOS (TABLES)
+   ----------------------------------------------------------- */
+
 table {
-    /* Ancho completo */
     width: 100%;
-    /* Bordes separados */
+
+    /* border-collapse: separate; 
+       Necesario para que el border-radius funcione en las esquinas de la tabla. */
     border-collapse: separate;
-    /* Sin espacio entre celdas */
     border-spacing: 0;
-    /* Margen superior */
+
     margin-top: 20px;
-    /* Fondo blanco */
     background: white;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Ocultar desbordamiento */
+    /* Bordes redondeados en la tabla */
     overflow: hidden;
-    /* Sombra suave */
+    /* Recorta el contenido que sobresale de las esquinas redondeadas */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* th, td: Celdas de cabecera y cuerpo de tabla */
+/* Celdas (header y data) */
 th,
 td {
-    /* Relleno de celdas */
     padding: 15px;
-    /* Alineacion izquierda */
     text-align: left;
-    /* Linea divisoria inferior */
     border-bottom: 1px solid #f0f0f0;
+    /* Línea divisoria */
 }
 
-/* th: Estilos especificos para la cabecera (negrita, gris) */
+/* Cabecera de tabla */
 th {
-    /* Fondo gris claro cabecera */
     background-color: #fafafa;
-    /* Peso negrita */
+    /* Fondo gris muy claro */
     font-weight: 600;
-    /* Color gris medio */
     color: #555;
-    /* Mayusculas */
     text-transform: uppercase;
-    /* Tamaño letra pequeño */
+    /* Todo en mayúsculas estilo etiqueta */
     font-size: 0.85rem;
 }
 
-/* Ultima fila: Quita el borde inferior para que se vea limpio */
+/* Quitamos el borde inferior de la última fila para limpieza visual */
 tr:last-child td {
-    /* Quitar borde ultima fila */
     border-bottom: none;
 }
 
-/* tr:hover -> Resalta la fila de la tabla donde esta el mouse */
+/* Resaltado de fila al pasar el mouse */
 tr:hover {
-    /* Fondo gris claro al pasar mouse */
     background-color: #fbfbfb;
 }
 
-/* Grid: Cuadricula para mostrar las tarjetas de marcas */
+/* -----------------------------------------------------------
+   8. GRID LAYOUT (LISTA DE MARCAS)
+   ----------------------------------------------------------- */
+
 .lista-marcas {
-    /* Quitar viñetas */
     list-style: none;
-    /* Sin relleno */
+    /* Sin puntos de lista */
     padding: 0;
-    /* Usar Grid */
+
+    /* display: grid; Activa Grid Layout.
+       Superpoderoso para organizar items en 2 dimensiones. */
     display: grid;
-    /* Columnas auto-ajustables */
+
+    /* grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+       Magia responsiva:
+       - auto-fill: Crea tantas columnas como quepan.
+       - minmax(250px, 1fr): Cada columna mide al menos 250px, 
+         pero si sobra espacio (1fr), se estira para ocuparlo. */
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    /* Espacio entre items */
+
+    /* gap: 15px; Espacio entre filas y columnas de la rejilla. */
     gap: 15px;
 }
 
-/* .marca-item: Cada cajita individual de una marca */
 .marca-item {
-    /* Fondo blanco */
     background: #fff;
-    /* Borde gris claro */
     border: 1px solid #eee;
-    /* Relleno */
     padding: 15px;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Texto centrado */
     text-align: center;
 }
 
-/* .modal-mensaje: Fondo oscuro que cubre la pantalla */
+/* -----------------------------------------------------------
+   9. MODALES Y NOTIFICACIONES
+   ----------------------------------------------------------- */
+
+/* Overlay oscuro de fondo */
 .modal-mensaje {
-    /* Posicion fija pantalla completa */
     position: fixed;
+    /* Fijo respecto a la ventana del navegador */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* Fondo oscuro semitransparente */
+    /* Cubre toda la pantalla */
     background: rgba(0, 0, 0, 0.5);
-    /* Flexbox centrado */
+    /* Semi-transparente negro */
+
+    /* Centrado absoluto usando Flexbox */
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Capa superior */
+
     z-index: 1000;
+    /* Asegura que esté por encima de todo */
 }
 
-/* .modal-contenido: La cajita blanca del mensaje en el centro */
+/* Caja de contenido del modal */
 .modal-contenido {
-    /* Fondo blanco */
     background: white;
-    /* Relleno */
     padding: 30px;
-    /* Bordes redondeados */
     border-radius: 12px;
-    /* Texto centrado */
     text-align: center;
-    /* Sombra fuerte */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    /* Ancho responsivo */
+    /* Sombra difusa profunda */
     width: 90%;
     max-width: 400px;
+    /* No más ancho de 400px */
 }
 
-/* Boton dentro del modal (generalmente cerrar/aceptar) */
 .modal-contenido button {
-    /* Color gris para boton cerrar */
     background-color: #6c757d;
-    /* Margen superior */
+    /* Gris secundario */
     margin-top: 15px;
 }
 
-/* --- ESTILOS ESPECIFICOS PAR EL LOGIN DE ADMIN --- */
+/* -----------------------------------------------------------
+   10. ESTILOS ESPECÍFICOS: LOGIN
+   ----------------------------------------------------------- */
 
-/* body.login-page: Layout exclusivo pantalla de login */
+/* Layout exclusivo para la página de login */
 body.login-page {
-    /* Imagen de fondo con degradado oscuro */
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('img/admin.png') no-repeat center center fixed;
-    /* Ajuste de tamaño imagen */
+    /* Fondo con imagen y overlay oscuro degradado */
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('img/performance.jpeg') no-repeat center center fixed;
     background-size: cover;
-    /* Flexbox para centrar tarjeta */
+    /* Asegura que la imagen cubra todo el fondo */
+
+    /* Centrado perfecto vertical y horizontal */
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Altura completa pantalla */
     height: 100vh;
+    /* 100% de la altura de la ventana (Viewport Height) */
 }
 
-/* .login-card: La tarjeta transparente (Glassmorphism) */
+/* Tarjeta de Login (Efecto Glassmorphism) */
 .login-card {
-    /* Fondo transparente */
     background: rgba(255, 255, 255, 0.0);
-    /* Desenfoque de fondo */
+    /* Completamente transparente base */
+
+    /* backdrop-filter: blur(5px);
+       Desenfoca lo que hay DETRÁS del elemento. Efecto vidrio esmerilado. */
     backdrop-filter: blur(5px);
-    /* Soporte Safari */
     -webkit-backdrop-filter: blur(5px);
-    /* Borde sutil blanco */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Borde solicitado azul grisaceo */
+    /* Safari */
+
+    /* Borde personalizado azul grisáceo (#7390A0) */
     border: 2px solid #7390A0;
-    /* Bordes redondeados */
+
     border-radius: 14px;
-    /* Relleno interno */
     padding: 40px 50px;
-    /* Ancho relativo */
     width: 90%;
-    /* Ancho maximo */
     max-width: 420px;
-    /* Sombra suave */
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* Transicion suave */
-    transition: all 0.3s ease;
-    /* Texto centrado */
-    text-align: center;
-    /* Color texto blanco */
+
+    /* Texto blanco para contrastar con el fondo oscuro */
     color: #fff;
-    /* Animacion de entrada */
+    text-align: center;
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+
+    /* Animación de entrada */
     animation: fadeIn 0.5s ease-out;
 }
 
-/* @keyframes: Define la animacion de "aparecer suavemente" */
+/* Definición de la animación fadeIn */
 @keyframes fadeIn {
     from {
-        /* Inicio invisible desplazado */
         opacity: 0;
         transform: translateY(-20px);
+        /* Empieza 20px arriba */
     }
 
     to {
-        /* Final visible posicion original */
         opacity: 1;
         transform: translateY(0);
+        /* Termina en su posición natural */
     }
 }
 
-/* Logo dentro del login */
+/* Logos y Títulos del Login */
 .logo-taller img {
-    /* Ancho logo */
     width: 100px;
-    /* Bloque para permitir margen */
     display: block;
-    /* Centrado horizontal */
     margin: 0 auto 15px auto;
-    /* Sombra blanca al logo */
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    /* Resplandor blanco */
 }
 
-/* Titulo del logo (H1) */
 .logo-taller h1 {
-    /* Tamaño titulo */
     font-size: 1.6rem;
-    /* Texto centrado */
-    text-align: center;
-    /* Margen inferior */
     margin-bottom: 5px;
-    /* Color blanco */
     color: #fff;
-    /* Negrita */
     font-weight: 700;
-    /* Sombra texto para lectura */
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* Sombra de texto para lectura */
 }
 
-/* Subtitulo del logo */
 .logo-taller .subtitulo {
-    /* Texto centrado */
-    text-align: center;
-    /* Color gris claro */
     color: #ddd;
-    /* Tamaño pequeño */
+    /* Gris claro */
     font-size: 0.9rem;
-    /* Sin margen superior */
-    margin-top: 0;
-    /* Margen inferior */
     margin-bottom: 20px;
-    /* Peso medio */
-    font-weight: 600;
 }
 
-/* .input-group: Contenedor para poner icono junto al input */
+/* Inputs de Login con Iconos */
 .input-group {
-    /* Posicion relativa para icono absoluto */
     position: relative;
-    /* Margen inferior */
+    /* Contexto de posicionamiento para el icono absoluto */
     margin-bottom: 20px;
 }
 
-/* Iconos FontAwesome dentro del input */
 .input-group i {
-    /* Posicion absoluta */
     position: absolute;
-    /* Izquierda 15px */
+    /* Flota sobre el input */
     left: 15px;
-    /* Centrado vertical */
+    /* Margen izquierdo */
     top: 50%;
+    /* Centrado vertical inicio */
     transform: translateY(-50%);
-    /* Color icono oscuro */
+    /* Ajuste fino de centrado vertical (mitad de su altura) */
     color: #444;
-    /* Capa superior */
     z-index: 2;
+    /* Encima del input */
 }
 
-/* El campo de texto dentro del grupo */
 .input-group input {
-    /* Ancho total */
     width: 100%;
-    /* Relleno ajustado para icono */
+    /* padding-left: 45px; Deja espacio para que el icono no tape el texto. */
     padding: 12px 12px 12px 45px;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Sin borde por defecto */
     border: none;
-    /* Fondo blanco */
     background-color: #ffffff;
-    /* Tamaño letra */
     font-size: 15px;
-    /* Sombra suave */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Color texto oscuro */
-    color: #333;
 }
 
-/* Estado Focus dentro del grupo */
 .input-group input:focus {
-    /* Fondo blanco al foco */
-    background-color: #fff;
-    /* Borde azul al foco */
     border: 2px solid #0d6efd;
-    /* Sombra azul al foco */
-    box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+    /* Borde azul al enfocar */
 }
 
-/* Wrapper invisible solo para estructura */
-.login-wrapper {
-    /* Ancho total */
-    width: 100%;
-    /* Maximo ancho */
-    max-width: 400px;
-    /* Centrado horizontal */
-    margin: 0 auto;
-}
-
-/* .btn-login: Clase exclusiva boton 'Iniciar Sesion' */
+/* Botón de Login Específico */
 .btn-login {
-    /* Ancho total */
     width: 100%;
-    /* Relleno generoso */
     padding: 12px;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Margen superior */
     margin-top: 10px;
-    /* Fondo rojo */
     background: #d32f2f;
-    /* Tamaño letra */
     font-size: 16px;
-    /* Mayusculas */
     text-transform: uppercase;
-    /* Espaciado letras */
     letter-spacing: 1px;
-    /* Sombra roja */
-    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
-    /* Texto blanco */
     color: white;
-    /* Sin borde */
     border: none;
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+    /* Sombra roja brillante */
 }
 
-/* Hover del boton login */
 .btn-login:hover {
-    /* Fondo mas oscuro */
     background: #b71c1c;
-    /* Elevacion */
+    /* Rojo más oscuro */
     transform: translateY(-2px);
-    /* Sombra mas difusa */
     box-shadow: 0 8px 20px rgba(211, 47, 47, 0.4);
 }
 
-/* Footer con enlaces abajo de los botones */
+/* Pie de Login */
 .login-footer {
-    /* Texto centrado */
     text-align: center;
-    /* Margen superior */
     margin-top: 25px;
-    /* Tamaño aumentado */
-    font-size: 1.1rem;
-}
-
-.login-footer p {
-    /* Color gris claro */
-    color: #eee;
-    /* Margen inferior */
-    margin-bottom: 10px;
 }
 
 .login-footer a {
-    /* Color azul clasico */
     color: #0d6efd;
-    /* Negrita */
+    /* Azul enlace */
     font-weight: 700;
-    /* Sin subrayado */
     text-decoration: none;
-    /* Tamaño grande */
-    font-size: 1.15rem;
 }
 
 .login-footer a:hover {
-    /* Subrayado al pasar */
     text-decoration: underline;
 }
 
-/* Enlace 'Volver a la tienda' */
 .back-link {
-    /* Mostrar bloque */
     display: block;
-    /* Margen superior */
     margin-top: 15px;
-    /* Color gris claro forzado */
     color: #ccc !important;
-    /* Tamaño normal */
-    font-size: 1rem;
+    /* Forzamos color gris claro */
 }
 
-/* Hover enlace volver */
 .back-link:hover {
-    /* Color blanco al pasar */
     color: #fff !important;
+    /* Blanco al hover */
 }
 
-/* Cajas de alerta para errores de login */
+/* Alertas de error en login */
 .alert-box {
-    /* Fondo rojo muy claro */
     background-color: #ffebee;
-    /* Texto rojo oscuro */
+    /* Rojo muy pálido */
     color: #c62828;
-    /* Relleno */
+    /* Rojo oscuro */
     padding: 10px;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Margen inferior */
     margin-bottom: 20px;
-    /* Texto centrado */
     text-align: center;
-    /* Tamaño pequeño */
-    font-size: 0.9rem;
-    /* Borde rojo claro */
     border: 1px solid #ffcdd2;
 }

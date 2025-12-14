@@ -1,280 +1,224 @@
-/* body: Configuración inicial de la página de registro */
+/* =========================================
+   HOJA DE ESTILOS: REGISTRO DE USUARIO
+   =========================================
+   Archivo: registro.css
+   Descripción: Estilos para el formulario de creación de cuentas nuevas.
+   Estrategia: Comparte el lenguaje visual de "inicio_secion.css" (Glassmorphism) para consistencia.
+*/
+
+/* -----------------------------------------------------------
+   1. CONFIGURACIÓN DEL CUERPO (BODY)
+   ----------------------------------------------------------- */
 body {
-    /* Sin margen */
+    /* Reset básico */
     margin: 0;
-    /* Sin relleno */
     padding: 0;
-    /* Fondo oscuro con imagen y degradado */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/inicio.png");
-    /* Ajustar imagen al tamaño completo */
+
+    /* Configuración de Fondo:
+       Misma técnica que en el login: degradado oscuro sobre imagen para legibilidad. */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/performance.jpeg");
     background-size: cover;
-    /* Centrar imagen */
     background-position: center;
-    /* Fondo fijo durante scroll */
     background-attachment: fixed;
-    /* Fuente principal Poppins */
+
     font-family: 'Poppins', sans-serif;
-    /* Altura minima del 100% de la ventana */
+
+    /* min-height: 100vh;
+       Asegura que el fondo cubra toda la altura disponible aunque el contenido sea corto. */
     min-height: 100vh;
-    /* Flexbox para centrar contenido */
+
+    /* Centrado Vertical y Horizontal (Flexbox) */
     display: flex;
-    /* Centrar horizontalmente */
     justify-content: center;
-    /* Centrar verticalmente */
     align-items: center;
-    /* Color de texto blanco base */
+
     color: #fff;
 }
 
-/* .formulario: Contenedor principal del registro (Estilo Glassmorphism) */
+/* -----------------------------------------------------------
+   2. TARJETA DE REGISTRO (EFECTO VIDRIO)
+   ----------------------------------------------------------- */
 .formulario {
-    /* Fondo transparente (0.0) */
+    /* Fondo: Transparencia total inicial. */
     background: rgba(255, 255, 255, 0.0);
-    /* Desenfoque de fondo */
+
+    /* Desenfoque de fondo (Backdrop Filter): Efecto cristal esmerilado. */
     backdrop-filter: blur(5px);
-    /* Soporte Safari */
     -webkit-backdrop-filter: blur(5px);
-    /* Borde blanco semitransparente */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Borde azul grisaceo destacado */
+
+    /* Borde personalizado azul grisáceo (#7390A0) para identidad. */
     border: 2px solid #7390A0;
-    /* Esquinas redondeadas */
     border-radius: 14px;
-    /* Relleno interno */
+
     padding: 40px 50px;
-    /* Ancho relativo */
     width: 90%;
-    /* Ancho maximo restringido */
     max-width: 420px;
-    /* Sombra suave */
+
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* Transicion suave */
     transition: all 0.3s ease;
-    /* Texto centrado */
+
     text-align: center;
-    /* Color blanco */
     color: #fff;
-    /* Posicion relativa para elementos hijos absolutos si los hubiera */
     position: relative;
 }
 
-/* .logo-taller img: Logotipo del taller */
+/* -----------------------------------------------------------
+   3. LOGO Y ENCABEZADOS
+   ----------------------------------------------------------- */
 .logo-taller img {
-    /* Ancho limitado */
     width: 80px;
-    /* Margen automatico horizontal */
-    margin: 0 auto;
-    /* Comportamiento bloque */
+    margin: 0 auto 15px auto;
     display: block;
-    /* Margen inferior */
-    margin-bottom: 15px;
-    /* Sombra blanca al logo */
+
+    /* Sombra para despegar el logo del fondo vidrioso. */
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
-/* .logo-taller h1: Titulo del formulario */
 .logo-taller h1 {
-    /* Alineacion centro */
     text-align: center;
-    /* Texto blanco */
     color: #fff;
-    /* Tamaño grande */
     font-size: 1.6rem;
-    /* Margen inferior muy pequeño */
     margin: 0 0 5px 0;
-    /* Negrita */
     font-weight: 700;
-    /* Sombra texto */
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* .logo-taller .subtitulo: Descripcion pequeña */
 .logo-taller .subtitulo {
-    /* Alineacion centro */
     text-align: center;
-    /* Color gris claro */
     color: #ddd;
-    /* Tamaño pequeño */
     font-size: 0.9rem;
-    /* Sin margen superior */
     margin-top: 0;
-    /* Margen inferior */
     margin-bottom: 25px;
-    /* Peso medio */
     font-weight: 500;
 }
 
-/* label: Textos encima de los inputs */
+/* -----------------------------------------------------------
+   4. CAMPOS DEL FORMULARIO
+   ----------------------------------------------------------- */
+
+/* Etiquetas (Labels) */
 .seccion-informacion label {
-    /* Ocupar linea completa */
     display: block;
-    /* Espacio abajo */
     margin-bottom: 5px;
-    /* Peso negrita */
     font-weight: 600;
-    /* Color blanco */
     color: #fff;
-    /* Tamaño letra */
     font-size: 0.95rem;
-    /* Sombra texto */
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* input: Cajas de texto para ingresar datos */
+/* Inputs de Texto */
 .seccion-informacion input {
-    /* Ancho total */
     width: 100%;
-    /* Relleno */
     padding: 12px;
-    /* Espacio inferior */
     margin-bottom: 20px;
-    /* Sin borde */
     border: none;
-    /* Fondo blanco */
     background: #ffffff;
-    /* Texto interno oscuro */
     color: #333;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Sin contorno */
+
+    /* outline: none; Quitamos el borde azul por defecto (lo reemplazamos en :focus). */
     outline: none;
-    /* Animacion suave */
+
     transition: all 0.3s ease;
-    /* Caja incluye padding */
     box-sizing: border-box;
-    /* Sombra interna sutil */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* input:focus -> Al seleccionar el input */
+/* Input en Foco */
 .seccion-informacion input:focus {
-    /* Borde azul */
+    /* Borde azul de Bootstrap (#0d6efd) */
     border: 2px solid #0d6efd;
-    /* Escalado ligero */
+
+    /* Pequeño zoom para feedback táctil/visual. */
     transform: scale(1.01);
 }
 
-/* button[type="submit"]: Boton de envio de formulario */
+/* -----------------------------------------------------------
+   5. BOTÓN DE ENVÍO
+   ----------------------------------------------------------- */
 button[type="submit"] {
-    /* Ancho total */
     width: 100%;
-    /* Relleno */
     padding: 12px;
-    /* Fondo rojo */
+
+    /* Rojo corporativo (#d32f2f) */
     background: #d32f2f;
-    /* Texto blanco */
     color: white;
-    /* Sin borde */
+
     border: none;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Tamaño letra */
     font-size: 16px;
-    /* Negrita */
     font-weight: 700;
-    /* Cursor mano */
     cursor: pointer;
-    /* Margen superior */
     margin-top: 10px;
-    /* Sombra */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    /* Transicion */
     transition: background 0.2s;
 }
 
-/* button:hover -> Al pasar mouse por el boton */
 button[type="submit"]:hover {
-    /* Rojo mas oscuro */
     background: #b71c1c;
+    /* Rojo oscuro */
 }
 
-/* p: Parrafo de enlaces inferiores */
+/* -----------------------------------------------------------
+   6. ENLACES INFERIORES
+   ----------------------------------------------------------- */
 .seccion-botones p {
-    /* Texto centrado */
     text-align: center;
-    /* Espacio superior */
     margin-top: 25px;
-    /* Tamaño letra grande */
     font-size: 1.1rem;
-    /* Color gris claro */
     color: #eee;
-    /* Peso medio */
     font-weight: 500;
 }
 
-/* a: Enlaces de accion */
 .seccion-botones a {
-    /* Azul original */
     color: #0d6efd;
-    /* Negrita */
     font-weight: 700;
-    /* Margen izquierdo */
     margin-left: 5px;
-    /* Sin subrayado */
     text-decoration: none;
-    /* Tamaño letra grande */
     font-size: 1.15rem;
 }
 
-/* a:hover -> Al pasar mouse por enlace */
 .seccion-botones a:hover {
-    /* Azul oscuro */
     color: #0a58ca;
-    /* Subrayado */
     text-decoration: underline;
 }
 
-/* .modal-mensaje: Pantalla oscura de alerta */
+/* -----------------------------------------------------------
+   7. MODAL DE MENSAJES
+   ----------------------------------------------------------- */
 .modal-mensaje {
-    /* Posicion fija */
     position: fixed;
-    /* Coordenadas 0 para cubrir todo */
     top: 0;
     left: 0;
-    /* Ancho 100% */
     width: 100%;
-    /* Alto 100% */
     height: 100%;
-    /* Fondo transparente negro */
     background: rgba(0, 0, 0, 0.8);
-    /* Flexbox centrado */
+
+    /* Centrado Flexbox */
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Capa superior */
+
     z-index: 1000;
 }
 
-/* .modal-contenido: Caja blanca de alerta */
 .modal-contenido {
-    /* Fondo gris oscuro */
     background: #222;
-    /* Texto blanco */
+    /* Fondo gris oscuro */
     color: #fff;
-    /* Relleno */
     padding: 30px;
-    /* Bordes redondeados */
     border-radius: 12px;
-    /* Texto centrado */
     text-align: center;
-    /* Ancho relativo */
     width: 90%;
-    /* Maximo ancho */
     max-width: 350px;
-    /* Borde gris */
     border: 1px solid #444;
 }
 
-/* Boton del modal */
 .modal-contenido button {
-    /* Fondo gris */
     background: #6c757d;
-    /* Ancho automatico */
+    /* Gris secundario */
     width: auto;
-    /* Relleno */
     padding: 8px 25px;
-    /* Borde arriba */
     margin-top: 15px;
-    /* Redondeado */
     border-radius: 5px;
 }

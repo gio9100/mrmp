@@ -38,7 +38,7 @@ function enviarCorreo($destinatario, $asunto, $cuerpo) {
 
         // --- DESTINATARIOS ---
         // setFrom: Dirección y nombre del remitente (quien envía)
-        $mail->setFrom('mexicanracermp@gmail.com', 'Mexican Racing Motor Parts'); 
+        $mail->setFrom('tucorreo@gmail.com', 'Performance Zone MX'); 
         // addAddress: Agrega el destinatario del correo
         $mail->addAddress($destinatario); 
 

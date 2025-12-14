@@ -187,7 +187,7 @@ if(isset($_POST['cantidad'])){
     
     <!-- Bootstrap CSS (CDN): 
          Este archivo es el "maquillaje" profesional de tu sitio. Contiene miles de reglas de diseño (CSS) ya escritas.
-         ¿Cómo funciona? Funciona detectando las "clases" que pones en tu HTML:
+        Funciona detectando las "clases" que pones en tu HTML:
          - Botones: Cuando escribes class="btn btn-primary", este archivo le dice al navegador: "Pintalo de azul, ponle bordes redondos, letra blanca y cambia de color al pasar el mouse".
          - Columnas: Cuando pones class="col-md-6", este archivo le dice: "Usa exactamente el 50% del ancho de la pantalla y ponte al lado del otro elemento".
          Sin este enlace, todas esas clases (btn, col, card, alert) no harían nada y tu web se vería como texto plano y feo. -->
@@ -207,8 +207,8 @@ if(isset($_POST['cantidad'])){
         <div class="container">
             <!-- navbar-brand: Clase especial para el logo o nombre de la marca en la barra -->
             <a class="navbar-brand" href="pagina-principal.php">
-                <img src="img/mrmp logo.png" alt="MRMP" height="70" class="d-inline-block align-text-top">
-                <span class="brand-text">Mexican Racing Motor Parts</span>
+                <img src="img/nuevologo.jpeg" alt="Performance Zone MX" height="40" class="d-inline-block align-text-top">
+                Performance Zone MX
             </a>
             
             <!-- navbar-toggler: Es el botón "hamburguesa" que aparece solo en móviles para abrir el menú -->

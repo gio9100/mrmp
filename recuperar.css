@@ -1,220 +1,239 @@
-/* 1: Configuración básica universal para limpiar estilos por defecto */
+/* =========================================
+   HOJA DE ESTILOS: RECUPERACIÓN DE CONTRASEÑA
+   =========================================
+   Archivo: recuperar.css
+   Descripción: Estilos para la vista de recuperación de cuenta.
+   Estrategia: Diseño limpio, centrado y minimalista para enfocar al usuario en la tarea crítica.
+*/
+
+/* -----------------------------------------------------------
+   1. RESET GLOBAL
+   ----------------------------------------------------------- */
 * {
-    /* Quitamos margenes por defecto */
+    /* Eliminamos márgenes y rellenos predeterminados del navegador */
     margin: 0;
-    /* Quitamos relleno por defecto */
     padding: 0;
-    /* El borde y relleno se incluyen en el tamaño total */
+
+    /* box-sizing: border-box; 
+       Fundamental para que el padding no afecte el ancho total de los elementos. */
     box-sizing: border-box;
-    /* Fuente tipográfica principal */
+
     font-family: 'Poppins', sans-serif;
 }
 
-/* body: Configuración principal del cuerpo de la página */
+/* -----------------------------------------------------------
+   2. CUERPO (BODY) CENTRADO
+   ----------------------------------------------------------- */
 body {
-    /* Fondo blanco limpio */
-    background-color: #fff;
-    /* Texto casi negro para contraste */
+    /* Fondo con imagen y degradado oscuro (igual que login/registro) */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("img/performance.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    /* Texto casi negro para elementos internos, pero el body es global */
     color: #111;
-    /* Usar Flexbox para centrar contenido vertical y horizontalmente */
+
+    /* Configuración Flexbox para centrado absoluto en pantalla */
     display: flex;
-    /* Centrar horizontalmente */
     justify-content: center;
-    /* Centrar verticalmente */
+    /* Centrado horizontal */
     align-items: center;
-    /* Ocupar al menos toda la altura de la pantalla */
+    /* Centrado vertical */
+
+    /* Asegura que el body ocupe al menos toda la altura de la ventana */
     min-height: 100vh;
 }
 
-/* .formulario: Contenedor principal del formulario de recuperación */
+/* -----------------------------------------------------------
+   3. TARJETA DE FORMULARIO
+   ----------------------------------------------------------- */
 .formulario {
-    /* Fondo gris muy claro */
     background: #f8f8f8;
-    /* Borde rojo sólido destacado */
+    /* Gris muy suave para diferenciar del fondo blanco */
+
+    /* Borde rojo de marca (#c00) para identidad visual fuerte */
     border: 2px solid #c00;
-    /* Esquinas redondeadas */
+
     border-radius: 14px;
-    /* Espacio interno amplio */
+    /* Esquinas redondeadas */
     padding: 40px 50px;
-    /* Ancho relativo responsivo */
+    /* Espacio interno generoso */
+
+    /* Diseño responsivo: 90% en móviles, tope de 420px en escritorio */
     width: 90%;
-    /* Ancho máximo fijo */
     max-width: 420px;
-    /* Sombra suave inferior */
+
+    /* Sombra suave para dar profundidad */
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    /* Transición suave para efectos hover */
+
+    /* Transición suave para el efecto hover */
     transition: all 0.3s ease;
-    /* Centrar todo el texto interno */
+
     text-align: center;
+    /* Centrar contenidos internos */
 }
 
-/* .formulario:hover: Efecto de elevación al pasar el mouse sobre el formulario */
+/* Interacción Hover en el Formulario */
 .formulario:hover {
-    /* Mover ligeramente hacia arriba */
+    /* Pequeño movimiento hacia arriba ("levitación") */
     transform: translateY(-5px);
-    /* Sombra más intensa y difusa */
+
+    /* La sombra se hace más grande y difusa */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* .logo-taller img: Imagen del logo dentro del formulario */
+/* -----------------------------------------------------------
+   4. LOGO Y TEXTOS
+   ----------------------------------------------------------- */
+
+/* Imagen del Logo */
 .logo-taller img {
-    /* Ancho fijo para el logo */
     width: 120px;
-    /* Altura automática proporcional */
     height: auto;
-    /* Separación inferior */
+    /* Mantiene la proporción */
     margin-bottom: 10px;
 }
 
-/* .logo-taller h1: Título principal debajo del logo */
+/* Título Principal */
 .logo-taller h1 {
-    /* Peso de fuente negrita */
     font-weight: 700;
-    /* Color de texto oscuro */
     color: #111;
-    /* Tamaño de fuente grande */
     font-size: 24px;
 }
 
-/* .subtitulo: Texto descriptivo o secundario */
+/* Subtítulo Destacado */
 .subtitulo {
-    /* Tamaño de fuente mediano-grande */
     font-size: 20px;
-    /* Color rojo brillante para destacar */
+
+    /* Rojo brillante (#f80a0a) para alertar/informar */
     color: #f80a0a;
-    /* Margen inferior grande */
+
     margin-bottom: 20px;
 }
 
-/* label: Etiquetas de los campos de entrada */
+/* -----------------------------------------------------------
+   5. CAMPOS DE ENTRADA (INPUTS)
+   ----------------------------------------------------------- */
+
+/* Etiquetas */
 label {
-    /* Comportamiento de bloque para ocupar su propia línea */
     display: block;
-    /* Alineación de texto a la izquierda */
+    /* Ocupa su propia línea */
     text-align: left;
-    /* Pequeño espacio con el input */
+    /* Alineado a la izquierda para lectura natural */
     margin-bottom: 6px;
-    /* Peso de fuente medio */
     font-weight: 500;
-    /* Color de texto oscuro suave */
     color: #222;
 }
 
-/* input: Campos de texto para correo o contraseña */
+/* Campo de Texto */
 input {
-    /* Ancho total disponible */
     width: 100%;
-    /* Relleno interno cómodo */
     padding: 10px 14px;
-    /* Espacio separador inferior */
     margin-bottom: 20px;
-    /* Borde gris claro */
+
+    /* Borde gris claro inicial */
     border: 1.8px solid #ccc;
-    /* Bordes redondeados */
+
     border-radius: 6px;
-    /* Fondo blanco */
     background: #fff;
-    /* Transición para el borde y la sombra */
+
+    /* Transición para suavizar el cambio de color al enfocar */
     transition: border 0.3s box-shadow 0.3s;
 }
 
-/* input:focus: Estado activo del campo de texto cuando se escribe */
+/* Input En Foco (Activo) */
 input:focus {
-    /* Cambia borde a rojo */
+    /* Cambia a rojo de marca */
     border-color: #c00;
-    /* Añade resplandor rojo suave */
+
+    /* Añade un resplandor rojo suave */
     box-shadow: 0 0 5px rgba(204, 0, 0, 0.3);
-    /* Quita el contorno por defecto del navegador */
+
     outline: none;
+    /* Quita el borde azul del navegador */
 }
 
-/* button: Botón principal de acción */
+/* -----------------------------------------------------------
+   6. BOTONES Y ENLACES
+   ----------------------------------------------------------- */
+
+/* Botón de Acción */
 button {
-    /* Ancho total */
     width: 100%;
-    /* Fondo rojo corporativo */
+
+    /* Rojo corporativo */
     background: #c00;
-    /* Texto blanco */
     color: #fff;
-    /* Sin borde */
+
     border: none;
-    /* Relleno interno */
     padding: 12px;
-    /* Bordes redondeados */
     border-radius: 8px;
-    /* Tamaño de letra */
     font-size: 16px;
-    /* Negrita */
     font-weight: 600;
-    /* Cursor de mano al pasar por encima */
     cursor: pointer;
-    /* Transición de color de fondo */
     transition: 0.3s;
+    /* Suaviza el hover */
 }
 
-/* button:hover: Efecto al pasar el mouse por el botón */
+/* Hover Botón */
 button:hover {
-    /* Oscurecer el rojo para feedback */
     background: #a30000;
+    /* Rojo más oscuro */
 }
 
-/* a: Enlaces de texto (como volver al inicio) */
+/* Enlaces (Volver a inicio, etc.) */
 a {
-    /* Color rojo */
     color: #c00;
-    /* Sin subrayado inicial */
     text-decoration: none;
-    /* Peso medio */
     font-weight: 500;
 }
 
-/* a:hover: Efecto al pasar mouse por enlace */
 a:hover {
-    /* Añadir subrayado */
     text-decoration: underline;
+    /* Subrayado clásico al pasar mouse */
 }
 
-/* @media: Estilos para dispositivos móviles */
-@media (max-width: 480px) {
+/* -----------------------------------------------------------
+   7. RESPONSIVE DESIGN (MÓVIL)
+   ----------------------------------------------------------- */
 
-    /* .formulario: Ajustes para pantallas pequeñas */
+/* Para pantallas menores a 480px (Celulares verticales) */
+@media (max-width: 480px) {
     .formulario {
-        /* Reducir el relleno interno */
         padding: 25px 30px;
+        /* Reducir padding para ganar espacio */
     }
 
-    /* h1: Reducir tamaño de título */
     h1 {
         font-size: 22px;
+        /* Reducir tamaño de fuente */
     }
 }
 
-/* .message: Cajas de notificación (éxito/error) */
+/* -----------------------------------------------------------
+   8. MENSAJES DE ESTADO (ALERTAS)
+   ----------------------------------------------------------- */
+
 .message {
-    /* Relleno interno */
     padding: 10px;
-    /* Espacio inferior */
     margin-bottom: 15px;
-    /* Bordes redondeados */
     border-radius: 6px;
-    /* Texto en negrita */
     font-weight: bold;
-    /* Texto centrado */
     text-align: center;
 }
 
-/* .message.success: Estilo específico para mensajes de éxito */
+/* Mensaje de Éxito */
 .message.success {
-    /* Texto verde */
     color: green;
-    /* Fondo verde muy claro */
     background: #e6ffe6;
+    /* Verde pastel muy claro */
 }
 
-/* .message.error: Estilo específico para mensajes de error */
+/* Mensaje de Error */
 .message.error {
-    /* Texto rojo */
     color: red;
-    /* Fondo rojo muy claro */
     background: #ffe6e6;
+    /* Rojo pastel muy claro */
 }

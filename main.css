@@ -1,133 +1,177 @@
-/* :root: Define variables globales CSS. 
-   Sirve para mantener consistencia en colores y facilitar cambios de tema en toda la web. */
+/* =========================================
+   HOJA DE ESTILOS: PRINCIPAL (GLOBAL)
+   =========================================
+   Archivo: main.css
+   Descripción: Define las variables globales (CSS Variables) y estilos base compartidos por toda la aplicación.
+   Estrategia: Uso de :root para centralizar colores y tipografías, facilitando el mantenimiento y coherencia de marca.
+*/
+
+/* 
+   :root pseudo-clase
+   ------------------
+   Define variables CSS personalizadas que pueden ser reutilizadas en todo el documento.
+   Cambiar un valor aquí actualiza automáticamente toda la página.
+*/
 :root {
-    /* Rojo MRMP: Color corporativo principal (Mantenido). */
+    /* Paleta de Colores Corporativa */
+
+    /* Rojo MRMP (#d32f2f): Color primario para botones, iconos importantes y énfasis. */
     --primary-color: #d32f2f;
-    /* Blanco: Nuevo color base para fondos. */
+
+    /* Blanco (#ffffff): Color secundario, usado para fondos de tarjetas y contenedores. */
     --secondary-color: #ffffff;
-    /* Negro: Para títulos y textos principales. */
+
+    /* Texto Primario (#000000): Color negro para títulos y contenido de alta jerarquía. */
     --text-primary: #000000;
-    /* Gris oscuro: Para textos secundarios o párrafos. */
+
+    /* Texto Secundario (#333333): Gris oscuro para párrafos y textos descriptivos. */
     --text-secondary: #333333;
-    /* Gris muy claro: Para fondos de secciones alternas. */
+
+    /* Fondo Claro (#f8f9fa): Gris muy sutil para diferenciar secciones del fondo blanco puro. */
     --light-bg: #f8f9fa;
 }
 
-/* body: Selector de etiqueta para el cuerpo del documento. */
+/* -----------------------------------------------------------
+   ESTILOS BASE DEL DOM
+   ----------------------------------------------------------- */
+
+/* body: Configuración tipográfica y de color base */
 body {
-    /* Define la tipografía principal y respaldo */
+    /* Tipografía: 'Poppins' como principal (Google Fonts), sans-serif como respaldo. */
     font-family: 'Poppins', sans-serif;
-    /* Establece el color de fondo blanco base */
+
+    /* var(--secondary-color): Usamos la variable definida arriba para el fondo base. */
     background-color: var(--secondary-color);
-    /* Define el color del texto base oscuro */
+
+    /* Color de texto por defecto para toda la web. */
     color: var(--text-secondary);
 }
 
-/* h1-h6: Títulos y encabezados HTML. */
+/* Encabezados (h1 - h6) */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-    /* Grosor de la fuente para destacar */
+    /* font-weight: 600; Seminegrita para destacar la jerarquía visual. */
     font-weight: 600;
-    /* Color negro puro para encabezados */
+
+    /* Color negro puro para máximo contraste en títulos. */
     color: var(--text-primary);
 }
 
-/* .btn-primary: Clase para botones de acción principal. */
+/* -----------------------------------------------------------
+   COMPONENTES BOOTSTRAP PERSONALIZADOS
+   ----------------------------------------------------------- */
+
+/* Personalización del Botón Primario (.btn-primary) */
 .btn-primary {
-    /* Fondo del botón rojo */
+    /* Fondo rojo marca */
     background-color: var(--primary-color);
-    /* Color del borde rojo */
+
+    /* Borde rojo marca (para sobrescribir el azul de Bootstrap) */
     border-color: var(--primary-color);
-    /* Transición suave para efectos hover */
+
+    /* transition: Suaviza todos los cambios de estado (hover, active) durante 0.3s. */
     transition: all 0.3s ease;
 }
 
-/* .btn-primary:hover: Estado del botón al pasar el mouse por encima. */
+/* Estado Hover del Botón Primario */
 .btn-primary:hover {
-    /* Oscurecer fondo al pasar el mouse */
+    /* Oscurecemos el rojo para dar feedback visual de "interactuable". */
     background-color: #b71c1c;
-    /* Oscurecer borde al pasar el mouse */
     border-color: #b71c1c;
-    /* Efecto de elevación (mover arriba) */
+
+    /* transform: translateY(-2px);
+       Desplaza el botón 2 píxeles hacia arriba para crear un efecto de "levitación". */
     transform: translateY(-2px);
 }
 
-/* .card: Contenedor tipo tarjeta para productos o contenido. */
+/* Personalización de Tarjetas (.card) */
 .card {
-    /* Sin borde visible para diseño limpio */
+    /* border: none; Eliminamos el borde gris por defecto de Bootstrap para un look más limpio. */
     border: none;
-    /* Fondo blanco para la tarjeta */
+
     background-color: #ffffff;
-    /* Sombra suave para dar profundidad */
+
+    /* Sombra suave inicial */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Transición suave para la sombra y movimiento */
+
+    /* Animamos la transformación (movimiento) y la sombra. */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .card:hover: Estado de la tarjeta al pasar el mouse. */
+/* Hover en Tarjetas */
 .card:hover {
-    /* Mueve la tarjeta hacia arriba */
+    /* Al pasar el mouse, la tarjeta "sube" 5 píxeles. */
     transform: translateY(-5px);
-    /* Aumenta la sombra para simular mayor elevación */
+
+    /* La sombra crece y se difumina más, simulando mayor altura. */
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* .form-control: Inputs estandarizados de Bootstrap. */
+/* Entradas de Formulario (.form-control) */
 .form-control {
-    /* Redondeo de las esquinas del input */
+    /* Bordes más redondeados que el estándar. */
     border-radius: 0.5rem;
-    /* Espaciado interno cómodo */
+
+    /* Padding cómodo (0.75rem vertical, 1rem horizontal). */
     padding: 0.75rem 1rem;
-    /* Borde gris claro */
+
+    /* Borde gris claro neutro. */
     border: 1px solid #ced4da;
-    /* Fondo blanco */
+
     background-color: #fff;
-    /* Color de texto oscuro */
     color: var(--text-secondary);
 }
 
-/* .form-control:focus: Estado del input cuando se escribe en él. */
+/* Input Activo (.form-control:focus) */
 .form-control:focus {
-    /* Resplandor rojo suave alrededor */
+    /* box-shadow: Anillo de luz roja difusa (RGBA con 25% opacidad) en lugar del azul Bootstrap. */
     box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.25);
-    /* Cambia el borde al rojo primario */
+
+    /* El borde se vuelve rojo sólido. */
     border-color: var(--primary-color);
 }
 
-/* .navbar-light .nav-link: Enlaces de navegación en la barra superior. */
+/* -----------------------------------------------------------
+   BARRA DE NAVEGACIÓN (NAVBAR)
+   ----------------------------------------------------------- */
+
+/* Enlaces del menú */
 .navbar-light .navbar-nav .nav-link {
-    /* Grosor medio de fuente */
     font-weight: 500;
-    /* Color gris oscuro */
+    /* Peso medio */
     color: var(--text-secondary);
-    /* Suaviza cambio de color */
+    /* Text gris oscuro */
     transition: color 0.3s ease;
+    /* Transición suave de color */
 }
 
-/* .navbar-light .nav-link:hover: Efecto hover en enlaces de menú. */
+/* Hover en enlaces del menú */
 .navbar-light .navbar-nav .nav-link:hover {
-    /* Cambia a rojo al pasar el mouse */
+    /* Cambia al rojo corporativo al pasar el mouse. */
     color: var(--primary-color);
 }
 
-/* .badge: Etiquetas pequeñas para notificaciones o estados. */
+/* Etiquetas (.badge) */
 .badge {
-    /* Relleno interno ajustado */
+    /* Ajuste fino del padding para mejor legibilidad. */
     padding: 0.5em 0.8em;
-    /* Peso de fuente medio */
     font-weight: 500;
 }
 
-/* .center-xy: Clase utilitaria personalizada para centrar contenido. */
+/* -----------------------------------------------------------
+   CLASES DE UTILIDAD (HELPERS)
+   ----------------------------------------------------------- */
+
+/* Centrado Absoluto Vertical y Horizontal */
 .center-xy {
-    /* Habilita Flexbox */
     display: flex;
-    /* Centra verticalmente */
+    /* Flexbox */
     align-items: center;
-    /* Centra horizontalmente */
+    /* Eje Y: Centro */
     justify-content: center;
+    /* Eje X: Centro */
 }

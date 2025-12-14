@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login MRMP</title>
+    <title>Iniciar Sesión - Performance Zone MX</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="inicio_secion.css">
@@ -103,9 +103,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!-- novalidate: Desactiva la validación por defecto del navegador para usar la nuestra. -->
 <form method="post" class="formulario" novalidate>
     <div class="logo-taller">
-        <img src="img/mrmp-logo.png" alt="Logo MRMP">
-        <h1>Inicio de sesión MRMP</h1>
-        <p class="subtitulo">Motor Racing Mexican Parts</p>
+        <img src="img/nuevologo.jpeg" alt="Logo Taller">
+        <h1>Performance Zone MX</h1>
+        <p class="subtitulo">Acceso a Clientes</p>
     </div>
 
     <section class="seccion-informacion">

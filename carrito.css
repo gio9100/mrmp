@@ -1,12 +1,30 @@
-/* 1: Reset Básico */
-/* Este archivo contiene estilos mínimos, ya que el diseño se maneja mayormente con Tailwind CSS en el HTML */
+/* =========================================
+   HOJA DE ESTILOS: CARRITO DE COMPRAS
+   =========================================
+   Archivo: carrito.css
+   Descripción: Estilos auxiliares para el carrito de compras.
+   Nota: La mayor parte del diseño del carrito se maneja mediante clases de utilidad
+         de Bootstrap directamente en el HTML (carrito.php). Este archivo contiene
+         solo un reset básico para asegurar consistencia.
+*/
 
-/* *: Selector universal, afecta a todos los elementos */
+/* -----------------------------------------------------------
+   SELECTOR UNIVERSAL (*)
+   ----------------------------------------------------------- */
+/* El asterisco (*) selecciona TODOS los elementos del DOM. */
 * {
-    /* Modelo de caja incluye bordes y padding en el tamaño total */
+    /* box-sizing: border-box;
+       CRUCIAL: Cambia el modelo de caja (Box Model).
+       Por defecto (content-box), el padding y el border se SUMAN al ancho (width).
+       Con border-box, el padding y border se INCLUYEN dentro del ancho definido.
+       Ejemplo: width: 100px; padding: 10px;
+         - content-box: Ancho total = 120px.
+         - border-box:  Ancho total = 100px. */
     box-sizing: border-box;
-    /* Sin márgenes por defecto */
+
+    /* margin: 0; padding: 0;
+       Reset básico para eliminar márgenes y rellenos predeterminados
+       que los navegadores añaden a etiquetas como <body>, <h1>, <p>, etc. */
     margin: 0;
-    /* Sin relleno por defecto */
     padding: 0;
 }

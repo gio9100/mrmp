@@ -1,145 +1,173 @@
-/* .hero-section: Sección principal con imagen grande (Hero). */
+/* =========================================
+   HOJA DE ESTILOS: PÁGINA PRINCIPAL
+   =========================================
+   Archivo: pagina-principal.css
+   Descripción: Estilos específicos para la landing page (Hero, Cards de Productos).
+   Dependencias: Se apoya en 'main.css' para variables de color.
+*/
+
+/* -----------------------------------------------------------
+   SECCIÓN HÉROE (HERO SECTION)
+   ----------------------------------------------------------- */
+
+/* Contenedor principal del banner de bienvenida */
 .hero-section {
-    /* Propiedad abreviada para fondo */
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/img/hero-bg.jpg');
-    /* Escala la imagen para cubrir todo el contenedor */
+    /* Fondo compuesto multicapa: 
+       Capa 1 (frente): Gradiente lineal negro semitransparente (0.7 opacity).
+       Capa 2 (fondo): Imagen 'hero-bg.jpg'. */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('img/performance.jpeg');
+
+    /* background-size: cover; Asegura que la imagen cubra todo el bloque sin deformarse. */
     background-size: cover;
-    /* Centra la imagen de fondo */
+
+    /* background-position: center; Focaliza el centro de la imagen. */
     background-position: center;
-    /* Texto blanco */
+
+    /* color: white; Texto blanco para contraste sobre el fondo oscuro. */
     color: white;
-    /* Relleno vertical grande (100px) */
+
+    /* padding: 100px 0; Espacio vertical generoso para impacto visual. */
     padding: 100px 0;
 }
 
-/* .hero-title: Título principal del Hero. */
+/* Título principal del Hero */
 .hero-title {
-    /* Tamaño de fuente grande (3.5rem) */
+    /* font-size: 3.5rem; Tamaño de letra muy grande para captar atención. */
     font-size: 3.5rem;
-    /* Negrita fuerte (700) */
+
+    /* font-weight: 700; Negrita fuerte. */
     font-weight: 700;
-    /* Espacio debajo del título */
+
+    /* margin-bottom: 1rem; Espacio para separar del subtítulo o botón. */
     margin-bottom: 1rem;
 }
 
-/* .product-card: Tarjetas de productos en el grid. */
+/* -----------------------------------------------------------
+   TARJETAS DE PRODUCTO (PRODUCT CARDS)
+   ----------------------------------------------------------- */
+
+/* Contenedor de la tarjeta */
 .product-card {
-    /* Fondo blanco */
     background: #fff;
-    /* Bordes redondeados (15px) */
+
+    /* border-radius: 15px; Bordes suavemente redondeados. */
     border-radius: 15px;
-    /* Oculta el contenido que se sale de los bordes */
+
+    /* overflow: hidden; 
+       Esencial para que la imagen interna no se salga de los bordes redondeados al hacer zoom. */
     overflow: hidden;
-    /* Posicionamiento relativo para hijos absolutos */
+
+    /* position: relative; 
+       Contexto de posicionamiento para elementos absolutos hijos (como el badge 'Nuevo'). */
     position: relative;
-    /* Transición suave para efectos hover */
+
+    /* Transición suave para movimiento y sombra. */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .product-image: Contenedor de la imagen del producto. */
+/* Contenedor de la Imagen */
 .product-image {
-    /* Altura fija (250px) para uniformidad */
+    /* height: 250px; Altura fija para mantener alineación uniforme en el grid. */
     height: 250px;
-    /* Ancho total del padre */
+
     width: 100%;
-    /* Necesario para el badge interno */
     position: relative;
-    /* Para el efecto de zoom en la imagen */
+
+    /* overflow: hidden; Oculta el desbordamiento de la imagen al hacer zoom. */
     overflow: hidden;
 }
 
-/* .product-image img: La etiqueta <img> dentro del contenedor. */
+/* La Imagen Real (img) */
 .product-image img {
-    /* Ancho total */
     width: 100%;
-    /* Alto total */
     height: 100%;
-    /* Recorta la imagen para llenar espacio */
+
+    /* object-fit: cover;
+       Recorta la imagen para llenar el contenedor 250px sin distorsionar la relación de aspecto. */
     object-fit: cover;
-    /* Transición para el zoom */
+
+    /* transition: Efecto lento (0.5s) para el zoom al hacer hover. */
     transition: transform 0.5s ease;
 }
 
-/* .product-card:hover .product-image img: Efecto al pasar mouse sobre la tarjeta. */
+/* Efecto Zoom en Hover */
 .product-card:hover .product-image img {
-    /* Aumenta el tamaño al 110% (Zoom) */
+    /* Escala la imagen al 110% de su tamaño original. */
     transform: scale(1.1);
 }
 
-/* .product-badge: Etiqueta "Nuevo" sobre la imagen. */
+/* Etiqueta "Nuevo/Oferta" (Badge) */
 .product-badge {
-    /* Posicionamiento absoluto */
     position: absolute;
-    /* Coordenada superior */
+    /* Flota sobre la imagen */
+
+    /* Coordenadas desde la esquina superior izquierda */
     top: 15px;
-    /* Coordenada izquierda */
     left: 15px;
-    /* Fondo rojo primario */
+
+    /* var(--primary-color): Usa el rojo corporativo definido en main.css */
     background: var(--primary-color);
-    /* Texto blanco */
+
     color: white;
-    /* Relleno interno */
     padding: 5px 12px;
-    /* Bordes muy redondeados */
     border-radius: 20px;
-    /* Tamaño de letra pequeño */
+    /* Forma de píldora */
     font-size: 0.8rem;
-    /* Peso negrita */
     font-weight: 600;
-    /* Capa superior sobre la imagen */
+
+    /* z-index: 2; Asegura que esté por encima de la imagen. */
     z-index: 2;
 }
 
-/* .product-content: Área de texto de la tarjeta. */
+/* Contenido de Texto de la Tarjeta */
 .product-content {
-    /* Relleno interno */
     padding: 20px;
+    /* Relleno interno */
 }
 
-/* .product-title: Título del producto. */
+/* Nombre del Producto */
 .product-title {
-    /* Tamaño de fuente mediano */
     font-size: 1.1rem;
-    /* Peso negrita */
     font-weight: 600;
-    /* Margen inferior */
     margin-bottom: 5px;
-    /* Texto en una sola línea */
+
+    /* --- TÉCNICA DE TRUNCAMIENTO DE TEXTO --- */
     white-space: nowrap;
-    /* Oculta exceso de texto */
+    /* Fuerza el texto en una sola línea. */
     overflow: hidden;
-    /* Añade puntos suspensivos (...) */
+    /* Oculta lo que no cabe. */
     text-overflow: ellipsis;
+    /* Añade "..." al final si se corta. */
 }
 
-/* .product-price: Precio del producto. */
+/* Precio del Producto */
 .product-price {
-    /* Tamaño grande */
     font-size: 1.25rem;
-    /* Color rojo primario */
     color: var(--primary-color);
-    /* Peso muy negrita */
+    /* Rojo */
     font-weight: 700;
-    /* Margen inferior */
     margin-bottom: 15px;
 }
 
-/* .feature-item: Ítems de la sección "Sobre Nosotros". */
+/* -----------------------------------------------------------
+   SECCIÓN DE CARACTERÍSTICAS (SOBRE NOSOTROS)
+   ----------------------------------------------------------- */
+
+/* Elemento individual de lista */
 .feature-item {
-    /* Flexbox para alinear icono y texto */
     display: flex;
-    /* Alineación vertical */
+    /* Flexbox para alinear icono y texto */
     align-items: center;
-    /* Espacio inferior */
+    /* Centrado vertical */
     margin-bottom: 15px;
-    /* Tamaño de letra */
     font-size: 1.1rem;
 }
 
-/* .feature-item i: El icono dentro del ítem. */
+/* Icono dentro del item */
 .feature-item i {
-    /* Espacio a la derecha del icono */
     margin-right: 15px;
-    /* Tamaño del icono */
+    /* Separación del texto */
     font-size: 1.2rem;
+    /* Icono ligeramente más grande que el texto */
+    /* Color heredado normalmente del texto o definido inline */
 }

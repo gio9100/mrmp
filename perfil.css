@@ -1,86 +1,115 @@
-/* .tarjeta-perfil: Estilo para la tarjeta lateral de información del usuario. */
+/*
+   Descripción: Estilos específicos para la sección "Mi Cuenta" y el historial de pedidos.
+   Estrategia: Diseño de tarjetas oscuras degradadas para el perfil y pestañas personalizadas.
+*/
+
+/* -----------------------------------------------------------
+   TARJETAS DE INFORMACIÓN
+   ----------------------------------------------------------- */
+
+/* Tarjeta Lateral Izquierda (Foto y Nombre cortó) */
 .tarjeta-perfil {
-    /* Fondo con degradado oscuro lineal */
+    /* linear-gradient: Fondo moderno con degradado diagonal oscuro.
+       Va desde #2c2c2c (gris oscuro) hasta #1a1a1a (casi negro). */
     background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-    /* Sin borde visible */
+
+    /* Sin borde estándar */
     border: none;
+
     /* Esquinas redondeadas (15px) */
     border-radius: 15px;
-    /* Color de texto blanco */
+
+    /* Texto blanco para contraste alto */
     color: white;
 }
 
-/* .informacion-perfil: Tarjeta principal donde se muestran los datos personales. */
+/* Tarjeta Principal (Datos detallados, Pestañas) */
 .informacion-perfil {
-    /* Fondo consistente con el sidebar (degradado oscuro) */
+    /* Mismo fondo degradado para consistencia visual con la lateral */
     background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-    /* Sin borde */
+
     border: none;
-    /* Esquinas redondeadas */
     border-radius: 15px;
-    /* Sombra suave para dar efecto de elevación */
+
+    /* box-shadow: Sombra suave para separarla del fondo de la página. */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* .nav-tabs .nav-link: Estilo base de las pestañas de navegación cuando están inactivas. */
+/* -----------------------------------------------------------
+   PESTAÑAS DE NAVEGACIÓN (TABS)
+   ----------------------------------------------------------- */
+
+/* Estilo base de los enlaces de pestaña inactivos */
 .nav-tabs .nav-link {
-    /* Color de texto gris oscuro */
+    /* Color gris medio */
     color: #495057;
-    /* Peso de fuente medio */
+
     font-weight: 500;
-    /* Sin borde por defecto */
+
+    /* border: none; Quitamos los bordes cuadrados por defecto de Bootstrap. */
     border: none;
-    /* Borde inferior transparente (reserva espacio para el activo) */
+
+    /* border-bottom: transparente; Reserva el espacio para el borde activo (evita saltos). */
     border-bottom: 3px solid transparent;
 }
 
-/* .nav-tabs .nav-link:hover: Efecto al pasar el mouse por una pestaña. */
+/* Hover en pestañas */
 .nav-tabs .nav-link:hover {
-    /* Mantiene borde transparente para evitar saltos */
     border-color: transparent;
-    /* Cambia texto a color primario (Rojo) */
+
+    /* Cambia al color primario (rojo) al pasar el mouse.
+       var(--primary-color) viene de main.css. */
     color: var(--primary-color);
 }
 
-/* .nav-tabs .nav-link.active: Estilo de la pestaña que está seleccionada actualmente. */
+/* Pestaña ACTIVA (Seleccionada) */
 .nav-tabs .nav-link.active {
-    /* Color rojo para indicar actividad */
     color: var(--primary-color);
-    /* Fondo transparente (sin caja gris de Bootstrap) */
+
+    /* Fondo transparente para integrarse con el diseño minimalista. */
     background-color: transparent;
-    /* Linea roja inferior indicadora de selección */
+
+    /* Indicador visual fuerte: Línea roja gruesa inferior. */
     border-bottom: 3px solid var(--primary-color);
 }
 
-/* .accordion-button: El encabezado clickeable de cada pedido en el historial. */
+/* -----------------------------------------------------------
+   ACORDEÓN DE PEDIDOS (HISTORIAL)
+   ----------------------------------------------------------- */
+
+/* Botón encabezado del acordeón */
 .accordion-button {
-    /* Texto en negrita */
     font-weight: 600;
+    /* Texto en negrita */
 }
 
-/* .accordion-button:not(.collapsed): Estado del botón cuando el pedido está desplegado (abierto). */
+/* Estado del botón cuando está ABIERTO (:not(.collapsed)) */
 .accordion-button:not(.collapsed) {
-    /* Texto rojo destacado */
+    /* El texto se vuelve rojo. */
     color: var(--primary-color);
-    /* Fondo rojo muy tenue para resaltar la sección abierta */
+
+    /* El fondo se vuelve rojo muy pálido (5% opacidad) para destacar la sección abierta. */
     background-color: rgba(211, 47, 47, 0.05);
 }
 
-/* .wishlist-card: Tarjeta individual de cada producto en la lista de deseos. */
+/* -----------------------------------------------------------
+   LISTA DE DESEOS (WISHLIST)
+   ----------------------------------------------------------- */
+
+/* Tarjeta de producto en Wishlist */
 .wishlist-card {
-    /* Animación suave al transformar */
+    /* Prepara la tarjeta para animaciones. */
     transition: transform 0.2s ease;
 }
 
-/* .wishlist-card:hover: Efecto al pasar el mouse sobre la tarjeta de deseo. */
+/* Hover en tarjeta de Wishlist */
 .wishlist-card:hover {
-    /* Pequeña elevación visual hacia arriba */
+    /* Efecto Levitación: Sube 3 píxeles al pasar el mouse. */
     transform: translateY(-3px);
 }
 
-/* .btn-remove-wishlist: Botón específico para eliminar items de la lista de deseos. */
+/* Botón "Eliminar de Wishlist" */
 .btn-remove-wishlist {
-    /* Utiliza estilos base de botones, aquí se personaliza si es necesario */
-    /* Por defecto hereda borde redondeado de Bootstrap */
+    /* Hereda la mayoría de estilos de .btn, aseguramos bordes redondeados. */
     border-radius: 0.375rem;
 }
