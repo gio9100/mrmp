@@ -1,16 +1,10 @@
-/* =========================================
-   HOJA DE ESTILOS: CARRITO DE COMPRAS
-   =========================================
-   Archivo: carrito.css
-   Descripción: Estilos auxiliares para el carrito de compras.
-   Nota: La mayor parte del diseño del carrito se maneja mediante clases de utilidad
+/*
+La mayor parte del diseño del carrito se maneja mediante clases de utilidad
          de Bootstrap directamente en el HTML (carrito.php). Este archivo contiene
          solo un reset básico para asegurar consistencia.
 */
 
-/* -----------------------------------------------------------
-   SELECTOR UNIVERSAL (*)
-   ----------------------------------------------------------- */
+
 /* El asterisco (*) selecciona TODOS los elementos del DOM. */
 * {
     /* box-sizing: border-box;
